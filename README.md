@@ -1,17 +1,28 @@
-# 🐥 Duck Duck Project
-
-![Telegram](https://img.shields.io/badge/Telegram-2CA5E0?style=for-the-badge&logo=telegram&logoColor=white)
-![Python](https://img.shields.io/badge/python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54)
-![Aiogram](https://img.shields.io/badge/aiogram-2CA5E0?style=for-the-badge&logo=aiogram&logoColor=white)
-![Postgresql](https://img.shields.io/badge/PostgreSQL-316192?style=for-the-badge&logo=postgresql&logoColor=white)
-![Django](https://img.shields.io/badge/django-%23092E20.svg?style=for-the-badge&logo=django&logoColor=white)
-![DRF](https://img.shields.io/badge/DJANGO-REST-ff1709?style=for-the-badge&logo=django&logoColor=white&color=ff1709&labelColor=gray)
-![Redis](https://img.shields.io/badge/redis-%23DD0031.svg?style=for-the-badge&logo=redis&logoColor=white)
+# ✈️ Telegram Bot Template
 
 ---
 
-### 🧪 You can use bot <u><a href="https://t.me/duck_duck_robot">here</a></u>.
+Simple template for telegram bot development.
+
+### ✨ Includes DI middleware to pass any argument right into the handlers.
+
+In the [main.py](./src/main.py):
+
+```python
+dependency_inject_middleware = DependencyInjectMiddleware(
+    user_repository=user_repository,
+    # you can pass your objects here
+)
+
+
+# and access them in the handlers
+async def on_start(
+        message: Message,
+        user_repository: UserRepository,
+) -> None:
+    ...
+```
 
 ---
 
-### 📢 [Changelog](./CHANGELOG.md)
+### ⚙️ Also includes config parsing template.
