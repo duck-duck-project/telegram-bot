@@ -25,7 +25,7 @@ from models import (
 from models.contacts import Contact
 from models.secret_media_types import SecretMediaType
 from repositories import UserRepository
-from views import DepositNotificationView
+from views import DepositNotificationView, WithdrawalNotificationView
 from views.base import View
 
 __all__ = (
@@ -459,6 +459,17 @@ class PrivateChatNotifier:
         await send_view(
             bot=self.__bot,
             chat_id=deposit.user.id,
+            view=view,
+        )
+
+    async def send_withdrawal_notification(
+            self,
+            withdrawal: SystemTransaction,
+    ) -> None:
+        view = WithdrawalNotificationView(withdrawal)
+        await send_view(
+            bot=self.__bot,
+            chat_id=withdrawal.user.id,
             view=view,
         )
 
