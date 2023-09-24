@@ -16,8 +16,11 @@ from bs4 import BeautifulSoup
 
 from exceptions import InvalidSecretMediaDeeplinkError, UserDoesNotExistError
 from models import (
-    User, FoodMenuItem, ArithmeticProblem, ArithmeticExpression,
-    Deposit
+    User,
+    FoodMenuItem,
+    ArithmeticProblem,
+    ArithmeticExpression,
+    SystemTransaction,
 )
 from models.contacts import Contact
 from models.secret_media_types import SecretMediaType
@@ -450,7 +453,7 @@ class PrivateChatNotifier:
 
     async def send_deposit_notification(
             self,
-            deposit: Deposit,
+            deposit: SystemTransaction,
     ) -> None:
         view = DepositNotificationView(deposit)
         await send_view(
