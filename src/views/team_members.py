@@ -9,10 +9,7 @@ from callback_data import (
     TeamMemberCreateCallbackData,
     TeamMemberCreateAcceptInvitationCallbackData,
 )
-from callback_data import (
-    TeamMemberListCallbackData,
-    TeamMemberDeleteCallbackData,
-)
+from callback_data import TeamMemberDeleteCallbackData
 from models import TeamMember
 from models import (
     TeamMemberStatus,

@@ -31,7 +31,7 @@ from repositories import (
     TeamMemberRepository,
     TeamRepository,
     TransferRepository,
-    DepositRepository,
+    BalanceRepository,
 )
 from repositories.themes import ThemeRepository
 from services import PrivateChatNotifier
@@ -113,7 +113,7 @@ async def main() -> None:
             theme_repository=ThemeRepository,
             transfer_repository=TransferRepository,
             user_repository=UserRepository,
-            deposit_repository=DepositRepository,
+            balance_repository=BalanceRepository,
         )
     )
     dispatcher.update.outer_middleware(user_retrieve_middleware)

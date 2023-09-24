@@ -3,6 +3,7 @@ from aiogram.enums import ChatType
 from aiogram.filters import StateFilter, Command
 from aiogram.types import Message, InputMediaPhoto
 
+from repositories import BalanceRepository
 from services import get_food_menu_html, parse_food_menu_html
 
 __all__ = ('router',)
@@ -10,7 +11,10 @@ __all__ = ('router',)
 router = Router(name=__name__)
 
 
-async def on_show_food_menu(message: Message) -> None:
+async def on_show_food_menu(
+        message: Message,
+        balance_repository: BalanceRepository,
+) -> None:
     food_menu_html = await get_food_menu_html()
     food_menu_items = parse_food_menu_html(food_menu_html)
 

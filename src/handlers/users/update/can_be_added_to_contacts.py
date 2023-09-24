@@ -32,8 +32,6 @@ async def on_toggle_can_be_added_to_contacts(
         born_at=user.born_at,
     )
     user = await user_repository.get_by_id(user.id)
-
-    state_name = await state.get_state()
     view = UserPersonalSettingsView(user)
     await edit_message_by_view(message=callback_query.message, view=view)
 

@@ -6,7 +6,6 @@ from exceptions import (
     ServerAPIError,
     UserAlreadyExistsError,
 )
-from models import UserBalance
 from repositories import APIRepository
 
 __all__ = ('UserRepository',)

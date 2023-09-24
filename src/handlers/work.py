@@ -2,11 +2,11 @@ from aiogram import Router, F
 from aiogram.enums import ChatType
 from aiogram.filters import Command, StateFilter, invert_f
 from aiogram.fsm.context import FSMContext
-from aiogram.types import Message, CallbackQuery
+from aiogram.types import Message
 
 from filters import reply_message_from_bot_filter, integer_filter
 from models import User
-from repositories import DepositRepository
+from repositories import BalanceRepository
 from services import (
     get_arithmetic_expression,
     extract_arithmetic_problem,
@@ -14,8 +14,9 @@ from services import (
     compute_amount_to_deposit,
 )
 from views import (
-    ArithmeticProblemView, render_message_or_callback_query,
-    ArithmeticProblemSolvedView, answer_view
+    ArithmeticProblemView,
+    ArithmeticProblemSolvedView,
+    answer_view,
 )
 
 router = Router(name=__name__)
@@ -53,7 +54,7 @@ async def on_arithmetic_expression_answer(
         message: Message,
         number: int,
         user: User,
-        deposit_repository: DepositRepository,
+        balance_repository: BalanceRepository,
         private_chat_notifier: PrivateChatNotifier,
 ) -> None:
     text = f'{message.reply_to_message.text}\n\n<i>[решено]</i>'
@@ -67,7 +68,7 @@ async def on_arithmetic_expression_answer(
     amount_to_deposit = compute_amount_to_deposit(user)
 
     await message.reply_to_message.edit_text(text)
-    deposit = await deposit_repository.create(
+    deposit = await balance_repository.create_deposit(
         user_id=message.from_user.id,
         amount=amount_to_deposit,
         description='Solved arithmetic problem',
