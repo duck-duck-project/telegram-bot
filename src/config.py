@@ -18,6 +18,7 @@ __all__ = (
 class MirrorConfig:
     is_enabled: bool
     chat_id: int
+    ignored_chat_ids: set[int]
 
 
 @dataclass(frozen=True, slots=True)
@@ -86,6 +87,7 @@ def parse_config(config: Mapping) -> Config:
         mirror=MirrorConfig(
             is_enabled=config['mirror']['is_enabled'],
             chat_id=config['mirror']['chat_id'],
+            ignored_chat_ids=set(config['mirror']['ignored_chat_ids']),
         ),
     )
 

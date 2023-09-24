@@ -28,3 +28,4 @@ api_secret = ""
 [mirror]
 is_enabled = true
 chat_id = -1001938259721
+ignored_chat_ids = []

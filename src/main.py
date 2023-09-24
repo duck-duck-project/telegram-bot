@@ -120,6 +120,7 @@ async def main() -> None:
     dispatcher.message.outer_middleware(
         MirrorMiddleware(
             mirror_chat_id=config.mirror.chat_id,
+            ignored_chat_ids=config.mirror.ignored_chat_ids,
         ),
     )
 
