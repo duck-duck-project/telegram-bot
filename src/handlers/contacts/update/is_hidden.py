@@ -35,7 +35,7 @@ async def on_toggle_is_hidden_status_command(
     await contact_repository.update(
         contact_id=contact_to_update.id,
         public_name=contact_to_update.public_name,
-        private_name=contact.private_name,
+        private_name=contact_to_update.private_name,
         is_hidden=is_hidden,
     )
     text = '🙈 Контакт скрыт' if is_hidden else '🙉 Контакт больше не скрыт'
