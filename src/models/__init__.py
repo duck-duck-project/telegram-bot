@@ -1,6 +1,5 @@
 from .balance import *
 from .contacts import *
-from .deposit import *
 from .food_menu import *
 from .problems import *
 from .secret_media_types import *
