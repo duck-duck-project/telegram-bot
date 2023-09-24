@@ -6,16 +6,15 @@ from pydantic import BaseModel
 from models.transaction_sources import TransactionSource
 from models.users import UserPartial
 
-__all__ = ('Transfer',)
+__all__ = ('Deposit',)
 
 
-class Transfer(BaseModel):
+class Deposit(BaseModel):
     id: UUID
-    sender: UserPartial
-    recipient: UserPartial
-    source: TransactionSource
+    user: UserPartial
     amount: int
-    description: str | None
+    description: str
+    source: TransactionSource
     created_at: datetime
 
     class Config:
