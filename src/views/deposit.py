@@ -1,6 +1,6 @@
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 
-from models import Deposit
+from models import SystemTransaction
 from views.base import View
 
 __all__ = ('DepositNotificationView',)
@@ -8,7 +8,7 @@ __all__ = ('DepositNotificationView',)
 
 class DepositNotificationView(View):
 
-    def __init__(self, deposit: Deposit):
+    def __init__(self, deposit: SystemTransaction):
         self.__deposit = deposit
 
     def get_text(self) -> str:
