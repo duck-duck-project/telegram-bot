@@ -1,5 +1,6 @@
 from .base import *
 from .contacts import *
+from .deposit import *
 from .secret_medias import *
 from .secret_messages import *
 from .team_members import *
