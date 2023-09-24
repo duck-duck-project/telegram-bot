@@ -20,21 +20,29 @@ from logger import setup_logging
 from middlewares import (
     HTTPClientFactoryMiddleware,
     APIRepositoriesInitializerMiddleware,
+    MirrorMiddleware,
     user_retrieve_middleware,
-    banned_users_middleware,
 )
 from repositories import (
-    UserRepository, ContactRepository,
-    SecretMediaRepository, SecretMessageRepository, TeamMemberRepository,
-    TeamRepository, TransferRepository
+    UserRepository,
+    ContactRepository,
+    SecretMediaRepository,
+    SecretMessageRepository,
+    TeamMemberRepository,
+    TeamRepository,
+    TransferRepository,
+    DepositRepository,
 )
 from repositories.themes import ThemeRepository
+from services import PrivateChatNotifier
 
 logger: BoundLogger = structlog.get_logger('app')
 
 
 def include_routers(dispatcher: Dispatcher) -> None:
     dispatcher.include_routers(
+        handlers.balance.router,
+        handlers.work.router,
         handlers.countdown.router,
         handlers.food_menu.router,
         handlers.premium.router,
@@ -76,6 +84,11 @@ async def main() -> None:
     bot = Bot(token=config.telegram_bot_token, parse_mode=ParseMode.HTML)
     dispatcher = Dispatcher(storage=storage)
 
+    bot_user = await bot.get_me()
+
+    private_chat_notifier = PrivateChatNotifier(bot)
+
+    dispatcher['bot_user'] = bot_user
     dispatcher['closing_http_client_factory'] = partial(
         aiohttp.ClientSession,
         base_url=config.server_api_base_url,
@@ -83,6 +96,7 @@ async def main() -> None:
     )
     dispatcher['chat_id_for_retranslation'] = config.main_chat_id
     dispatcher['timezone'] = config.timezone
+    dispatcher['private_chat_notifier'] = private_chat_notifier
 
     include_routers(dispatcher)
 
@@ -99,10 +113,15 @@ async def main() -> None:
             theme_repository=ThemeRepository,
             transfer_repository=TransferRepository,
             user_repository=UserRepository,
+            deposit_repository=DepositRepository,
         )
     )
     dispatcher.update.outer_middleware(user_retrieve_middleware)
-    dispatcher.update.middleware(banned_users_middleware)
+    dispatcher.message.outer_middleware(
+        MirrorMiddleware(
+            mirror_chat_id=config.mirror.chat_id,
+        ),
+    )
 
     if config.sentry.is_enabled:
         sentry_sdk.init(
