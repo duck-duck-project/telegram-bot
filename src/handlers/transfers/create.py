@@ -6,7 +6,7 @@ from aiogram.filters import StateFilter, Command, invert_f
 from aiogram.types import Message
 
 from filters import transfer_operation_amount_filter
-from repositories import TransferRepository, UserRepository
+from repositories import TransferRepository, BalanceRepository
 
 __all__ = ('register_handlers',)
 
@@ -25,12 +25,12 @@ async def on_create_transfer_in_group_chat(
         message: Message,
         amount: int,
         transfer_repository: TransferRepository,
-        user_repository: UserRepository,
+        balance_repository: BalanceRepository,
 ) -> None:
     sender_id = message.from_user.id
     recipient_id = message.reply_to_message.from_user.id
 
-    sender_balance = await user_repository.get_balance(sender_id)
+    sender_balance = await balance_repository.get_user_balance(sender_id)
     if sender_balance.balance < amount:
         await message.reply('❌ Недостаточно средств на балансе')
         return
@@ -41,7 +41,7 @@ async def on_create_transfer_in_group_chat(
     )
     await message.reply(f'✅ Перевод на сумму ${amount} успешно выполнен')
 
-    recipient_balance = await user_repository.get_balance(recipient_id)
+    recipient_balance = await balance_repository.get_user_balance(recipient_id)
     with contextlib.suppress(TelegramAPIError):
         await message.bot.send_message(
             recipient_id,
