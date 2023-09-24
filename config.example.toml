@@ -24,3 +24,8 @@ traces_sample_rate = 1.0  # 100% of traces to be sent to Sentry
 cloud_name = ""
 api_key = ""
 api_secret = ""
+
+[mirror]
+is_enabled = true
+chat_id = -1001938259721
+ignored_chat_ids = []

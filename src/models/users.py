@@ -4,7 +4,13 @@ from pydantic import BaseModel, HttpUrl
 
 from models.themes import SecretMessageTheme
 
-__all__ = ('User',)
+__all__ = ('User', 'UserPartial')
+
+
+class UserPartial(BaseModel):
+    id: int
+    username: str | None
+    fullname: str
 
 
 class User(BaseModel):

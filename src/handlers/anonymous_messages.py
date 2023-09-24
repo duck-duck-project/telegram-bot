@@ -5,7 +5,6 @@ from aiogram.filters import Command, StateFilter, or_f
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message
 
-from exceptions import UserHasNoPremiumSubscriptionError
 from models import User
 from services import determine_media_file_id_and_answer_method
 from states import AnonymousMessagingStates

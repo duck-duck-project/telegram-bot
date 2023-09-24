@@ -20,8 +20,15 @@ async def user_retrieve_middleware(
                 message.text is not None
                 and not message.text.startswith('/')
         )
-        if no_command and not is_chat_type_private:
-            return
+
+        bot_id = data['bot_user'].id
+        is_reply_to_bot = (
+                event.message.reply_to_message is not None
+                and event.message.reply_to_message.from_user.id == bot_id
+        )
+
+        if no_command and not is_chat_type_private and not is_reply_to_bot:
+            return await handler(event, data)
 
     from_user = extract_user_from_update(event)
 

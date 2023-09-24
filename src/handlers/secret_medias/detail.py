@@ -1,6 +1,4 @@
-import re
-
-from aiogram import Dispatcher, Router, F
+from aiogram import Router, F
 from aiogram.enums import ChatType
 from aiogram.exceptions import TelegramAPIError
 from aiogram.filters import StateFilter, CommandStart

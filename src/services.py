@@ -1,4 +1,6 @@
 import asyncio
+import random
+import traceback
 from collections.abc import Coroutine, Callable, Awaitable, Iterable
 from datetime import timedelta, datetime
 from typing import Protocol, TypeAlias, TypeVar, Any, NewType
@@ -8,14 +10,22 @@ from zoneinfo import ZoneInfo
 import aiohttp
 import cloudinary.uploader
 from aiogram import Bot
+from aiogram.exceptions import TelegramAPIError
 from aiogram.types import Message, Update, User as FromUser
 from bs4 import BeautifulSoup
 
 from exceptions import InvalidSecretMediaDeeplinkError, UserDoesNotExistError
-from models import User, FoodMenuItem
+from models import (
+    User,
+    FoodMenuItem,
+    ArithmeticProblem,
+    ArithmeticExpression,
+    SystemTransaction,
+)
 from models.contacts import Contact
 from models.secret_media_types import SecretMediaType
 from repositories import UserRepository
+from views import DepositNotificationView, WithdrawalNotificationView
 from views.base import View
 
 __all__ = (
@@ -39,6 +49,13 @@ __all__ = (
     'extract_user_from_update',
     'get_food_menu_html',
     'parse_food_menu_html',
+    'get_arithmetic_problem',
+    'get_arithmetic_expression',
+    'get_plus_or_minus',
+    'extract_arithmetic_problem',
+    'solve_arithmetic_expression',
+    'PrivateChatNotifier',
+    'compute_amount_to_deposit',
 )
 
 Url = NewType('Url', str)
@@ -371,3 +388,91 @@ def extract_user_from_update(update: Update) -> FromUser:
 async def upload_photo_to_cloud(url: str) -> Url:
     uploaded_media = await asyncio.to_thread(cloudinary.uploader.upload, url)
     return Url(uploaded_media['url'])
+
+
+def get_plus_or_minus() -> str:
+    return random.choice('+-')
+
+
+def get_arithmetic_expression() -> ArithmeticExpression:
+    return ArithmeticExpression(
+        f'{random.randint(1, 10)}'
+        f'{get_plus_or_minus()}'
+        f'{random.randint(1, 10)}'
+        f'{get_plus_or_minus()}'
+        f'{random.randint(1, 10)}'
+        f'{get_plus_or_minus()}'
+        f'{random.randint(1, 10)}'
+    )
+
+
+def solve_arithmetic_expression(expression: str) -> int:
+    return eval(expression)
+
+
+def get_arithmetic_problem() -> ArithmeticProblem:
+    expression = get_arithmetic_expression()
+    correct_answer = solve_arithmetic_expression(expression)
+    return ArithmeticProblem(
+        expression=expression,
+        correct_answer=correct_answer,
+    )
+
+
+def extract_arithmetic_problem(text: str) -> ArithmeticProblem:
+    expression = ArithmeticExpression(
+        text.split('\n')[0].removeprefix('❓ Сколько будет: ').removesuffix('?')
+    )
+    correct_answer = solve_arithmetic_expression(expression)
+    return ArithmeticProblem(
+        expression=expression,
+        correct_answer=correct_answer,
+    )
+
+
+async def send_view(
+        *,
+        bot,
+        chat_id: int,
+        view: View,
+) -> None:
+    try:
+        await bot.send_message(
+            chat_id=chat_id,
+            text=view.get_text(),
+            reply_markup=view.get_reply_markup(),
+        )
+    except TelegramAPIError:
+        traceback.print_exc()
+
+
+class PrivateChatNotifier:
+
+    def __init__(self, bot: Bot):
+        self.__bot = bot
+
+    async def send_deposit_notification(
+            self,
+            deposit: SystemTransaction,
+    ) -> None:
+        view = DepositNotificationView(deposit)
+        await send_view(
+            bot=self.__bot,
+            chat_id=deposit.user.id,
+            view=view,
+        )
+
+    async def send_withdrawal_notification(
+            self,
+            withdrawal: SystemTransaction,
+    ) -> None:
+        view = WithdrawalNotificationView(withdrawal)
+        await send_view(
+            bot=self.__bot,
+            chat_id=withdrawal.user.id,
+            view=view,
+        )
+
+
+def compute_amount_to_deposit(user: User) -> int:
+    return 10 if not user.is_premium else 20

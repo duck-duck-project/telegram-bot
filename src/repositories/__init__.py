@@ -1,3 +1,4 @@
+from .balance import *
 from .base import *
 from .contacts import *
 from .secret_medias import *

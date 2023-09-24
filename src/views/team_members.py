@@ -9,10 +9,7 @@ from callback_data import (
     TeamMemberCreateCallbackData,
     TeamMemberCreateAcceptInvitationCallbackData,
 )
-from callback_data import (
-    TeamMemberListCallbackData,
-    TeamMemberDeleteCallbackData,
-)
+from callback_data import TeamMemberDeleteCallbackData
 from models import TeamMember
 from models import (
     TeamMemberStatus,
@@ -62,11 +59,11 @@ class TeamMemberDetailView(View):
         return f'Участник секретной группы: {self.__team_member.name}'
 
     def get_reply_markup(self) -> InlineKeyboardMarkup:
-        markup = InlineKeyboardMarkup()
+        keyboard = InlineKeyboardBuilder()
         is_owner = self.__current_team_member.status == TeamMemberStatus.OWNER
         is_not_self = self.__team_member != self.__current_team_member
         if is_owner and is_not_self:
-            markup.row(
+            keyboard.row(
                 InlineKeyboardButton(
                     text='❌🗑️ Исключить из секретной группы',
                     callback_data=TeamMemberDeleteCallbackData().new(
@@ -74,7 +71,7 @@ class TeamMemberDetailView(View):
                     ),
                 ),
             )
-        return markup
+        return keyboard.as_markup()
 
 
 class TeamMemberListView(View):

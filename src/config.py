@@ -15,6 +15,13 @@ __all__ = (
 
 
 @dataclass(frozen=True, slots=True)
+class MirrorConfig:
+    is_enabled: bool
+    chat_id: int
+    ignored_chat_ids: set[int]
+
+
+@dataclass(frozen=True, slots=True)
 class LoggingConfig:
     level: int
 
@@ -50,6 +57,7 @@ class Config:
     server_api_base_url: str
     main_chat_id: int | str
     timezone: ZoneInfo
+    mirror: MirrorConfig
 
 
 def parse_config(config: Mapping) -> Config:
@@ -76,6 +84,11 @@ def parse_config(config: Mapping) -> Config:
         server_api_base_url=config['server_api']['base_url'],
         main_chat_id=config['main_chat_id'],
         timezone=ZoneInfo(config['timezone']),
+        mirror=MirrorConfig(
+            is_enabled=config['mirror']['is_enabled'],
+            chat_id=config['mirror']['chat_id'],
+            ignored_chat_ids=set(config['mirror']['ignored_chat_ids']),
+        ),
     )
 
 

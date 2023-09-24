@@ -1,4 +1,5 @@
 from . import (
+    balance,
     contacts,
     food_menu,
     secret_messages,
@@ -13,9 +14,11 @@ from . import (
     countdown,
     premium,
     server,
+    work,
 )
 
 __all__ = (
+    'balance',
     'contacts',
     'food_menu',
     'secret_medias',
@@ -30,4 +33,5 @@ __all__ = (
     'countdown',
     'premium',
     'server',
+    'work',
 )

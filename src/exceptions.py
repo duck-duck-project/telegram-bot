@@ -55,3 +55,7 @@ class UserHasNoPremiumSubscriptionError(Exception):
 
 class ThemeDoesNotExistError(ServerAPIError):
     pass
+
+
+class InsufficientFundsForWithdrawalError(ServerAPIError):
+    pass

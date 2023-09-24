@@ -4,7 +4,7 @@ from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery
 
 from callback_data import TeamDeleteAskForConfirmationCallbackData
-from repositories import HTTPClientFactory, TeamRepository
+from repositories import TeamRepository
 from states import TeamDeleteStates
 from views import (
     TeamDeleteAskForConfirmationView,

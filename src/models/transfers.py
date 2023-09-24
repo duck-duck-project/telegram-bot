@@ -4,14 +4,9 @@ from uuid import UUID
 from pydantic import BaseModel
 
 from models.transaction_sources import TransactionSource
+from models.users import UserPartial
 
 __all__ = ('Transfer',)
-
-
-class UserPartial(BaseModel):
-    id: int
-    username: str | None
-    fullname: str
 
 
 class Transfer(BaseModel):

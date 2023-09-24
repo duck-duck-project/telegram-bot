@@ -3,8 +3,6 @@ from datetime import datetime
 
 from pydantic import BaseModel
 
-from models.users import User
-
 __all__ = (
     'TeamIdAndName',
     'TeamMember',
