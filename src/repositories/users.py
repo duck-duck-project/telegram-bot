@@ -111,13 +111,3 @@ class UserRepository(APIRepository):
                 raise UserDoesNotExistError(user_id=user_id)
             if response.status != 204:
                 raise ServerAPIError
-
-    async def get_balance(self, user_id: int) -> UserBalance:
-        url = f'/economics/balance/users/{user_id}/'
-        async with self._http_client.get(url) as response:
-            if response.status == 404:
-                raise UserDoesNotExistError(user_id=user_id)
-            if response.status != 200:
-                raise ServerAPIError
-            response_data = await response.json()
-        return UserBalance.model_validate(response_data)
