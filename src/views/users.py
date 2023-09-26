@@ -95,7 +95,7 @@ class UserPersonalSettingsView(View):
                 [
                     InlineKeyboardButton(
                         text='🏞️ Фото профиля',
-                        callback_data='show-profile-photo',
+                        callback_data='update-profile-photo',
                     )
                 ]
             ],
