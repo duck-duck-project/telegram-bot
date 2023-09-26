@@ -5,12 +5,12 @@ class ServerAPIError(Exception):
     pass
 
 
-class SecretMessageDoesNotExistError(ServerAPIError):
+class SecretMessageDoesNotExistError(Exception):
     pass
 
 
 @dataclass(frozen=True, slots=True)
-class UserDoesNotExistError(ServerAPIError):
+class UserDoesNotExistError(Exception):
     user_id: int
 
     def __str__(self):
@@ -18,22 +18,22 @@ class UserDoesNotExistError(ServerAPIError):
 
 
 @dataclass(frozen=True, slots=True)
-class UserAlreadyExistsError(ServerAPIError):
+class UserAlreadyExistsError(Exception):
     user_id: int
 
     def __str__(self):
         return f'User with Telegram ID {self.user_id} already exists'
 
 
-class ContactAlreadyExistsError(ServerAPIError):
+class ContactAlreadyExistsError(Exception):
     pass
 
 
-class SecretMediaAlreadyExistsError(ServerAPIError):
+class SecretMediaAlreadyExistsError(Exception):
     pass
 
 
-class SecretMediaDoesNotExistError(ServerAPIError):
+class SecretMediaDoesNotExistError(Exception):
     pass
 
 
@@ -42,7 +42,7 @@ class InvalidSecretMediaDeeplinkError(Exception):
 
 
 @dataclass(frozen=True, slots=True)
-class ContactDoesNotExistError(ServerAPIError):
+class ContactDoesNotExistError(Exception):
     contact_id: int
 
     def __str__(self) -> str:
@@ -53,9 +53,9 @@ class UserHasNoPremiumSubscriptionError(Exception):
     pass
 
 
-class ThemeDoesNotExistError(ServerAPIError):
+class ThemeDoesNotExistError(Exception):
     pass
 
 
-class InsufficientFundsForWithdrawalError(ServerAPIError):
+class InsufficientFundsForWithdrawalError(Exception):
     pass
