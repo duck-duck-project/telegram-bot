@@ -2,7 +2,7 @@ import aiohttp
 import structlog
 from aiogram import Router
 from aiogram.filters import ExceptionTypeFilter
-from aiogram.types import Update
+from aiogram.types import ErrorEvent
 from structlog.stdlib import BoundLogger
 
 from exceptions import ServerAPIError
@@ -18,9 +18,9 @@ logger: BoundLogger = structlog.get_logger('app')
 router = Router(name=__name__)
 
 
-async def on_client_connector_error(
-        update: Update,
-) -> bool:
+@router.error(ExceptionTypeFilter(aiohttp.ClientConnectorError))
+async def on_client_connector_error(event: ErrorEvent) -> None:
+    update = event.update
     text = '❌ Ошибка подключения к серверу, попробуйте позже'
     if update.message is not None:
         await update.message.answer(text)
@@ -32,12 +32,11 @@ async def on_client_connector_error(
             .get_inline_query_result_article()
         ], is_personal=True)
     await logger.acritical('Can not connect to the API server')
-    return True
 
 
-async def on_server_api_error(
-        update: Update,
-) -> bool:
+@router.error(ExceptionTypeFilter(ServerAPIError))
+async def on_server_api_error(event: ErrorEvent) -> None:
+    update = event.update
     text = '❌ Ошибка API сервера, попробуйте позже'
     if update.message is not None:
         await update.message.answer(text)
@@ -49,14 +48,3 @@ async def on_server_api_error(
             .get_inline_query_result_article()
         ])
     await logger.acritical('Error on the API server side')
-    return True
-
-
-router.errors.register(
-    on_client_connector_error,
-    ExceptionTypeFilter(aiohttp.ClientConnectorError),
-)
-router.errors.register(
-    on_server_api_error,
-    ExceptionTypeFilter(ServerAPIError),
-)
