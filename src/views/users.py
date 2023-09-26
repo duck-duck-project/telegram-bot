@@ -92,6 +92,12 @@ class UserPersonalSettingsView(View):
                         callback_data='show-themes-list',
                     ),
                 ],
+                [
+                    InlineKeyboardButton(
+                        text='🏞️ Фото профиля',
+                        callback_data='show-profile-photo',
+                    )
+                ]
             ],
         )
 
