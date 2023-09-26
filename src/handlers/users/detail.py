@@ -72,7 +72,6 @@ def register_handlers(router: Router) -> None:
     router.callback_query.register(
         on_show_personal_settings,
         F.data == 'show-personal-settings',
-        F.chat.type == ChatType.PRIVATE,
         StateFilter('*'),
     )
     router.message.register(
