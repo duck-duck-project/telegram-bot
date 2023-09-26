@@ -8,6 +8,7 @@ __all__ = (
     'TeamDeleteStates',
     'TeamMemberCreateStates',
     'ContactCreateWaitForForwardedMessage',
+    'ProfilePhotoUpdateStates',
 )
 
 
@@ -41,3 +42,7 @@ class TeamDeleteStates(StatesGroup):
 
 class TeamMemberCreateStates(StatesGroup):
     contact = State()
+
+
+class ProfilePhotoUpdateStates(StatesGroup):
+    photo = State()
