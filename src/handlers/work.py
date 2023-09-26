@@ -11,7 +11,7 @@ from services import (
     get_arithmetic_expression,
     extract_arithmetic_problem,
     PrivateChatNotifier,
-    compute_amount_to_deposit,
+    compute_final_reward, extract_reward, get_random_reward_value,
 )
 from views import (
     ArithmeticProblemView,
@@ -65,7 +65,13 @@ async def on_arithmetic_expression_answer(
         await message.reply('Неправильно')
         return
 
-    amount_to_deposit = compute_amount_to_deposit(user)
+    premium_multiplier: int = 3
+    reward_value = extract_reward(message.reply_to_message.text)
+    amount_to_deposit = compute_final_reward(
+        reward_value=reward_value,
+        premium_multiplier=premium_multiplier,
+        is_premium=user.is_premium,
+    )
 
     await message.reply_to_message.edit_text(text)
     deposit = await balance_repository.create_deposit(
@@ -90,5 +96,9 @@ async def on_create_arithmetic_expression_to_solve(
     await state.clear()
 
     expression = get_arithmetic_expression()
-    view = ArithmeticProblemView(expression)
+    view = ArithmeticProblemView(
+        expression=expression,
+        premium_multiplier=3,
+        reward=get_random_reward_value(),
+    )
     await answer_view(message=message, view=view)
