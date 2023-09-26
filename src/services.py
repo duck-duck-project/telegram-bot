@@ -55,7 +55,9 @@ __all__ = (
     'extract_arithmetic_problem',
     'solve_arithmetic_expression',
     'PrivateChatNotifier',
-    'compute_amount_to_deposit',
+    'extract_reward',
+    'upload_photo_to_cloud',
+    'compute_final_reward',
 )
 
 Url = NewType('Url', str)
@@ -406,6 +408,10 @@ def get_arithmetic_expression() -> ArithmeticExpression:
     )
 
 
+def get_random_reward_value() -> int:
+    return random.randint(5, 25)
+
+
 def solve_arithmetic_expression(expression: str) -> int:
     return eval(expression)
 
@@ -428,6 +434,10 @@ def extract_arithmetic_problem(text: str) -> ArithmeticProblem:
         expression=expression,
         correct_answer=correct_answer,
     )
+
+
+def extract_reward(text: str) -> int:
+    return int(text.split('\n')[1].split(' ')[2])
 
 
 async def send_view(
@@ -474,5 +484,12 @@ class PrivateChatNotifier:
         )
 
 
-def compute_amount_to_deposit(user: User) -> int:
-    return 10 if not user.is_premium else 20
+def compute_final_reward(
+        *,
+        reward_value: int,
+        premium_multiplier: int | float,
+        is_premium: bool,
+) -> int:
+    if is_premium:
+        return reward_value * premium_multiplier
+    return int(reward_value)

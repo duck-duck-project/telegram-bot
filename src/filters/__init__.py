@@ -1,4 +1,5 @@
 from .bot import *
+from .photo import *
 from .secret_messages import *
 from .text import *
 from .themes import *

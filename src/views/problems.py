@@ -6,13 +6,22 @@ __all__ = ('ArithmeticProblemView', 'ArithmeticProblemSolvedView')
 
 class ArithmeticProblemView(View):
 
-    def __init__(self, expression: ArithmeticExpression):
+    def __init__(
+            self,
+            *,
+            expression: ArithmeticExpression,
+            reward: int,
+            premium_multiplier: int | float,
+    ):
         self.__expression = expression
+        self.__reward = reward
+        self.__premium_multiplier = premium_multiplier
 
     def get_text(self) -> str:
         return (
             f'❓ Сколько будет: {self.__expression}?\n'
-            '💰 Награда: 10 дак-дак коинов (x2 для премиум пользователей 🌟)'
+            f'💰 Награда: {self.__reward} дак-дак коинов'
+            f' (x{self.__premium_multiplier} для премиум пользователей 🌟)'
         )
 
 

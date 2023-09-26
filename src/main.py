@@ -84,7 +84,7 @@ async def main() -> None:
     bot = Bot(token=config.telegram_bot_token, parse_mode=ParseMode.HTML)
     dispatcher = Dispatcher(storage=storage)
 
-    bot_user = await bot.get_me()
+    bot_user = await bot.me()
 
     private_chat_notifier = PrivateChatNotifier(bot)
 
@@ -117,12 +117,14 @@ async def main() -> None:
         )
     )
     dispatcher.update.outer_middleware(user_retrieve_middleware)
-    dispatcher.message.outer_middleware(
-        MirrorMiddleware(
-            mirror_chat_id=config.mirror.chat_id,
-            ignored_chat_ids=config.mirror.ignored_chat_ids,
-        ),
-    )
+
+    if config.mirror.is_enabled:
+        dispatcher.message.outer_middleware(
+            MirrorMiddleware(
+                mirror_chat_id=config.mirror.chat_id,
+                ignored_chat_ids=config.mirror.ignored_chat_ids,
+            ),
+        )
 
     if config.sentry.is_enabled:
         sentry_sdk.init(
