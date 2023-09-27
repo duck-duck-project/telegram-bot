@@ -8,10 +8,12 @@ from filters import reply_message_from_bot_filter, integer_filter
 from models import User
 from repositories import BalanceRepository
 from services import (
-    get_arithmetic_expression,
     extract_arithmetic_problem,
     PrivateChatNotifier,
-    compute_final_reward, extract_reward, get_random_reward_value,
+    compute_final_reward,
+    extract_reward,
+    compute_arithmetic_problem_reward,
+    get_arithmetic_problem,
 )
 from views import (
     ArithmeticProblemView,
@@ -65,7 +67,7 @@ async def on_arithmetic_expression_answer(
         await message.reply('Неправильно')
         return
 
-    premium_multiplier: int = 3
+    premium_multiplier: int = 2
     reward_value = extract_reward(message.reply_to_message.text)
     amount_to_deposit = compute_final_reward(
         reward_value=reward_value,
@@ -95,10 +97,11 @@ async def on_create_arithmetic_expression_to_solve(
 ) -> None:
     await state.clear()
 
-    expression = get_arithmetic_expression()
+    problem = get_arithmetic_problem()
+    reward_value = compute_arithmetic_problem_reward(problem)
     view = ArithmeticProblemView(
-        expression=expression,
-        premium_multiplier=3,
-        reward=get_random_reward_value(),
+        expression=problem.expression,
+        premium_multiplier=2,
+        reward=reward_value,
     )
     await answer_view(message=message, view=view)
