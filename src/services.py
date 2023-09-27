@@ -58,6 +58,7 @@ __all__ = (
     'extract_reward',
     'upload_photo_to_cloud',
     'compute_final_reward',
+    'compute_arithmetic_problem_reward',
 )
 
 Url = NewType('Url', str)
@@ -393,19 +394,21 @@ async def upload_photo_to_cloud(url: str) -> Url:
 
 
 def get_plus_or_minus() -> str:
-    return random.choice('+-')
+    return random.choice('+-*')
 
 
 def get_arithmetic_expression() -> ArithmeticExpression:
-    return ArithmeticExpression(
-        f'{random.randint(1, 10)}'
+    expression = (
         f'{get_plus_or_minus()}'
         f'{random.randint(1, 10)}'
         f'{get_plus_or_minus()}'
         f'{random.randint(1, 10)}'
         f'{get_plus_or_minus()}'
         f'{random.randint(1, 10)}'
-    )
+        f'{get_plus_or_minus()}'
+        f'{random.randint(1, 10)}'
+    ).lstrip('+*')
+    return ArithmeticExpression(expression)
 
 
 def get_random_reward_value() -> int:
@@ -482,6 +485,18 @@ class PrivateChatNotifier:
             chat_id=withdrawal.user.id,
             view=view,
         )
+
+
+def compute_arithmetic_problem_reward(
+        arithmetic_problem: ArithmeticProblem,
+) -> int:
+    operators_complexity_value = (
+            arithmetic_problem.expression.count('+') * 3
+            + arithmetic_problem.expression.count('-') * 5
+            + arithmetic_problem.expression.count('*') * 5
+    )
+    answer_complexity = abs(arithmetic_problem.correct_answer) // 10
+    return operators_complexity_value + answer_complexity
 
 
 def compute_final_reward(

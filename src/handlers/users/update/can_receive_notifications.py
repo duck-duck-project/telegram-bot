@@ -30,6 +30,7 @@ async def on_toggle_can_receive_notifications(
         secret_messages_theme_id=secret_message_theme_id,
         can_receive_notifications=not user.can_receive_notifications,
         born_at=user.born_at,
+        profile_photo_url=str(user.profile_photo_url),
     )
     user = await user_repository.get_by_id(user.id)
     view = UserPersonalSettingsView(user)
