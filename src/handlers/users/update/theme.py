@@ -26,12 +26,6 @@ async def on_update_user_theme(
         theme_id: int,
         private_chat_notifier: PrivateChatNotifier,
 ) -> None:
-    if not user.is_premium:
-        await message.reply(
-            '🌟 Смена темы доступна только премиум пользователям'
-        )
-        return
-
     theme = await theme_repository.get_by_id(theme_id)
 
     if theme.is_hidden:
