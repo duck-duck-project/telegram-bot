@@ -1,6 +1,10 @@
+from typing import NewType
+
 from pydantic import BaseModel, HttpUrl
 
-__all__ = ('FoodMenuItem',)
+__all__ = ('FoodMenuItem', 'HTML')
+
+HTML = NewType('HTML', str)
 
 
 class FoodMenuItem(BaseModel):

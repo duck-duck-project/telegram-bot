@@ -20,7 +20,7 @@ from models import (
     FoodMenuItem,
     ArithmeticProblem,
     ArithmeticExpression,
-    SystemTransaction,
+    SystemTransaction, HTML,
 )
 from models.contacts import Contact
 from models.secret_media_types import SecretMediaType
@@ -330,7 +330,7 @@ def calculate_urgency_coefficient(days_left: int) -> int:
     return 11 - days_left
 
 
-def parse_food_menu_html(html: str) -> list[FoodMenuItem]:
+def parse_food_menu_html(html: HTML) -> list[FoodMenuItem]:
     soup = BeautifulSoup(html, 'lxml')
 
     food_item_tags = soup.find_all('div', attrs={'class': 'features-image'})
@@ -356,12 +356,12 @@ def parse_food_menu_html(html: str) -> list[FoodMenuItem]:
     return food_items
 
 
-async def get_food_menu_html() -> str:
+async def get_food_menu_html() -> HTML:
     url = 'https://beslenme.manas.edu.kg'
     async with aiohttp.ClientSession() as session:
         async with session.get(url, ssl=False) as response:
             html = await response.text()
-    return html
+    return HTML(html)
 
 
 def extract_user_from_update(update: Update) -> FromUser:
