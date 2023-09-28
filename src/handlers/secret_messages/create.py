@@ -10,7 +10,7 @@ from repositories import (
     SecretMessageRepository,
     ContactRepository
 )
-from services import send_view_to_user
+from services import send_view
 from views import (
     answer_view,
     SecretMessagePromptView,
@@ -61,11 +61,10 @@ async def on_message_created(
                 secret_message_id=secret_message_id,
                 contact=contact,
             )
-            await send_view_to_user(
+            await send_view(
                 bot=bot,
                 view=view,
-                to_chat_id=contact.to_user.id,
-                from_chat_id=contact.of_user.id,
+                chat_id=contact.to_user.id,
             )
 
 

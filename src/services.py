@@ -2,10 +2,8 @@ import asyncio
 import random
 import traceback
 from collections.abc import Coroutine, Callable, Awaitable, Iterable
-from datetime import timedelta, datetime
 from typing import Protocol, TypeAlias, TypeVar, Any, NewType
 from uuid import UUID
-from zoneinfo import ZoneInfo
 
 import aiohttp
 import cloudinary.uploader
@@ -41,11 +39,10 @@ __all__ = (
     'get_message_method_by_media_type',
     'can_create_new_contact',
     'get_or_create_user',
+    'send_view',
     'filter_not_hidden',
     'can_see_team_secret',
     'send_view_to_user',
-    'get_time_before_studies_start',
-    'calculate_urgency_coefficient',
     'extract_user_from_update',
     'get_food_menu_html',
     'parse_food_menu_html',
@@ -271,63 +268,6 @@ async def send_view_to_user(
         text=view.get_text(),
         reply_markup=view.get_reply_markup(),
     )
-
-
-#     except BotBlocked:
-#     with contextlib.suppress(TelegramAPIError):
-#         await bot.send_message(
-#             chat_id=from_chat_id,
-#             text=(
-#                 '❌ Не удалось отправить сообщение.'
-#                 ' Пользователь заблокировал бота'
-#             ),
-#         )
-#
-# except CantInitiateConversation:
-# with contextlib.suppress(TelegramAPIError):
-#     await bot.send_message(
-#         chat_id=from_chat_id,
-#         text=(
-#             '❌ Не удалось отправить сообщение.'
-#             ' Пользователь пока не начинал диалог с ботом'
-#         ),
-#     )
-# except ChatNotFound:
-# with contextlib.suppress(TelegramAPIError):
-#     await bot.send_message(
-#         chat_id=from_chat_id,
-#         text=(
-#             '❌ Не удалось отправить сообщение.'
-#             ' Пользователь не существует'
-#         ),
-#     )
-# except TelegramAPIError as error:
-# with contextlib.suppress(TelegramAPIError):
-#     await bot.send_message(
-#         chat_id=from_chat_id,
-#         text='❌ Не удалось отправить сообщение.',
-#     )
-# else:
-# await bot.send_message(
-#     chat_id=from_chat_id,
-#     text='✅ Секретное сообщение отправлено',
-#     disable_notification=True,
-# )
-
-
-def get_time_before_studies_start(timezone: ZoneInfo) -> timedelta:
-    studies_start_at = datetime(
-        year=2023,
-        month=9,
-        day=11,
-        hour=9,
-        tzinfo=timezone,
-    )
-    return studies_start_at - datetime.now(tz=timezone)
-
-
-def calculate_urgency_coefficient(days_left: int) -> int:
-    return 11 - days_left
 
 
 def parse_food_menu_html(html: HTML) -> list[FoodMenuItem]:

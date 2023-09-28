@@ -17,7 +17,8 @@ from repositories import (
 from repositories import HTTPClientFactory
 from services import (
     determine_media_file,
-    get_message_method_by_media_type, send_view_to_user, filter_not_hidden,
+    get_message_method_by_media_type, filter_not_hidden,
+    send_view,
 )
 from states import SecretMediaCreateStates
 from views import (
@@ -86,11 +87,10 @@ async def on_secret_media_create_confirm(
     await sent_message.reply('Вы можете переслать это сообщение получателю')
 
     if contact.to_user.can_receive_notifications:
-        await send_view_to_user(
+        await send_view(
             bot=bot,
             view=view,
-            to_chat_id=contact.to_user.id,
-            from_chat_id=contact.of_user.id,
+            chat_id=contact.to_user.id,
         )
 
 
