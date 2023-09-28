@@ -39,7 +39,9 @@ async def on_create_transfer_in_group_chat(
         recipient_id=recipient_id,
         amount=amount,
     )
-    await message.reply(f'✅ Перевод на сумму ${amount} успешно выполнен')
+    await message.reply(
+        text=f'✅ Перевод на сумму в {amount} дак-дак коинов успешно выполнен',
+    )
 
     recipient_balance = await balance_repository.get_user_balance(recipient_id)
     with contextlib.suppress(TelegramAPIError):
