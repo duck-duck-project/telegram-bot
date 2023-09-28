@@ -51,7 +51,7 @@ __all__ = (
     'parse_food_menu_html',
     'get_arithmetic_problem',
     'get_arithmetic_expression',
-    'get_plus_or_minus',
+    'get_operator_sign',
     'extract_arithmetic_problem',
     'solve_arithmetic_expression',
     'PrivateChatNotifier',
@@ -393,19 +393,19 @@ async def upload_photo_to_cloud(url: str) -> Url:
     return Url(uploaded_media['url'])
 
 
-def get_plus_or_minus() -> str:
+def get_operator_sign() -> str:
     return random.choice('+-*')
 
 
 def get_arithmetic_expression() -> ArithmeticExpression:
     expression = (
-        f'{get_plus_or_minus()}'
+        f'{get_operator_sign()}'
         f'{random.randint(1, 10)}'
-        f'{get_plus_or_minus()}'
+        f'{get_operator_sign()}'
         f'{random.randint(1, 10)}'
-        f'{get_plus_or_minus()}'
+        f'{get_operator_sign()}'
         f'{random.randint(1, 10)}'
-        f'{get_plus_or_minus()}'
+        f'{get_operator_sign()}'
         f'{random.randint(1, 10)}'
     ).lstrip('+*')
     return ArithmeticExpression(expression)
