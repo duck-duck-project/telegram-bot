@@ -4,7 +4,7 @@ from aiogram.types import Message
 
 from filters import transfer_operation_filter
 from repositories import BalanceRepository
-from services import PrivateChatNotifier
+from services import BalanceNotifier
 
 router = Router(name=__name__)
 
@@ -40,7 +40,7 @@ async def on_create_transfer_in_group_chat(
         amount: int,
         description: str | None,
         balance_repository: BalanceRepository,
-        private_chat_notifier: PrivateChatNotifier,
+        balance_notifier: BalanceNotifier,
 ) -> None:
     sender_id = message.from_user.id
     recipient_id = message.reply_to_message.from_user.id
@@ -56,4 +56,4 @@ async def on_create_transfer_in_group_chat(
     await message.reply(
         text=f'✅ Перевод на сумму в {amount} дак-дак коинов успешно выполнен',
     )
-    await private_chat_notifier.send_transfer_notification(transfer)
+    await balance_notifier.send_transfer_notification(transfer)

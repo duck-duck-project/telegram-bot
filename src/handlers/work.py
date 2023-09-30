@@ -9,14 +9,15 @@ from models import User
 from repositories import BalanceRepository
 from services import (
     ArithmeticProblem,
-    PrivateChatNotifier,
     compute_final_reward,
     get_arithmetic_problem,
+    BalanceNotifier,
 )
 from views import (
     ArithmeticProblemView,
     ArithmeticProblemSolvedView,
-    answer_view, reply_view,
+    answer_view,
+    reply_view,
 )
 
 router = Router(name=__name__)
@@ -55,7 +56,7 @@ async def on_arithmetic_expression_answer(
         number: int,
         user: User,
         balance_repository: BalanceRepository,
-        private_chat_notifier: PrivateChatNotifier,
+        balance_notifier: BalanceNotifier,
 ) -> None:
     text = f'{message.reply_to_message.text}\n\n<i>[решено]</i>'
 
@@ -81,7 +82,7 @@ async def on_arithmetic_expression_answer(
     view = ArithmeticProblemSolvedView(amount_to_deposit)
     await reply_view(message=message, view=view)
     if message.chat.type != ChatType.PRIVATE:
-        await private_chat_notifier.send_deposit_notification(deposit)
+        await balance_notifier.send_deposit_notification(deposit)
 
 
 @router.message(

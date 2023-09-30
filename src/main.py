@@ -33,7 +33,7 @@ from repositories import (
     BalanceRepository,
 )
 from repositories.themes import ThemeRepository
-from services import PrivateChatNotifier
+from services import BalanceNotifier
 
 logger: BoundLogger = structlog.get_logger('app')
 
@@ -84,7 +84,7 @@ async def main() -> None:
 
     bot_user = await bot.me()
 
-    private_chat_notifier = PrivateChatNotifier(bot)
+    balance_notifier = BalanceNotifier(bot)
 
     dispatcher['bot_user'] = bot_user
     dispatcher['closing_http_client_factory'] = partial(
@@ -94,7 +94,7 @@ async def main() -> None:
     )
     dispatcher['chat_id_for_retranslation'] = config.main_chat_id
     dispatcher['timezone'] = config.timezone
-    dispatcher['private_chat_notifier'] = private_chat_notifier
+    dispatcher['balance_notifier'] = balance_notifier
 
     include_routers(dispatcher)
 
