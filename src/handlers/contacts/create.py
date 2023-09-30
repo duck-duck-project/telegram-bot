@@ -6,7 +6,12 @@ from aiogram.types import Message
 from models import User
 from repositories import ContactRepository, UserRepository, BalanceRepository
 from repositories import HTTPClientFactory
-from services import can_create_new_contact, compute_new_contact_price
+from services import (
+    can_create_new_contact,
+    compute_new_contact_price,
+    BalanceNotifier,
+    is_user_already_contact,
+)
 from states import ContactCreateWaitForForwardedMessage
 
 __all__ = ('register_handlers',)
@@ -71,6 +76,7 @@ async def on_add_contact(
         user_repository: UserRepository,
         contact_repository: ContactRepository,
         balance_repository: BalanceRepository,
+        balance_notifier: BalanceNotifier,
 ) -> None:
     reply = message.reply_to_message
     if reply.from_user.is_bot:
@@ -98,6 +104,13 @@ async def on_add_contact(
     contacts = await contact_repository.get_by_user_id(message.from_user.id)
     contacts_count = len(contacts)
 
+    if is_user_already_contact(
+            user_id=to_user.id,
+            contacts=contacts,
+    ):
+        await message.reply('🤭 Этот пользователь уже в ваших контактах')
+        return
+
     user_balance = await balance_repository.get_user_balance(user.id)
 
     new_contact_price = compute_new_contact_price(contacts_count)
@@ -112,12 +125,18 @@ async def on_add_contact(
         )
         return
 
+    withdrawal = await balance_repository.create_withdrawal(
+        user_id=user.id,
+        amount=new_contact_price,
+        description='Добавление нового контакта',
+    )
     await contact_repository.create(
         of_user_id=user.id,
         to_user_id=to_user.id,
         private_name=name,
         public_name=name,
     )
+    await balance_notifier.send_withdrawal_notification(withdrawal)
     await message.reply('✅ Контакт успешно добавлен')
 
 
