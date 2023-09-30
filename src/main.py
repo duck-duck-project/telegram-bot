@@ -30,7 +30,6 @@ from repositories import (
     SecretMessageRepository,
     TeamMemberRepository,
     TeamRepository,
-    TransferRepository,
     BalanceRepository,
 )
 from repositories.themes import ThemeRepository
@@ -43,7 +42,6 @@ def include_routers(dispatcher: Dispatcher) -> None:
     dispatcher.include_routers(
         handlers.balance.router,
         handlers.work.router,
-        handlers.countdown.router,
         handlers.food_menu.router,
         handlers.premium.router,
         handlers.server.router,
@@ -111,7 +109,6 @@ async def main() -> None:
             team_member_repository=TeamMemberRepository,
             team_repository=TeamRepository,
             theme_repository=ThemeRepository,
-            transfer_repository=TransferRepository,
             user_repository=UserRepository,
             balance_repository=BalanceRepository,
         )
