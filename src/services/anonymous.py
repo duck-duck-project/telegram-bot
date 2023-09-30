@@ -6,6 +6,7 @@ from aiogram.types import Message
 from models import SecretMediaType
 
 __all__ = (
+    'is_anonymous_messaging_enabled',
     'determine_media_file',
     'determine_media_file_id_and_answer_method',
     'get_message_method_by_media_type',

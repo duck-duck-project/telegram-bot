@@ -7,6 +7,7 @@ from models import Contact, HasUserId
 __all__ = (
     'can_see_team_secret',
     'can_see_contact_secret',
+    'extract_secret_media_id',
 )
 
 
