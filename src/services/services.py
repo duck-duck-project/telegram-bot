@@ -1,10 +1,8 @@
 from collections.abc import Coroutine, Callable, Awaitable
 from typing import Protocol, TypeAlias, Any, NewType
-from uuid import UUID
 
 from aiogram.types import Message, Update, User as FromUser
 
-from exceptions import InvalidSecretMediaDeeplinkError
 from models import SecretMediaType
 
 __all__ = (
@@ -14,7 +12,6 @@ __all__ = (
     'HasSendVideoPhotoAnimationVoiceAudioDocumentMethod',
     'determine_media_file_id_and_answer_method',
     'ReturnsMessage',
-    'extract_secret_media_id',
     'determine_media_file',
     'get_message_method_by_media_type',
     'extract_user_from_update',
@@ -109,13 +106,6 @@ def determine_media_file_id_and_answer_method(
         if media is not None:
             return media.file_id, method
     raise ValueError('Unsupported media type')
-
-
-def extract_secret_media_id(deep_link: str) -> UUID:
-    try:
-        return UUID(deep_link.split('-')[-1])
-    except (ValueError, IndexError):
-        raise InvalidSecretMediaDeeplinkError
 
 
 def determine_media_file(message: Message) -> tuple[str, SecretMediaType]:

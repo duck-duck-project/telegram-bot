@@ -1,5 +1,7 @@
 from typing import Iterable
+from uuid import UUID
 
+from exceptions import InvalidSecretMediaDeeplinkError
 from models import Contact, HasUserId
 
 __all__ = (
@@ -26,3 +28,10 @@ def can_see_contact_secret(
         contact.of_user.id,
         contact.to_user.id,
     )
+
+
+def extract_secret_media_id(deep_link: str) -> UUID:
+    try:
+        return UUID(deep_link.split('-')[-1])
+    except (ValueError, IndexError):
+        raise InvalidSecretMediaDeeplinkError
