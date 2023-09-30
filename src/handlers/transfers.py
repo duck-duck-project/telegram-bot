@@ -26,13 +26,8 @@ async def on_insufficient_funds_for_transfer_error(event: ErrorEvent) -> None:
 
 
 @router.message(
-    or_f(
-        Command('send'),
-        and_f(
-            Command('pay'),
-            invert_f(transfer_operation_filter),
-        )
-    ),
+    Command('send'),
+    invert_f(transfer_operation_filter),
     StateFilter('*'),
 )
 async def on_transfer_operation_amount_invalid(
@@ -40,13 +35,13 @@ async def on_transfer_operation_amount_invalid(
 ) -> None:
     await message.reply(
         '💳 Отправить перевод:\n'
-        '<code>/pay {сумма перевода} {описание (необязательно)}</code>'
+        '<code>/send {сумма перевода} {описание (необязательно)}</code>'
     )
 
 
 @router.message(
     F.reply_to_message,
-    Command('pay'),
+    Command('send'),
     invert_f(F.reply_to_message.from_user.is_bot),
     transfer_operation_filter,
     StateFilter('*'),
