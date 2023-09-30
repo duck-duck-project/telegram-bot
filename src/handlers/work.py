@@ -18,7 +18,7 @@ from services import (
 from views import (
     ArithmeticProblemView,
     ArithmeticProblemSolvedView,
-    answer_view,
+    answer_view, reply_view,
 )
 
 router = Router(name=__name__)
@@ -82,7 +82,7 @@ async def on_arithmetic_expression_answer(
         description='Solved arithmetic problem',
     )
     view = ArithmeticProblemSolvedView(amount_to_deposit)
-    await answer_view(message=message, view=view)
+    await reply_view(message=message, view=view)
     if message.chat.type != ChatType.PRIVATE:
         await private_chat_notifier.send_deposit_notification(deposit)
 
