@@ -1,23 +1,15 @@
-from collections.abc import Coroutine, Callable, Awaitable
-from typing import Protocol, TypeAlias, Any, NewType
+from collections.abc import Callable, Awaitable
+from typing import TypeAlias, Protocol, Coroutine, Any
 
-from aiogram.types import Message, Update, User as FromUser
+from aiogram.types import Message
 
 from models import SecretMediaType
 
 __all__ = (
-    'is_anonymous_messaging_enabled',
-    'HasVideoPhotoAnimationVoiceAudioDocument',
-    'HasFileID',
-    'HasSendVideoPhotoAnimationVoiceAudioDocumentMethod',
-    'determine_media_file_id_and_answer_method',
-    'ReturnsMessage',
     'determine_media_file',
+    'determine_media_file_id_and_answer_method',
     'get_message_method_by_media_type',
-    'extract_user_from_update',
 )
-
-Url = NewType('Url', str)
 
 ReturnsMessage: TypeAlias = Callable[..., Awaitable[Message]]
 
@@ -147,27 +139,3 @@ def get_message_method_by_media_type(
         return media_type_to_method[media_type]
     except KeyError:
         raise ValueError('Unsupported media type')
-
-
-def extract_user_from_update(update: Update) -> FromUser:
-    """Extract user from update.
-
-    Args:
-        update: Update object.
-
-    Returns:
-        User object.
-
-    Raises:
-        ValueError: If update type is unknown.
-    """
-    if update.message is not None:
-        return update.message.from_user
-    elif update.callback_query is not None:
-        return update.callback_query.from_user
-    elif update.inline_query is not None:
-        return update.inline_query.from_user
-    elif update.chosen_inline_result is not None:
-        return update.chosen_inline_result.from_user
-    else:
-        raise ValueError('Unknown event type')

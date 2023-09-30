@@ -1,8 +1,11 @@
 import asyncio
+from typing import NewType
 
 import cloudinary.uploader
 
-from services.services import Url
+__all__ = ('upload_photo_to_cloud',)
+
+Url = NewType('Url', str)
 
 
 async def upload_photo_to_cloud(url: str) -> Url:
