@@ -15,7 +15,7 @@ from redis.asyncio import Redis
 from structlog.stdlib import BoundLogger
 
 import handlers
-from config import load_config_from_file_path
+from config import load_config_from_file_path, load_commands_from_file
 from logger import setup_logging
 from middlewares import (
     HTTPClientFactoryMiddleware,
@@ -64,6 +64,9 @@ async def main() -> None:
     config_file_path = pathlib.Path(__file__).parent.parent / 'config.toml'
     config = load_config_from_file_path(config_file_path)
 
+    commands_file_path = pathlib.Path(__file__).parent.parent / 'commands.json'
+    commands = load_commands_from_file(commands_file_path)
+
     setup_logging(config.logging.level)
 
     cloudinary.config(
@@ -83,6 +86,8 @@ async def main() -> None:
     dispatcher = Dispatcher(storage=storage)
 
     bot_user = await bot.me()
+
+    await bot.set_my_commands(commands)
 
     balance_notifier = BalanceNotifier(bot)
 

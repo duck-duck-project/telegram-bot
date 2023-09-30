@@ -1,7 +1,15 @@
 from aiogram import Router, F
-from aiogram.filters import StateFilter, Command, invert_f, or_f, and_f
-from aiogram.types import Message
+from aiogram.filters import (
+    StateFilter,
+    Command,
+    invert_f,
+    or_f,
+    and_f,
+    ExceptionTypeFilter,
+)
+from aiogram.types import Message, ErrorEvent
 
+from exceptions import InsufficientFundsForTransferError
 from filters import transfer_operation_filter
 from repositories import BalanceRepository
 from services import BalanceNotifier
@@ -9,14 +17,17 @@ from services import BalanceNotifier
 router = Router(name=__name__)
 
 
+@router.error(ExceptionTypeFilter(InsufficientFundsForTransferError))
+async def on_insufficient_funds_for_transfer_error(event: ErrorEvent) -> None:
+    await event.update.message.reply(
+        '❌ Недостаточно средств для перевода\n'
+        '💸 Начните работать прямо сейчас /work'
+    )
+
+
 @router.message(
-    or_f(
-        Command('send'),
-        and_f(
-            Command('pay'),
-            invert_f(transfer_operation_filter),
-        )
-    ),
+    Command('send'),
+    invert_f(transfer_operation_filter),
     StateFilter('*'),
 )
 async def on_transfer_operation_amount_invalid(
@@ -24,13 +35,13 @@ async def on_transfer_operation_amount_invalid(
 ) -> None:
     await message.reply(
         '💳 Отправить перевод:\n'
-        '<code>/pay {сумма перевода} {описание (необязательно)}</code>'
+        '<code>/send {сумма перевода} {описание (необязательно)}</code>'
     )
 
 
 @router.message(
     F.reply_to_message,
-    Command('pay'),
+    Command('send'),
     invert_f(F.reply_to_message.from_user.is_bot),
     transfer_operation_filter,
     StateFilter('*'),

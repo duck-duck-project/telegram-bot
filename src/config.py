@@ -1,3 +1,4 @@
+import json
 import pathlib
 import tomllib
 from collections.abc import Mapping
@@ -10,8 +11,12 @@ __all__ = (
     'SentryConfig',
     'Config',
     'load_config_from_file_path',
+    'load_commands_from_file',
     'parse_config',
 )
+
+from aiogram.types import BotCommand
+from pydantic import TypeAdapter
 
 
 @dataclass(frozen=True, slots=True)
@@ -96,3 +101,10 @@ def load_config_from_file_path(file_path: pathlib.Path) -> Config:
     config_text = file_path.read_text(encoding='utf-8')
     config = tomllib.loads(config_text)
     return parse_config(config)
+
+
+def load_commands_from_file(file_path: pathlib.Path) -> list[BotCommand]:
+    commands_text = file_path.read_text(encoding='utf-8')
+    commands = json.loads(commands_text)
+    type_adapter = TypeAdapter(list[BotCommand])
+    return type_adapter.validate_python(commands)
