@@ -107,11 +107,11 @@ async def on_make_bet_on_specific_number(
     else:
         await message.reply(
             f'Вам выпало число {roulette.number},'
-            f' вы проиграли {bet_amount * 50} дак-дак коинов!'
+            f' вы проиграли {bet_amount} дак-дак коинов!'
         )
         withdrawal = await balance_repository.create_withdrawal(
             user_id=user.id,
-            amount=bet_amount * 50,
+            amount=bet_amount,
             description='Проигрыш в казино',
         )
         await balance_notifier.send_withdrawal_notification(withdrawal)
