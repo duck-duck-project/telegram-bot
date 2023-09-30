@@ -14,7 +14,6 @@ __all__ = ('register_handlers',)
 
 async def on_toggle_can_receive_notifications(
         callback_query: CallbackQuery,
-        state: FSMContext,
         user_repository: UserRepository,
         user: User,
 ) -> None:

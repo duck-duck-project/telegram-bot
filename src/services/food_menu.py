@@ -35,7 +35,7 @@ def parse_food_menu_html(html: HTML) -> list[FoodMenuItem]:
 async def get_food_menu_html() -> HTML:
     url = 'https://beslenme.manas.edu.kg'
     headers = {'User-Agent': 'Duck Duck Telegram Bot'}
-    async with aiohttp.ClientSession() as session:
+    async with aiohttp.ClientSession(headers=headers) as session:
         async with session.get(url, ssl=False) as response:
             html = await response.text()
     return HTML(html)
