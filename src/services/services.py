@@ -1,6 +1,6 @@
 import traceback
-from collections.abc import Coroutine, Callable, Awaitable, Iterable
-from typing import Protocol, TypeAlias, TypeVar, Any, NewType
+from collections.abc import Coroutine, Callable, Awaitable
+from typing import Protocol, TypeAlias, Any, NewType
 from uuid import UUID
 
 from aiogram import Bot
@@ -8,7 +8,7 @@ from aiogram.exceptions import TelegramAPIError
 from aiogram.types import Message, Update, User as FromUser
 
 from exceptions import InvalidSecretMediaDeeplinkError, UserDoesNotExistError
-from models import User, Contact, SecretMediaType
+from models import User, SecretMediaType
 from repositories import UserRepository
 from views.base import View
 
@@ -19,30 +19,17 @@ __all__ = (
     'HasSendVideoPhotoAnimationVoiceAudioDocumentMethod',
     'determine_media_file_id_and_answer_method',
     'ReturnsMessage',
-    'can_see_contact_secret',
     'extract_secret_media_id',
     'determine_media_file',
     'get_message_method_by_media_type',
     'get_or_create_user',
     'send_view',
-    'filter_not_hidden',
-    'can_see_team_secret',
     'send_view_to_user',
     'extract_user_from_update',
 )
 
 Url = NewType('Url', str)
 
-
-class HasUserId(Protocol):
-    user_id: int
-
-
-class HasIsHidden(Protocol):
-    is_hidden: bool
-
-
-HasIsHiddenT = TypeVar('HasIsHiddenT', bound=HasIsHidden)
 ReturnsMessage: TypeAlias = Callable[..., Awaitable[Message]]
 
 
@@ -132,26 +119,6 @@ def determine_media_file_id_and_answer_method(
     raise ValueError('Unsupported media type')
 
 
-def can_see_team_secret(
-        *,
-        user_id: int,
-        team_members: Iterable[HasUserId],
-) -> bool:
-    user_ids = {member.user_id for member in team_members}
-    return user_id in user_ids
-
-
-def can_see_contact_secret(
-        *,
-        user_id: int,
-        contact: Contact,
-) -> bool:
-    return user_id in (
-        contact.of_user.id,
-        contact.to_user.id,
-    )
-
-
 def extract_secret_media_id(deep_link: str) -> UUID:
     try:
         return UUID(deep_link.split('-')[-1])
@@ -215,10 +182,6 @@ async def get_or_create_user(
             fullname=fullname,
             username=username,
         ), True
-
-
-def filter_not_hidden(items: Iterable[HasIsHiddenT]) -> list[HasIsHiddenT]:
-    return [item for item in items if not item.is_hidden]
 
 
 async def send_view_to_user(
