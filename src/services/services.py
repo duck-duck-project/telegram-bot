@@ -4,21 +4,13 @@ from collections.abc import Coroutine, Callable, Awaitable, Iterable
 from typing import Protocol, TypeAlias, TypeVar, Any, NewType
 from uuid import UUID
 
-import aiohttp
 import cloudinary.uploader
 from aiogram import Bot
 from aiogram.exceptions import TelegramAPIError
 from aiogram.types import Message, Update, User as FromUser
-from bs4 import BeautifulSoup
 
 from exceptions import InvalidSecretMediaDeeplinkError, UserDoesNotExistError
-from models import (
-    User,
-    FoodMenuItem,
-    HTML,
-)
-from models.contacts import Contact
-from models.secret_media_types import SecretMediaType
+from models import User, Contact, SecretMediaType
 from repositories import UserRepository
 from views.base import View
 
@@ -39,8 +31,6 @@ __all__ = (
     'can_see_team_secret',
     'send_view_to_user',
     'extract_user_from_update',
-    'get_food_menu_html',
-    'parse_food_menu_html',
     'upload_photo_to_cloud',
 )
 
@@ -246,40 +236,6 @@ async def send_view_to_user(
         text=view.get_text(),
         reply_markup=view.get_reply_markup(),
     )
-
-
-def parse_food_menu_html(html: HTML) -> list[FoodMenuItem]:
-    soup = BeautifulSoup(html, 'lxml')
-
-    food_item_tags = soup.find_all('div', attrs={'class': 'features-image'})
-
-    food_items: list[FoodMenuItem] = []
-    for food_item in food_item_tags:
-        image_url = food_item.find('img')['src']
-        name = food_item.find('h5', attrs={'class': 'item-title'}).text.strip()
-        calories = (
-            food_item.find('h6', attrs={'class': 'item-subtitle'})
-            .text
-            .strip()
-            .split()[-1]
-        )
-        food_items.append(
-            FoodMenuItem(
-                image_url=image_url,
-                name=name,
-                calories=calories,
-            )
-        )
-
-    return food_items
-
-
-async def get_food_menu_html() -> HTML:
-    url = 'https://beslenme.manas.edu.kg'
-    async with aiohttp.ClientSession() as session:
-        async with session.get(url, ssl=False) as response:
-            html = await response.text()
-    return HTML(html)
 
 
 def extract_user_from_update(update: Update) -> FromUser:
