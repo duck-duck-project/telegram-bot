@@ -1,4 +1,5 @@
 from .balance import *
+from .casino import *
 from .contacts import *
 from .food_menu import *
 from .secret_media_types import *
