@@ -2,6 +2,7 @@ from exceptions import (
     ServerAPIError,
     UserDoesNotExistError,
     InsufficientFundsForWithdrawalError,
+    InsufficientFundsForTransferError,
 )
 from models import SystemTransaction, UserBalance, Transfer
 from repositories.base import APIRepository
@@ -27,6 +28,10 @@ class BalanceRepository(APIRepository):
             'description': description,
         }
         async with self._http_client.post(url, json=request_data) as response:
+            if response.status == 400:
+                response_data = await response.json()
+                if response_data[0] == 'Insufficient funds for transfer':
+                    raise InsufficientFundsForTransferError
             if response.status != 201:
                 raise ServerAPIError
             response_data = await response.json()

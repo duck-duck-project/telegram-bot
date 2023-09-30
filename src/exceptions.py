@@ -59,3 +59,7 @@ class ThemeDoesNotExistError(Exception):
 
 class InsufficientFundsForWithdrawalError(Exception):
     pass
+
+
+class InsufficientFundsForTransferError(Exception):
+    pass
