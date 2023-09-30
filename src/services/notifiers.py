@@ -1,7 +1,7 @@
 from aiogram import Bot
 
 from models import SystemTransaction, Transfer
-from services.services import send_view
+from services.views import send_view
 from views import DepositNotificationView, WithdrawalNotificationView
 
 __all__ = ('Notifier', 'BalanceNotifier',)

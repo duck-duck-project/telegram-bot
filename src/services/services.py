@@ -1,16 +1,12 @@
-import traceback
 from collections.abc import Coroutine, Callable, Awaitable
 from typing import Protocol, TypeAlias, Any, NewType
 from uuid import UUID
 
-from aiogram import Bot
-from aiogram.exceptions import TelegramAPIError
 from aiogram.types import Message, Update, User as FromUser
 
 from exceptions import InvalidSecretMediaDeeplinkError, UserDoesNotExistError
 from models import User, SecretMediaType
 from repositories import UserRepository
-from views.base import View
 
 __all__ = (
     'is_anonymous_messaging_enabled',
@@ -23,8 +19,6 @@ __all__ = (
     'determine_media_file',
     'get_message_method_by_media_type',
     'get_or_create_user',
-    'send_view',
-    'send_view_to_user',
     'extract_user_from_update',
 )
 
@@ -184,20 +178,6 @@ async def get_or_create_user(
         ), True
 
 
-async def send_view_to_user(
-        *,
-        bot: Bot,
-        view: View,
-        to_chat_id: int,
-        from_chat_id: int,
-) -> None:
-    await bot.send_message(
-        to_chat_id,
-        text=view.get_text(),
-        reply_markup=view.get_reply_markup(),
-    )
-
-
 def extract_user_from_update(update: Update) -> FromUser:
     """Extract user from update.
 
@@ -220,19 +200,3 @@ def extract_user_from_update(update: Update) -> FromUser:
         return update.chosen_inline_result.from_user
     else:
         raise ValueError('Unknown event type')
-
-
-async def send_view(
-        *,
-        bot,
-        chat_id: int,
-        view: View,
-) -> None:
-    try:
-        await bot.send_message(
-            chat_id=chat_id,
-            text=view.get_text(),
-            reply_markup=view.get_reply_markup(),
-        )
-    except TelegramAPIError:
-        traceback.print_exc()
