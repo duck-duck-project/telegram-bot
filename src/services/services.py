@@ -1,10 +1,8 @@
-import asyncio
 import traceback
 from collections.abc import Coroutine, Callable, Awaitable, Iterable
 from typing import Protocol, TypeAlias, TypeVar, Any, NewType
 from uuid import UUID
 
-import cloudinary.uploader
 from aiogram import Bot
 from aiogram.exceptions import TelegramAPIError
 from aiogram.types import Message, Update, User as FromUser
@@ -31,7 +29,6 @@ __all__ = (
     'can_see_team_secret',
     'send_view_to_user',
     'extract_user_from_update',
-    'upload_photo_to_cloud',
 )
 
 Url = NewType('Url', str)
@@ -260,11 +257,6 @@ def extract_user_from_update(update: Update) -> FromUser:
         return update.chosen_inline_result.from_user
     else:
         raise ValueError('Unknown event type')
-
-
-async def upload_photo_to_cloud(url: str) -> Url:
-    uploaded_media = await asyncio.to_thread(cloudinary.uploader.upload, url)
-    return Url(uploaded_media['url'])
 
 
 async def send_view(
