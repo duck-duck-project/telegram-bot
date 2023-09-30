@@ -11,7 +11,7 @@ __all__ = ('BalanceRepository',)
 
 class BalanceRepository(APIRepository):
 
-    async def create(
+    async def create_transfer(
             self,
             *,
             sender_id: int,
