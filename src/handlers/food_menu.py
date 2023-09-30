@@ -6,8 +6,9 @@ from aiogram.types import Message, InputMediaPhoto
 from exceptions import InsufficientFundsForWithdrawalError
 from repositories import BalanceRepository
 from services import (
-    get_food_menu_html, parse_food_menu_html,
-    PrivateChatNotifier
+    get_food_menu_html,
+    parse_food_menu_html,
+    BalanceNotifier,
 )
 
 __all__ = ('router',)
@@ -18,9 +19,11 @@ router = Router(name=__name__)
 async def on_show_food_menu(
         message: Message,
         balance_repository: BalanceRepository,
-        private_chat_notifier: PrivateChatNotifier,
+        balance_notifier: BalanceNotifier,
 ) -> None:
     food_menu_html = await get_food_menu_html()
+    with open('food_menu.html', 'w') as f:
+        f.write(food_menu_html)
     food_menu_items = parse_food_menu_html(food_menu_html)
 
     try:
@@ -35,7 +38,7 @@ async def on_show_food_menu(
             '💸 Стоимость просмотра йемека: 80 дак-дак коинов'
         )
         return
-    await private_chat_notifier.send_withdrawal_notification(withdrawal)
+    await balance_notifier.send_withdrawal_notification(withdrawal)
 
     caption: list[str] = [f'🍽️ <b>Меню на сегодня</b>\n']
     for food_menu_item in food_menu_items:

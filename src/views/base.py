@@ -19,6 +19,7 @@ __all__ = (
     'InlineQueryView',
     'render_message_or_callback_query',
     'send_view',
+    'reply_view',
 )
 
 ReplyMarkup: TypeAlias = (
@@ -87,6 +88,19 @@ async def answer_view(
         disable_web_page_preview: bool | None = None,
 ) -> Message:
     return await message.answer(
+        text=view.get_text(),
+        reply_markup=view.get_reply_markup(),
+        disable_web_page_preview=disable_web_page_preview,
+    )
+
+
+async def reply_view(
+        *,
+        message: Message,
+        view: View,
+        disable_web_page_preview: bool | None = None,
+) -> Message:
+    return await message.reply(
         text=view.get_text(),
         reply_markup=view.get_reply_markup(),
         disable_web_page_preview=disable_web_page_preview,

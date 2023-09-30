@@ -5,13 +5,13 @@ from aiogram.types import Message
 
 from exceptions import (
     ThemeDoesNotExistError,
-    InsufficientFundsForWithdrawalError
+    InsufficientFundsForWithdrawalError,
 )
 from filters import theme_update_command_filter
 from models import User
 from repositories import UserRepository, BalanceRepository
 from repositories.themes import ThemeRepository
-from services import PrivateChatNotifier
+from services import BalanceNotifier
 from views import ThemeSuccessfullyUpdatedView, answer_view
 
 __all__ = ('register_handlers',)
@@ -24,7 +24,7 @@ async def on_update_user_theme(
         theme_repository: ThemeRepository,
         balance_repository: BalanceRepository,
         theme_id: int,
-        private_chat_notifier: PrivateChatNotifier,
+        balance_notifier: BalanceNotifier,
 ) -> None:
     theme = await theme_repository.get_by_id(theme_id)
 
@@ -56,7 +56,7 @@ async def on_update_user_theme(
         return
     view = ThemeSuccessfullyUpdatedView()
     await answer_view(message=message, view=view)
-    await private_chat_notifier.send_withdrawal_notification(withdrawal)
+    await balance_notifier.send_withdrawal_notification(withdrawal)
 
 
 def register_handlers(router: Router) -> None:

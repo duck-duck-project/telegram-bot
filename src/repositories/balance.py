@@ -1,14 +1,36 @@
 from exceptions import (
-    ServerAPIError, UserDoesNotExistError,
-    InsufficientFundsForWithdrawalError
+    ServerAPIError,
+    UserDoesNotExistError,
+    InsufficientFundsForWithdrawalError,
 )
-from models import SystemTransaction, UserBalance
+from models import SystemTransaction, UserBalance, Transfer
 from repositories.base import APIRepository
 
 __all__ = ('BalanceRepository',)
 
 
 class BalanceRepository(APIRepository):
+
+    async def create_transfer(
+            self,
+            *,
+            sender_id: int,
+            recipient_id: int,
+            amount: float,
+            description: str | None = None,
+    ) -> Transfer:
+        url = '/economics/transfers/'
+        request_data = {
+            'sender_id': sender_id,
+            'recipient_id': recipient_id,
+            'amount': amount,
+            'description': description,
+        }
+        async with self._http_client.post(url, json=request_data) as response:
+            if response.status != 201:
+                raise ServerAPIError
+            response_data = await response.json()
+        return Transfer.model_validate(response_data)
 
     async def create_withdrawal(
             self,

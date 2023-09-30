@@ -2,7 +2,6 @@ from .anonymous_messaging import *
 from .balance import *
 from .base import *
 from .contacts import *
-from .deposit import *
 from .premium import *
 from .problems import *
 from .secret_messaging import *
@@ -11,4 +10,3 @@ from .team_members import *
 from .teams import *
 from .themes import *
 from .users import *
-from .withdrawal import *

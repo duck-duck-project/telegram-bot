@@ -30,11 +30,10 @@ from repositories import (
     SecretMessageRepository,
     TeamMemberRepository,
     TeamRepository,
-    TransferRepository,
     BalanceRepository,
 )
 from repositories.themes import ThemeRepository
-from services import PrivateChatNotifier
+from services import BalanceNotifier
 
 logger: BoundLogger = structlog.get_logger('app')
 
@@ -43,7 +42,6 @@ def include_routers(dispatcher: Dispatcher) -> None:
     dispatcher.include_routers(
         handlers.balance.router,
         handlers.work.router,
-        handlers.countdown.router,
         handlers.food_menu.router,
         handlers.premium.router,
         handlers.server.router,
@@ -86,7 +84,7 @@ async def main() -> None:
 
     bot_user = await bot.me()
 
-    private_chat_notifier = PrivateChatNotifier(bot)
+    balance_notifier = BalanceNotifier(bot)
 
     dispatcher['bot_user'] = bot_user
     dispatcher['closing_http_client_factory'] = partial(
@@ -96,7 +94,7 @@ async def main() -> None:
     )
     dispatcher['chat_id_for_retranslation'] = config.main_chat_id
     dispatcher['timezone'] = config.timezone
-    dispatcher['private_chat_notifier'] = private_chat_notifier
+    dispatcher['balance_notifier'] = balance_notifier
 
     include_routers(dispatcher)
 
@@ -111,7 +109,6 @@ async def main() -> None:
             team_member_repository=TeamMemberRepository,
             team_repository=TeamRepository,
             theme_repository=ThemeRepository,
-            transfer_repository=TransferRepository,
             user_repository=UserRepository,
             balance_repository=BalanceRepository,
         )

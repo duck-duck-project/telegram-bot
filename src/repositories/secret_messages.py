@@ -20,7 +20,7 @@ class SecretMessageRepository(APIRepository):
             'text': text,
         }
         url = '/secret-messages/'
-        async with self._http_client.post(url, json=request_data) as response:
+        async with self._http_client.post(url, json=request_data):
             pass
 
     async def get_by_id(self, secret_message_id: UUID) -> models.SecretMessage:

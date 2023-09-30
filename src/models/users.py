@@ -1,10 +1,15 @@
 from datetime import date
+from typing import Protocol
 
 from pydantic import BaseModel, HttpUrl
 
 from models.themes import SecretMessageTheme
 
-__all__ = ('User', 'UserPartial')
+__all__ = ('HasUserId', 'User', 'UserPartial')
+
+
+class HasUserId(Protocol):
+    user_id: int
 
 
 class UserPartial(BaseModel):

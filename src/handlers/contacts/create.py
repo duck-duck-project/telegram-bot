@@ -6,10 +6,7 @@ from aiogram.types import Message
 from models import User
 from repositories import ContactRepository, UserRepository
 from repositories import HTTPClientFactory
-from services import (
-    get_or_create_user,
-    can_create_new_contact,
-)
+from services import can_create_new_contact
 from states import ContactCreateWaitForForwardedMessage
 
 __all__ = ('register_handlers',)
@@ -25,8 +22,8 @@ async def on_contact_create_via_forwarded_message(
         contact = ContactRepository(http_client)
         contacts = await contact.get_by_user_id(user.id)
         if not can_create_new_contact(
-            contacts_count=len(contacts),
-            is_premium=user.is_premium,
+                contacts_count=len(contacts),
+                is_premium=user.is_premium,
         ):
             await message.reply(
                 '🤭 Вы не можете иметь больше 5 контактов за раз.'
@@ -70,8 +67,9 @@ async def on_contact_command_is_not_replied_to_user(
 
 async def on_add_contact(
         message: Message,
-        closing_http_client_factory: HTTPClientFactory,
         user: User,
+        user_repository: UserRepository,
+        contact_repository: ContactRepository,
 ) -> None:
     reply = message.reply_to_message
     if reply.from_user.is_bot:
@@ -84,42 +82,37 @@ async def on_add_contact(
 
     name = reply.from_user.username or reply.from_user.full_name
 
-    async with closing_http_client_factory() as http_client:
-        user_repository = UserRepository(http_client)
-        contact_repository = ContactRepository(http_client)
+    to_user, is_to_user_created = await user_repository.get_or_create(
+        user_id=reply.from_user.id,
+        fullname=reply.from_user.full_name,
+        username=reply.from_user.username,
+    )
 
-        to_user, is_to_user_created = await get_or_create_user(
-            user_repository=user_repository,
-            user_id=reply.from_user.id,
-            fullname=reply.from_user.full_name,
-            username=reply.from_user.username,
+    if not to_user.can_be_added_to_contacts:
+        await message.reply(
+            '😔 Этот пользователь запретил добавлять себя в контакты',
         )
+        return
 
-        if not to_user.can_be_added_to_contacts:
-            await message.reply(
-                '😔 Этот пользователь запретил добавлять себя в контакты',
-            )
-            return
-
-        contacts = await contact_repository.get_by_user_id(message.from_user.id)
-        if not can_create_new_contact(
-                contacts_count=len(contacts),
-                is_premium=user.is_premium,
-        ):
-            await message.reply(
-                '🤭 Вы не можете иметь больше 5 контактов за раз.'
-                '\nЧтобы убрать лимит,'
-                ' вы можете преобрести премиум подписку за 50 сомов/месяц'
-            )
-            return
-
-        await contact_repository.create(
-            of_user_id=user.id,
-            to_user_id=to_user.id,
-            private_name=name,
-            public_name=name,
+    contacts = await contact_repository.get_by_user_id(message.from_user.id)
+    if not can_create_new_contact(
+            contacts_count=len(contacts),
+            is_premium=user.is_premium,
+    ):
+        await message.reply(
+            '🤭 Вы не можете иметь больше 5 контактов за раз.'
+            '\nЧтобы убрать лимит,'
+            ' вы можете преобрести премиум подписку за 50 сомов/месяц'
         )
-        await message.reply('✅ Контакт успешно добавлен')
+        return
+
+    await contact_repository.create(
+        of_user_id=user.id,
+        to_user_id=to_user.id,
+        private_name=name,
+        public_name=name,
+    )
+    await message.reply('✅ Контакт успешно добавлен')
 
 
 def register_handlers(router: Router) -> None:

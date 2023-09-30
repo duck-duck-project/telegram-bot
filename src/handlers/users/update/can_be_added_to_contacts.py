@@ -14,7 +14,6 @@ __all__ = ('register_handlers',)
 
 async def on_toggle_can_be_added_to_contacts(
         callback_query: CallbackQuery,
-        state: FSMContext,
         user_repository: UserRepository,
         user: User,
 ) -> None:

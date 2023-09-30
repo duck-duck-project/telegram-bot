@@ -8,17 +8,16 @@ from filters import reply_message_from_bot_filter, integer_filter
 from models import User
 from repositories import BalanceRepository
 from services import (
-    extract_arithmetic_problem,
-    PrivateChatNotifier,
+    ArithmeticProblem,
     compute_final_reward,
-    extract_reward,
-    compute_arithmetic_problem_reward,
     get_arithmetic_problem,
+    BalanceNotifier,
 )
 from views import (
     ArithmeticProblemView,
     ArithmeticProblemSolvedView,
     answer_view,
+    reply_view,
 )
 
 router = Router(name=__name__)
@@ -26,7 +25,7 @@ router = Router(name=__name__)
 
 @router.message(
     F.reply_to_message.text.startswith('❓ Сколько будет'),
-    F.reply_to_message.text.contains('[решено]'),
+    invert_f(F.reply_to_message.text.contains('[решено]')),
     invert_f(integer_filter),
     StateFilter('*'),
 )
@@ -57,20 +56,19 @@ async def on_arithmetic_expression_answer(
         number: int,
         user: User,
         balance_repository: BalanceRepository,
-        private_chat_notifier: PrivateChatNotifier,
+        balance_notifier: BalanceNotifier,
 ) -> None:
     text = f'{message.reply_to_message.text}\n\n<i>[решено]</i>'
-    arithmetic_problem = extract_arithmetic_problem(
-        text=message.reply_to_message.text,
-    )
-    if arithmetic_problem.correct_answer != number:
+
+    arithmetic_problem = ArithmeticProblem.from_text(text)
+
+    if arithmetic_problem.compute_correct_answer() != number:
         await message.reply('Неправильно')
         return
 
     premium_multiplier: int = 2
-    reward_value = extract_reward(message.reply_to_message.text)
     amount_to_deposit = compute_final_reward(
-        reward_value=reward_value,
+        reward_value=arithmetic_problem.compute_reward_value(),
         premium_multiplier=premium_multiplier,
         is_premium=user.is_premium,
     )
@@ -82,9 +80,9 @@ async def on_arithmetic_expression_answer(
         description='Solved arithmetic problem',
     )
     view = ArithmeticProblemSolvedView(amount_to_deposit)
-    await answer_view(message=message, view=view)
+    await reply_view(message=message, view=view)
     if message.chat.type != ChatType.PRIVATE:
-        await private_chat_notifier.send_deposit_notification(deposit)
+        await balance_notifier.send_deposit_notification(deposit)
 
 
 @router.message(
@@ -97,11 +95,10 @@ async def on_create_arithmetic_expression_to_solve(
 ) -> None:
     await state.clear()
 
-    problem = get_arithmetic_problem()
-    reward_value = compute_arithmetic_problem_reward(problem)
+    arithmetic_problem = get_arithmetic_problem()
     view = ArithmeticProblemView(
-        expression=problem.expression,
+        expression=arithmetic_problem.expression,
         premium_multiplier=2,
-        reward=reward_value,
+        reward=arithmetic_problem.compute_reward_value(),
     )
     await answer_view(message=message, view=view)
