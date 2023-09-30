@@ -2,7 +2,7 @@ from typing import Protocol
 
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 
-from models import UserBalance, SystemTransaction
+from models import UserBalance
 from views.base import View
 
 __all__ = (
