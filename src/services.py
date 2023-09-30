@@ -18,7 +18,9 @@ from models import (
     FoodMenuItem,
     ArithmeticProblem,
     ArithmeticExpression,
-    SystemTransaction, HTML,
+    SystemTransaction,
+    HTML,
+    Transfer,
 )
 from models.contacts import Contact
 from models.secret_media_types import SecretMediaType
@@ -423,6 +425,23 @@ class PrivateChatNotifier:
         await send_view(
             bot=self.__bot,
             chat_id=withdrawal.user.id,
+            view=view,
+        )
+
+    async def send_transfer_notification(
+            self,
+            transfer: Transfer,
+    ) -> None:
+        view = WithdrawalNotificationView(transfer)
+        await send_view(
+            bot=self.__bot,
+            chat_id=transfer.sender.id,
+            view=view,
+        )
+        view = DepositNotificationView(transfer)
+        await send_view(
+            bot=self.__bot,
+            chat_id=transfer.recipient.id,
             view=view,
         )
 
