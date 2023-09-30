@@ -8,6 +8,10 @@
     "description": "👩‍🚒 Работать"
   },
   {
+    "command": "bet",
+    "description": "🎰 Сыграть в казино"
+  },
+  {
     "command": "balance",
     "description": "💸 Мой баланс"
   },
