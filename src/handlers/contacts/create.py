@@ -4,9 +4,9 @@ from aiogram.fsm.context import FSMContext
 from aiogram.types import Message
 
 from models import User
-from repositories import ContactRepository, UserRepository
+from repositories import ContactRepository, UserRepository, BalanceRepository
 from repositories import HTTPClientFactory
-from services import can_create_new_contact
+from services import can_create_new_contact, compute_new_contact_price
 from states import ContactCreateWaitForForwardedMessage
 
 __all__ = ('register_handlers',)
@@ -70,6 +70,7 @@ async def on_add_contact(
         user: User,
         user_repository: UserRepository,
         contact_repository: ContactRepository,
+        balance_repository: BalanceRepository,
 ) -> None:
     reply = message.reply_to_message
     if reply.from_user.is_bot:
@@ -95,14 +96,19 @@ async def on_add_contact(
         return
 
     contacts = await contact_repository.get_by_user_id(message.from_user.id)
+    contacts_count = len(contacts)
+
+    user_balance = await balance_repository.get_user_balance(user.id)
+
+    new_contact_price = compute_new_contact_price(contacts_count)
+
     if not can_create_new_contact(
-            contacts_count=len(contacts),
-            is_premium=user.is_premium,
+            contact_price=new_contact_price,
+            balance=user_balance.balance,
     ):
         await message.reply(
-            '🤭 Вы не можете иметь больше 5 контактов за раз.'
-            '\nЧтобы убрать лимит,'
-            ' вы можете преобрести премиум подписку за 50 сомов/месяц'
+            '❌ Недостаточно средств для добавления нового контакта.\n'
+            f'💸 Необходимый баланс: {new_contact_price} дак-дак коинов'
         )
         return
 
