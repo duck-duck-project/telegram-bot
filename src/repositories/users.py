@@ -113,3 +113,19 @@ class UserRepository(APIRepository):
                 raise UserDoesNotExistError(user_id=user_id)
             if response.status != 204:
                 raise ServerAPIError
+
+    async def get_or_create(
+            self,
+            *,
+            user_id: int,
+            fullname: str,
+            username: str | None,
+    ) -> tuple[models.User, bool]:
+        try:
+            return await self.get_by_id(user_id=user_id), False
+        except UserDoesNotExistError:
+            return await self.create(
+                user_id=user_id,
+                fullname=fullname,
+                username=username,
+            ), True

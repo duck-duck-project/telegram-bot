@@ -4,9 +4,8 @@ from uuid import UUID
 
 from aiogram.types import Message, Update, User as FromUser
 
-from exceptions import InvalidSecretMediaDeeplinkError, UserDoesNotExistError
-from models import User, SecretMediaType
-from repositories import UserRepository
+from exceptions import InvalidSecretMediaDeeplinkError
+from models import SecretMediaType
 
 __all__ = (
     'is_anonymous_messaging_enabled',
@@ -18,7 +17,6 @@ __all__ = (
     'extract_secret_media_id',
     'determine_media_file',
     'get_message_method_by_media_type',
-    'get_or_create_user',
     'extract_user_from_update',
 )
 
@@ -159,23 +157,6 @@ def get_message_method_by_media_type(
         return media_type_to_method[media_type]
     except KeyError:
         raise ValueError('Unsupported media type')
-
-
-async def get_or_create_user(
-        *,
-        user_id: int,
-        fullname: str,
-        username: str | None,
-        user_repository: UserRepository,
-) -> tuple[User, bool]:
-    try:
-        return await user_repository.get_by_id(user_id=user_id), False
-    except UserDoesNotExistError:
-        return await user_repository.create(
-            user_id=user_id,
-            fullname=fullname,
-            username=username,
-        ), True
 
 
 def extract_user_from_update(update: Update) -> FromUser:
