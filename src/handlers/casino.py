@@ -44,7 +44,10 @@ async def on_make_bet_on_specific_color(
         await message.reply('Вам выпало число 0, ваша ставка возвращается вам')
 
     if target_color == roulette.determine_color():
-        await message.reply('Вы выиграли!')
+        await message.reply(
+            f'Вам выпало число {roulette.number},'
+            f' вы выиграли {bet_amount} дак-дак коинов!'
+        )
         deposit = await balance_repository.create_deposit(
             user_id=user.id,
             amount=bet_amount,
@@ -52,7 +55,10 @@ async def on_make_bet_on_specific_color(
         )
         await balance_notifier.send_deposit_notification(deposit)
     else:
-        await message.reply('Вы проиграли!')
+        await message.reply(
+            f'Вам выпало число {roulette.number},'
+            f' вы проиграли {bet_amount} дак-дак коинов!'
+        )
         withdrawal = await balance_repository.create_withdrawal(
             user_id=user.id,
             amount=bet_amount,
@@ -88,7 +94,10 @@ async def on_make_bet_on_specific_number(
         return
 
     if target_number == roulette.number:
-        await message.reply(f'Выпало число {roulette.number}. Вы выиграли!')
+        await message.reply(
+            f'Вам выпало число {roulette.number},'
+            f' вы выиграли {bet_amount * 50} дак-дак коинов!'
+        )
         deposit = await balance_repository.create_deposit(
             user_id=user.id,
             amount=bet_amount * 50,
@@ -96,10 +105,13 @@ async def on_make_bet_on_specific_number(
         )
         await balance_notifier.send_deposit_notification(deposit)
     else:
-        await message.reply(f'Выпало число {roulette.number}. Вы проиграли!')
+        await message.reply(
+            f'Вам выпало число {roulette.number},'
+            f' вы проиграли {bet_amount * 50} дак-дак коинов!'
+        )
         withdrawal = await balance_repository.create_withdrawal(
             user_id=user.id,
-            amount=bet_amount,
+            amount=bet_amount * 50,
             description='Проигрыш в казино',
         )
         await balance_notifier.send_withdrawal_notification(withdrawal)
@@ -133,7 +145,10 @@ async def on_make_bet_on_even_or_odd_number(
         return
 
     if target_even_or_odd == roulette.determine_even_or_odd():
-        await message.reply(f'Выпало число {roulette.number}. Вы выиграли!')
+        await message.reply(
+            f'Вам выпало число {roulette.number},'
+            f' вы выиграли {bet_amount} дак-дак коинов!'
+        )
         deposit = await balance_repository.create_deposit(
             user_id=user.id,
             amount=bet_amount,
@@ -141,7 +156,10 @@ async def on_make_bet_on_even_or_odd_number(
         )
         await balance_notifier.send_deposit_notification(deposit)
     else:
-        await message.reply(f'Выпало число {roulette.number}. Вы проиграли!')
+        await message.reply(
+            f'Вам выпало число {roulette.number},'
+            f' вы проиграли {bet_amount} дак-дак коинов!'
+        )
         withdrawal = await balance_repository.create_withdrawal(
             user_id=user.id,
             amount=bet_amount,
