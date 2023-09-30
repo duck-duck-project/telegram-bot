@@ -1,5 +1,4 @@
 import asyncio
-import random
 import traceback
 from collections.abc import Coroutine, Callable, Awaitable, Iterable
 from typing import Protocol, TypeAlias, TypeVar, Any, NewType
@@ -16,16 +15,11 @@ from exceptions import InvalidSecretMediaDeeplinkError, UserDoesNotExistError
 from models import (
     User,
     FoodMenuItem,
-    ArithmeticProblem,
-    ArithmeticExpression,
-    SystemTransaction,
     HTML,
-    Transfer,
 )
 from models.contacts import Contact
 from models.secret_media_types import SecretMediaType
 from repositories import UserRepository
-from views import DepositNotificationView, WithdrawalNotificationView
 from views.base import View
 
 __all__ = (
@@ -39,7 +33,6 @@ __all__ = (
     'extract_secret_media_id',
     'determine_media_file',
     'get_message_method_by_media_type',
-    'can_create_new_contact',
     'get_or_create_user',
     'send_view',
     'filter_not_hidden',
@@ -48,16 +41,7 @@ __all__ = (
     'extract_user_from_update',
     'get_food_menu_html',
     'parse_food_menu_html',
-    'get_arithmetic_problem',
-    'get_arithmetic_expression',
-    'get_operator_sign',
-    'extract_arithmetic_problem',
-    'solve_arithmetic_expression',
-    'PrivateChatNotifier',
-    'extract_reward',
     'upload_photo_to_cloud',
-    'compute_final_reward',
-    'compute_arithmetic_problem_reward',
 )
 
 Url = NewType('Url', str)
@@ -246,14 +230,6 @@ async def get_or_create_user(
         ), True
 
 
-def can_create_new_contact(
-        *,
-        contacts_count: int,
-        is_premium: bool,
-) -> bool:
-    return contacts_count < 5 or is_premium
-
-
 def filter_not_hidden(items: Iterable[HasIsHiddenT]) -> list[HasIsHiddenT]:
     return [item for item in items if not item.is_hidden]
 
@@ -335,56 +311,6 @@ async def upload_photo_to_cloud(url: str) -> Url:
     return Url(uploaded_media['url'])
 
 
-def get_operator_sign() -> str:
-    return random.choice('+-*')
-
-
-def get_arithmetic_expression() -> ArithmeticExpression:
-    expression = (
-        f'{get_operator_sign()}'
-        f'{random.randint(1, 10)}'
-        f'{get_operator_sign()}'
-        f'{random.randint(1, 10)}'
-        f'{get_operator_sign()}'
-        f'{random.randint(1, 10)}'
-        f'{get_operator_sign()}'
-        f'{random.randint(1, 10)}'
-    ).lstrip('+*')
-    return ArithmeticExpression(expression)
-
-
-def get_random_reward_value() -> int:
-    return random.randint(5, 25)
-
-
-def solve_arithmetic_expression(expression: str) -> int:
-    return eval(expression)
-
-
-def get_arithmetic_problem() -> ArithmeticProblem:
-    expression = get_arithmetic_expression()
-    correct_answer = solve_arithmetic_expression(expression)
-    return ArithmeticProblem(
-        expression=expression,
-        correct_answer=correct_answer,
-    )
-
-
-def extract_arithmetic_problem(text: str) -> ArithmeticProblem:
-    expression = ArithmeticExpression(
-        text.split('\n')[0].removeprefix('❓ Сколько будет: ').removesuffix('?')
-    )
-    correct_answer = solve_arithmetic_expression(expression)
-    return ArithmeticProblem(
-        expression=expression,
-        correct_answer=correct_answer,
-    )
-
-
-def extract_reward(text: str) -> int:
-    return int(text.split('\n')[1].split(' ')[2])
-
-
 async def send_view(
         *,
         bot,
@@ -399,71 +325,3 @@ async def send_view(
         )
     except TelegramAPIError:
         traceback.print_exc()
-
-
-class PrivateChatNotifier:
-
-    def __init__(self, bot: Bot):
-        self.__bot = bot
-
-    async def send_deposit_notification(
-            self,
-            deposit: SystemTransaction,
-    ) -> None:
-        view = DepositNotificationView(deposit)
-        await send_view(
-            bot=self.__bot,
-            chat_id=deposit.user.id,
-            view=view,
-        )
-
-    async def send_withdrawal_notification(
-            self,
-            withdrawal: SystemTransaction,
-    ) -> None:
-        view = WithdrawalNotificationView(withdrawal)
-        await send_view(
-            bot=self.__bot,
-            chat_id=withdrawal.user.id,
-            view=view,
-        )
-
-    async def send_transfer_notification(
-            self,
-            transfer: Transfer,
-    ) -> None:
-        view = WithdrawalNotificationView(transfer)
-        await send_view(
-            bot=self.__bot,
-            chat_id=transfer.sender.id,
-            view=view,
-        )
-        view = DepositNotificationView(transfer)
-        await send_view(
-            bot=self.__bot,
-            chat_id=transfer.recipient.id,
-            view=view,
-        )
-
-
-def compute_arithmetic_problem_reward(
-        arithmetic_problem: ArithmeticProblem,
-) -> int:
-    operators_complexity_value = (
-            arithmetic_problem.expression.count('+') * 3
-            + arithmetic_problem.expression.count('-') * 5
-            + arithmetic_problem.expression.count('*') * 5
-    )
-    answer_complexity = abs(arithmetic_problem.correct_answer) // 10
-    return operators_complexity_value + answer_complexity
-
-
-def compute_final_reward(
-        *,
-        reward_value: int,
-        premium_multiplier: int | float,
-        is_premium: bool,
-) -> int:
-    if is_premium:
-        return reward_value * premium_multiplier
-    return int(reward_value)
