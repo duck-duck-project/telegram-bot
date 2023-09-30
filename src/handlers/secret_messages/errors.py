@@ -1,6 +1,6 @@
 from aiogram import Router
 from aiogram.filters import ExceptionTypeFilter
-from aiogram.types import Update, ErrorEvent
+from aiogram.types import ErrorEvent
 
 from exceptions import SecretMessageDoesNotExistError
 
