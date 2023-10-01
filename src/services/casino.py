@@ -5,7 +5,7 @@ from aiogram.types import Message
 from exceptions import InsufficientFundsForBetError
 from models import BetColor, BetEvenOrOdd
 from repositories import BalanceRepository
-from services import BalanceNotifier
+from services.notifiers import BalanceNotifier
 from views import BetWonView, reply_view, BetFailedView
 
 __all__ = (
