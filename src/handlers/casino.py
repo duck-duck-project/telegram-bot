@@ -58,7 +58,7 @@ async def on_make_bet_on_specific_color(
     if target_color == roulette.determine_color():
         await process_roulette_won(
             roulette=roulette,
-            bet_amount=bet_amount,
+            bet_amount=int(bet_amount * 0.9),
             message=message,
             balance_repository=balance_repository,
             balance_notifier=balance_notifier,
@@ -102,7 +102,7 @@ async def on_make_bet_on_specific_number(
     if target_number == roulette.number:
         await process_roulette_won(
             roulette=roulette,
-            bet_amount=bet_amount,
+            bet_amount=bet_amount * 36,
             message=message,
             balance_repository=balance_repository,
             balance_notifier=balance_notifier,
@@ -147,7 +147,7 @@ async def on_make_bet_on_even_or_odd_number(
     if target_even_or_odd == roulette.determine_even_or_odd():
         await process_roulette_won(
             roulette=roulette,
-            bet_amount=bet_amount,
+            bet_amount=int(bet_amount * 0.9),
             message=message,
             balance_repository=balance_repository,
             balance_notifier=balance_notifier,
