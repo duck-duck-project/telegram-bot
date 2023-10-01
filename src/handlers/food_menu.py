@@ -22,8 +22,6 @@ async def on_show_food_menu(
         balance_notifier: BalanceNotifier,
 ) -> None:
     food_menu_html = await get_food_menu_html()
-    with open('food_menu.html', 'w') as f:
-        f.write(food_menu_html)
     food_menu_items = parse_food_menu_html(food_menu_html)
 
     try:
