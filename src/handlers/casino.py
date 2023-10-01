@@ -1,7 +1,8 @@
 from aiogram import Router
-from aiogram.filters import StateFilter, Command
-from aiogram.types import Message
+from aiogram.filters import StateFilter, Command, ExceptionTypeFilter
+from aiogram.types import Message, ErrorEvent
 
+from exceptions import InsufficientFundsForBetError
 from filters import (
     bet_on_even_or_odd_number_filter,
     bet_on_specific_number_filter,
@@ -10,12 +11,23 @@ from filters import (
 )
 from models import BetColor, User, BetEvenOrOdd
 from repositories import BalanceRepository
-from services import BalanceNotifier
-from services.casino import get_roulette_with_random_number
+from services import (
+    BalanceNotifier,
+    get_roulette_with_random_number,
+    process_roulette_won,
+    process_roulette_failed,
+    validate_user_balance,
+)
+from views import CasinoFAQView, reply_view
 
 router = Router(name=__name__)
 
 __all__ = ('router',)
+
+
+@router.error(ExceptionTypeFilter(InsufficientFundsForBetError))
+async def on_insufficient_funds_for_bet_error(event: ErrorEvent) -> None:
+    await event.update.message.reply('❌ У вас недостаточно средств для ставки')
 
 
 @router.message(
@@ -34,37 +46,31 @@ async def on_make_bet_on_specific_color(
 ) -> None:
     roulette = get_roulette_with_random_number()
 
-    user_balance = await balance_repository.get_user_balance(user.id)
-
-    if user_balance.balance < bet_amount:
-        await message.reply('У вас недостаточно средств для ставки')
-        return
+    await validate_user_balance(
+        balance_repository=balance_repository,
+        user_id=user.id,
+        bet_amount=bet_amount,
+    )
 
     if target_color == BetColor.GREEN and roulette.is_zero():
         await message.reply('Вам выпало число 0, ваша ставка возвращается вам')
 
     if target_color == roulette.determine_color():
-        await message.reply(
-            f'Вам выпало число {roulette.number},'
-            f' вы выиграли {bet_amount} дак-дак коинов!'
+        await process_roulette_won(
+            roulette=roulette,
+            bet_amount=bet_amount,
+            message=message,
+            balance_repository=balance_repository,
+            balance_notifier=balance_notifier,
         )
-        deposit = await balance_repository.create_deposit(
-            user_id=user.id,
-            amount=bet_amount,
-            description='Выигрыш в казино',
-        )
-        await balance_notifier.send_deposit_notification(deposit)
     else:
-        await message.reply(
-            f'Вам выпало число {roulette.number},'
-            f' вы проиграли {bet_amount} дак-дак коинов!'
+        await process_roulette_failed(
+            roulette=roulette,
+            bet_amount=bet_amount,
+            message=message,
+            balance_repository=balance_repository,
+            balance_notifier=balance_notifier,
         )
-        withdrawal = await balance_repository.create_withdrawal(
-            user_id=user.id,
-            amount=bet_amount,
-            description='Проигрыш в казино',
-        )
-        await balance_notifier.send_withdrawal_notification(withdrawal)
 
 
 @router.message(
@@ -83,38 +89,32 @@ async def on_make_bet_on_specific_number(
 ) -> None:
     roulette = get_roulette_with_random_number()
 
-    user_balance = await balance_repository.get_user_balance(user.id)
-
-    if user_balance.balance < bet_amount:
-        await message.reply('У вас недостаточно средств для ставки')
-        return
+    await validate_user_balance(
+        balance_repository=balance_repository,
+        user_id=user.id,
+        bet_amount=bet_amount,
+    )
 
     if target_number == roulette.number and roulette.is_zero():
         await message.reply('Вам выпало число 0, ваша ставка возвращается вам')
         return
 
     if target_number == roulette.number:
-        await message.reply(
-            f'Вам выпало число {roulette.number},'
-            f' вы выиграли {bet_amount * 50} дак-дак коинов!'
+        await process_roulette_won(
+            roulette=roulette,
+            bet_amount=bet_amount,
+            message=message,
+            balance_repository=balance_repository,
+            balance_notifier=balance_notifier,
         )
-        deposit = await balance_repository.create_deposit(
-            user_id=user.id,
-            amount=bet_amount * 50,
-            description='Выигрыш в казино',
-        )
-        await balance_notifier.send_deposit_notification(deposit)
     else:
-        await message.reply(
-            f'Вам выпало число {roulette.number},'
-            f' вы проиграли {bet_amount} дак-дак коинов!'
+        await process_roulette_failed(
+            roulette=roulette,
+            bet_amount=bet_amount,
+            message=message,
+            balance_repository=balance_repository,
+            balance_notifier=balance_notifier,
         )
-        withdrawal = await balance_repository.create_withdrawal(
-            user_id=user.id,
-            amount=bet_amount,
-            description='Проигрыш в казино',
-        )
-        await balance_notifier.send_withdrawal_notification(withdrawal)
 
 
 @router.message(
@@ -133,11 +133,11 @@ async def on_make_bet_on_even_or_odd_number(
 ) -> None:
     roulette = get_roulette_with_random_number()
 
-    user_balance = await balance_repository.get_user_balance(user.id)
-
-    if user_balance.balance < bet_amount:
-        await message.reply('У вас недостаточно средств для ставки')
-        return
+    await validate_user_balance(
+        balance_repository=balance_repository,
+        user_id=user.id,
+        bet_amount=bet_amount,
+    )
 
     result_even_or_odd = roulette.determine_even_or_odd()
     if result_even_or_odd == target_even_or_odd and roulette.is_zero():
@@ -145,56 +145,26 @@ async def on_make_bet_on_even_or_odd_number(
         return
 
     if target_even_or_odd == roulette.determine_even_or_odd():
-        await message.reply(
-            f'Вам выпало число {roulette.number},'
-            f' вы выиграли {bet_amount} дак-дак коинов!'
+        await process_roulette_won(
+            roulette=roulette,
+            bet_amount=bet_amount,
+            message=message,
+            balance_repository=balance_repository,
+            balance_notifier=balance_notifier,
         )
-        deposit = await balance_repository.create_deposit(
-            user_id=user.id,
-            amount=bet_amount,
-            description='Выигрыш в казино',
-        )
-        await balance_notifier.send_deposit_notification(deposit)
     else:
-        await message.reply(
-            f'Вам выпало число {roulette.number},'
-            f' вы проиграли {bet_amount} дак-дак коинов!'
+        await process_roulette_failed(
+            roulette=roulette,
+            bet_amount=bet_amount,
+            message=message,
+            balance_repository=balance_repository,
+            balance_notifier=balance_notifier,
         )
-        withdrawal = await balance_repository.create_withdrawal(
-            user_id=user.id,
-            amount=bet_amount,
-            description='Проигрыш в казино',
-        )
-        await balance_notifier.send_withdrawal_notification(withdrawal)
 
 
 @router.message(
     Command('bet'),
     StateFilter('*'),
 )
-async def on_bet(
-        message: Message,
-) -> None:
-    await message.reply(
-        '🎲 Сделать ставку:'
-        '\n\n'
-        '🎨 <b>1. По цвету</b>'
-        '\n'
-        '<code>/bet {red или black} {сумма}</code>'
-        '\n'
-        'Выигрыш: 2x'
-        '\n\n'
-        '🔢 <b>2. На конкретное число</b>'
-        '\n'
-        '<code>/bet {число от 0 до 36} {сумма}</code>'
-        '\n'
-        'Выигрыш: 50x'
-        '\n\n'
-        '⚖️ <b>3. На четное или нечетное число</b>'
-        '\n'
-        '<code>/bet {even или odd} {сумма}</code>'
-        '\n'
-        'Выигрыш: 2x'
-        '\n\n'
-        'Сумма должна быть от 10 до 1 000 000 дак-дак коинов'
-    )
+async def on_bet(message: Message) -> None:
+    await reply_view(view=CasinoFAQView(), message=message)

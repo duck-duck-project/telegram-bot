@@ -1,8 +1,20 @@
 import random
 
-from models import BetColor, BetEvenOrOdd
+from aiogram.types import Message
 
-__all__ = ('CasinoRoulette', 'get_roulette_with_random_number')
+from exceptions import InsufficientFundsForBetError
+from models import BetColor, BetEvenOrOdd
+from repositories import BalanceRepository
+from services import BalanceNotifier
+from views import BetWonView, reply_view, BetFailedView
+
+__all__ = (
+    'CasinoRoulette',
+    'get_roulette_with_random_number',
+    'process_roulette_won',
+    'process_roulette_failed',
+    'validate_user_balance',
+)
 
 
 class CasinoRoulette:
@@ -36,3 +48,50 @@ class CasinoRoulette:
 
 def get_roulette_with_random_number() -> CasinoRoulette:
     return CasinoRoulette(random.randint(0, 36))
+
+
+async def process_roulette_won(
+        roulette: CasinoRoulette,
+        bet_amount: int,
+        message: Message,
+        balance_repository: BalanceRepository,
+        balance_notifier: BalanceNotifier,
+) -> None:
+    view = BetWonView(number=roulette.number, bet_amount=bet_amount)
+    await reply_view(view=view, message=message)
+    deposit = await balance_repository.create_deposit(
+        user_id=message.from_user.id,
+        amount=bet_amount,
+        description='Выигрыш в казино',
+    )
+    await balance_notifier.send_deposit_notification(deposit)
+
+
+async def process_roulette_failed(
+        *,
+        roulette: CasinoRoulette,
+        bet_amount: int,
+        message: Message,
+        balance_repository: BalanceRepository,
+        balance_notifier: BalanceNotifier,
+) -> None:
+    view = BetFailedView(number=roulette.number, bet_amount=bet_amount)
+    await reply_view(view=view, message=message)
+    withdrawal = await balance_repository.create_withdrawal(
+        user_id=message.from_user.id,
+        amount=bet_amount,
+        description='Проигрыш в казино',
+    )
+    await balance_notifier.send_withdrawal_notification(withdrawal)
+
+
+async def validate_user_balance(
+        *,
+        balance_repository: BalanceRepository,
+        user_id: int,
+        bet_amount: int,
+) -> None:
+    user_balance = await balance_repository.get_user_balance(user_id)
+
+    if user_balance.balance < bet_amount:
+        raise InsufficientFundsForBetError
