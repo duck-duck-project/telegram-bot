@@ -63,3 +63,7 @@ class InsufficientFundsForWithdrawalError(Exception):
 
 class InsufficientFundsForTransferError(Exception):
     pass
+
+
+class InsufficientFundsForBetError(Exception):
+    pass

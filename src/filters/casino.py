@@ -11,7 +11,7 @@ __all__ = (
 
 
 def bet_amount_filter(message: Message, bet_amount: int) -> bool | int:
-    return 0 < bet_amount <= 10000
+    return 10 < bet_amount <= 1_000_000
 
 
 def bet_on_specific_number_filter(message: Message) -> bool | dict:
