@@ -14,7 +14,7 @@ def can_create_new_contact(*, contact_price: int, balance: int) -> bool:
 
 
 def compute_new_contact_price(contacts_count: int) -> int:
-    return 100 * (2 + contacts_count) // 2 * (contacts_count + 1)
+    return 100 * (contacts_count + 1)
 
 
 def is_user_already_contact(
