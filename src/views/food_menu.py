@@ -52,6 +52,9 @@ class FoodMenuFAQView(View):
     <u>На завтра:</u>
     <code>/yemek tomorrow</code>
     
+    <u>На неделю вперёд:</u>
+    <code>/yemek week</code>
+    
     <b>🧐Так же можно просматривать на N дней вперёд:</b>
     
     •<code>/yemek {N}</code>
