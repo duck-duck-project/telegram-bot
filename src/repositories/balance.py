@@ -88,3 +88,18 @@ class BalanceRepository(APIRepository):
                 raise ServerAPIError
             response_data = await response.json()
         return UserBalance.model_validate(response_data)
+
+    async def create_richest_users_statistics_task(
+            self,
+            chat_id: int,
+            user_id: int,
+    ) -> None:
+        url = '/economics/richest-users-statistics/'
+        request_data = {
+            'limit': 50,
+            'chat_id': chat_id,
+            'user_id': user_id,
+        }
+        async with self._http_client.post(url, json=request_data) as response:
+            if response.status != 202:
+                raise ServerAPIError

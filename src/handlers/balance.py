@@ -40,3 +40,17 @@ async def on_show_user_balance(
         message_or_callback_query=message_or_callback_query,
         view=view,
     )
+
+
+@router.message(
+    Command('richest_top'),
+    StateFilter('*'),
+)
+async def on_show_richest_users_statistics(
+        message: Message,
+        balance_repository: BalanceRepository,
+) -> None:
+    await balance_repository.create_richest_users_statistics_task(
+        chat_id=message.chat.id,
+        user_id=message.from_user.id,
+    )
