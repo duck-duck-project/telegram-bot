@@ -57,8 +57,12 @@ class ThemeDoesNotExistError(Exception):
     pass
 
 
+@dataclass(frozen=True, slots=True)
 class InsufficientFundsForWithdrawalError(Exception):
-    pass
+    amount: int
+
+    def __str__(self):
+        return f'Insufficient funds for withdrawal: {self.amount=}'
 
 
 class InsufficientFundsForTransferError(Exception):

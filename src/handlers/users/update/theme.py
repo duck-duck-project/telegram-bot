@@ -5,7 +5,6 @@ from aiogram.types import Message
 
 from exceptions import (
     ThemeDoesNotExistError,
-    InsufficientFundsForWithdrawalError,
 )
 from filters import theme_update_command_filter
 from models import User
@@ -42,18 +41,11 @@ async def on_update_user_theme(
         profile_photo_url=str(user.profile_photo_url),
     )
 
-    try:
-        withdrawal = await balance_repository.create_withdrawal(
-            user_id=user.id,
-            amount=1000,
-            description='🎨 Theme change',
-        )
-    except InsufficientFundsForWithdrawalError:
-        await message.reply(
-            '❌ Недостаточно средств для списания\n'
-            '💸 Стоимость смены темы: 1000 дак-дак коинов'
-        )
-        return
+    withdrawal = await balance_repository.create_withdrawal(
+        user_id=user.id,
+        amount=1000,
+        description='🎨 Theme change',
+    )
     view = ThemeSuccessfullyUpdatedView()
     await answer_view(message=message, view=view)
     await balance_notifier.send_withdrawal_notification(withdrawal)

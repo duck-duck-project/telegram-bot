@@ -4,7 +4,6 @@ from aiogram import Router, F
 from aiogram.filters import StateFilter, Command, or_f
 from aiogram.types import Message
 
-from exceptions import InsufficientFundsForWithdrawalError
 from filters import (
     food_menu_for_tomorrow_filter,
     food_menu_for_today_filter,
@@ -31,6 +30,13 @@ async def on_show_food_menu_for_week_ahead(
 ) -> None:
     food_menus = await food_menu_repository.get_all()
 
+    withdrawal = await balance_repository.create_withdrawal(
+        user_id=message.from_user.id,
+        amount=560,
+        description='Просмотр йемека на неделю вперёд',
+    )
+    await balance_notifier.send_withdrawal_notification(withdrawal)
+
     for daily_food_menu in food_menus[:7]:
         view = FoodMenuMediaGroupView(daily_food_menu)
         await message.answer_media_group(
@@ -38,20 +44,6 @@ async def on_show_food_menu_for_week_ahead(
             disable_notification=True,
         )
         await asyncio.sleep(0.5)
-
-    try:
-        withdrawal = await balance_repository.create_withdrawal(
-            user_id=message.from_user.id,
-            amount=560,
-            description='Просмотр йемека на неделю вперёд',
-        )
-    except InsufficientFundsForWithdrawalError:
-        await message.reply(
-            '❌ Недостаточно средств для списания\n'
-            '💸 Стоимость просмотра йемека: 560 дак-дак коинов'
-        )
-        return
-    await balance_notifier.send_withdrawal_notification(withdrawal)
 
 
 @router.message(
@@ -71,6 +63,13 @@ async def on_show_food_menu_for_specific_day(
 ) -> None:
     food_menus = await food_menu_repository.get_all()
 
+    withdrawal = await balance_repository.create_withdrawal(
+        user_id=message.from_user.id,
+        amount=80,
+        description='Просмотр йемека на сегодня',
+    )
+    await balance_notifier.send_withdrawal_notification(withdrawal)
+
     try:
         food_menu = food_menus[days_skip_count]
     except IndexError:
@@ -79,20 +78,6 @@ async def on_show_food_menu_for_specific_day(
 
     view = FoodMenuMediaGroupView(food_menu)
     await message.answer_media_group(media=view.as_media_group())
-
-    try:
-        withdrawal = await balance_repository.create_withdrawal(
-            user_id=message.from_user.id,
-            amount=80,
-            description='Просмотр йемека на сегодня',
-        )
-    except InsufficientFundsForWithdrawalError:
-        await message.reply(
-            '❌ Недостаточно средств для списания\n'
-            '💸 Стоимость просмотра йемека: 80 дак-дак коинов'
-        )
-        return
-    await balance_notifier.send_withdrawal_notification(withdrawal)
 
 
 @router.message(
