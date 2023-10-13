@@ -16,11 +16,11 @@
     "description": "💸 Мой баланс"
   },
   {
-    "command": "secret_message ",
+    "command": "secret_message",
     "description": "💌 Отправить секретное сообщение"
   },
   {
-    "command": "pay",
+    "command": "send",
     "description": "💳 Сделать перевод средств"
   },
   {
