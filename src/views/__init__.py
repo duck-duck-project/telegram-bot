@@ -3,6 +3,7 @@ from .balance import *
 from .base import *
 from .casino import *
 from .contacts import *
+from .food_menu import *
 from .premium import *
 from .problems import *
 from .secret_messaging import *
