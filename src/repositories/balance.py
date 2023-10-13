@@ -54,7 +54,7 @@ class BalanceRepository(APIRepository):
             if response.status == 400:
                 response_data = await response.json()
                 if response_data[0] == 'Insufficient funds for withdrawal':
-                    raise InsufficientFundsForWithdrawalError
+                    raise InsufficientFundsForWithdrawalError(amount=amount)
             if response.status != 201:
                 raise ServerAPIError
             response_data = await response.json()

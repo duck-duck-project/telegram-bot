@@ -31,6 +31,7 @@ from repositories import (
     TeamMemberRepository,
     TeamRepository,
     BalanceRepository,
+    FoodMenuRepository,
 )
 from repositories.themes import ThemeRepository
 from services import BalanceNotifier
@@ -117,6 +118,7 @@ async def main() -> None:
             theme_repository=ThemeRepository,
             user_repository=UserRepository,
             balance_repository=BalanceRepository,
+            food_menu_repository=FoodMenuRepository,
         )
     )
     dispatcher.update.outer_middleware(user_retrieve_middleware)
