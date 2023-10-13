@@ -1,12 +1,11 @@
-from datetime import datetime
-from zoneinfo import ZoneInfo
+import textwrap
 
 from aiogram.types import InputMediaPhoto
 
 from models import DailyFoodMenu
 from views.base import View
 
-__all__ = ('FoodMenuMediaGroupView',)
+__all__ = ('FoodMenuMediaGroupView', 'FoodMenuFAQView')
 
 
 class FoodMenuMediaGroupView(View):
@@ -41,3 +40,23 @@ class FoodMenuMediaGroupView(View):
                 media=str(food_menu_item.photo_url),
             ) for food_menu_item in self.__daily_food_menu.items[1:]
         ]
+
+
+class FoodMenuFAQView(View):
+    text = textwrap.dedent('''\
+    <b>🤤Срочный просмотр меню в йемекхане:</b>
+
+    <u>На сегодня:</u>
+    <code>/yemek today</code>
+    
+    <u>На завтра:</u>
+    <code>/yemek tomorrow</code>
+    
+    <b>🧐Так же можно просматривать на N дней вперёд:</b>
+    
+    •<code>/yemek {N}</code>
+    
+    Например👇
+    <u>На послезавтра</u> - <code>/yemek 2</code>
+    <u>10 дней вперёд</u> - <code>/yemek 10</code>
+    ''')
