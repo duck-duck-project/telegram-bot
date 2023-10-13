@@ -15,18 +15,20 @@ class FoodMenuMediaGroupView(View):
 
     def get_text(self) -> str:
         caption: list[str] = [
-            f'🍽️ <b>Меню на {self.__daily_food_menu.at:%d.%m.%Y}</b>\n'
+            f'🍽️ <b>Меню на {self.__daily_food_menu.at:%d.%m.%Y}</b> 🍽️\n'
         ]
 
         total_calories_count: int = 0
 
         for food_menu_item in self.__daily_food_menu.items:
-            caption.append(f'▻ {food_menu_item.name}')
-            caption.append(f'◦ Калории: {food_menu_item.calories_count}\n')
+            caption.append(
+                f'🧂 <u>{food_menu_item.name}</u>\n'
+                f'🌱 Калории: <i>{food_menu_item.calories_count}</i>\n'
+            )
 
             total_calories_count += food_menu_item.calories_count
 
-        caption.append(f'Сумма калорий: {total_calories_count}')
+        caption.append(f'<b>Сумма калорий: {total_calories_count}</b>')
         return '\n'.join(caption)
 
     def as_media_group(self) -> list[InputMediaPhoto]:
