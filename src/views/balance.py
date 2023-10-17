@@ -2,13 +2,16 @@ from typing import Protocol
 
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 
-from models import UserBalance
+from models import UserBalance, Transfer
 from views.base import View
 
 __all__ = (
     'UserBalanceView',
     'WithdrawalNotificationView',
     'DepositNotificationView',
+    'TransferAskForDescriptionView',
+    'TransferConfirmView',
+    'TransferSuccessfullyExecutedView',
 )
 
 
@@ -75,3 +78,66 @@ class DepositNotificationView(View, MyBalanceReplyKeyboardMixin):
         if self.__deposit.description is not None:
             lines.append(f'ℹ <i>{self.__deposit.description}</i>')
         return '\n'.join(lines)
+
+
+class TransferAskForDescriptionView(View):
+    text = '📝 Введите описание перевода:'
+    reply_markup = InlineKeyboardMarkup(
+        inline_keyboard=[
+            [
+                InlineKeyboardButton(
+                    text='Пропустить',
+                    callback_data='skip',
+                ),
+            ],
+        ],
+    )
+
+
+class TransferConfirmView(View):
+
+    def __init__(self, recipient_name, amount: int, description: str | None):
+        self.__amount = amount
+        self.__description = description
+        self.__recipient_name = recipient_name
+
+    def get_text(self) -> str:
+        if self.__description is None:
+            return (
+                '❓ Вы уверены что хотите совершить перевод'
+                f' на сумму в N дак-дак коинов контакту {self.__recipient_name}'
+            )
+        return (
+            '❓ Вы уверены что хотите совершить перевод'
+            f' на сумму в N дак-дак коинов контакту {self.__recipient_name}'
+            f' с описанием <i>{self.__description}</i>'
+        )
+
+    def get_reply_markup(self) -> InlineKeyboardMarkup:
+        return InlineKeyboardMarkup(
+            inline_keyboard=[
+                [
+                    InlineKeyboardButton(
+                        text='❌ Отменить',
+                        callback_data='cancel',
+                    ),
+                    InlineKeyboardButton(
+                        text='✅ Подтвердить',
+                        callback_data='confirm',
+                    ),
+                ],
+            ],
+        )
+
+
+class TransferSuccessfullyExecutedView(View):
+
+    def __init__(self, transfer: Transfer):
+        self.__transfer = transfer
+
+    def get_text(self) -> str:
+        return (
+            '✅ Перевод успешно выполнен\n'
+            f'💰 Сумма: {self.__transfer.amount} дак-дак коинов\n'
+            f'📝 Описание: {self.__transfer.description or "отсутствует"}'
+        )

@@ -10,11 +10,13 @@ from callback_data import (
     ContactDetailCallbackData,
 )
 from models import Contact
+from services import filter_not_hidden
 from views import View
 
 __all__ = (
     'ContactDetailView',
     'ContactListView',
+    'ContactListChooseView',
 )
 
 
@@ -121,3 +123,27 @@ class ContactListView(View):
                 ),
             )
         return keyboard.as_markup()
+
+
+class ContactListChooseView(View):
+
+    def __init__(self, contacts: Iterable[Contact]):
+        self.__contacts = tuple(contacts)
+
+    def get_text(self) -> str:
+        return (
+            'Список ваших контактов 👱‍♂️'
+            if self.__contacts else 'У вас нет контактов 😔'
+        )
+
+    def get_reply_markup(self) -> InlineKeyboardMarkup:
+        return InlineKeyboardMarkup(
+            inline_keyboard=[
+                [
+                    InlineKeyboardButton(
+                        text=contact.private_name,
+                        callback_data=str(contact.id),
+                    )
+                ] for contact in filter_not_hidden(self.__contacts)
+            ]
+        )
