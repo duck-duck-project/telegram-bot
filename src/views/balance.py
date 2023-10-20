@@ -1,11 +1,17 @@
 from typing import Protocol
 
-from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
+from aiogram.types import (
+    InlineKeyboardMarkup,
+    InlineKeyboardButton,
+    ReplyKeyboardMarkup,
+    KeyboardButton,
+)
 
 from models import UserBalance, Transfer
 from views.base import View
 
 __all__ = (
+    'FinanceMenuView',
     'UserBalanceView',
     'WithdrawalNotificationView',
     'DepositNotificationView',
@@ -28,6 +34,25 @@ class MyBalanceReplyKeyboardMixin:
                     text='💰 Мой баланс',
                     callback_data='show-user-balance',
                 ),
+            ],
+        ],
+    )
+
+
+class FinanceMenuView(View):
+    text = '📊 Финансовые операции'
+    reply_markup = ReplyKeyboardMarkup(
+        resize_keyboard=True,
+        keyboard=[
+            [
+                KeyboardButton(text='💼 Работать'),
+            ],
+            [
+                KeyboardButton(text='💰 Мой баланс'),
+                KeyboardButton(text='💳 Перевод средств'),
+            ],
+            [
+                KeyboardButton(text='🔙 Назад'),
             ],
         ],
     )
@@ -105,11 +130,13 @@ class TransferConfirmView(View):
         if self.__description is None:
             return (
                 '❓ Вы уверены что хотите совершить перевод'
-                f' на сумму в N дак-дак коинов контакту {self.__recipient_name}'
+                f' на сумму в {self.__amount}'
+                f' дак-дак коинов контакту {self.__recipient_name}'
             )
         return (
             '❓ Вы уверены что хотите совершить перевод'
-            f' на сумму в N дак-дак коинов контакту {self.__recipient_name}'
+            f' на сумму в {self.__amount}'
+            f' дак-дак коинов контакту {self.__recipient_name}'
             f' с описанием <i>{self.__description}</i>'
         )
 

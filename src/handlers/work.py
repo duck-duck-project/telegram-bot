@@ -1,6 +1,6 @@
 from aiogram import Router, F
 from aiogram.enums import ChatType
-from aiogram.filters import Command, StateFilter, invert_f
+from aiogram.filters import Command, StateFilter, invert_f, or_f
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message
 
@@ -86,7 +86,10 @@ async def on_arithmetic_expression_answer(
 
 
 @router.message(
-    Command('work'),
+    or_f(
+        Command('work'),
+        F.text == '💼 Работать',
+    ),
     StateFilter('*'),
 )
 async def on_create_arithmetic_expression_to_solve(
