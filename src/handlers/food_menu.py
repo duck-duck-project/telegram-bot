@@ -1,6 +1,7 @@
 import asyncio
 
 from aiogram import Router, F
+from aiogram.enums import ContentType
 from aiogram.filters import StateFilter, Command, or_f
 from aiogram.types import Message
 
@@ -19,6 +20,7 @@ router = Router(name=__name__)
 
 
 @router.message(
+    F.content_type == ContentType.TEXT,
     F.text == '/yemek week',
     StateFilter('*'),
 )
@@ -47,6 +49,7 @@ async def on_show_food_menu_for_week_ahead(
 
 
 @router.message(
+    F.content_type == ContentType.TEXT,
     or_f(
         food_menu_for_today_filter,
         food_menu_for_tomorrow_filter,
@@ -81,6 +84,7 @@ async def on_show_food_menu_for_specific_day(
 
 
 @router.message(
+    F.content_type == ContentType.TEXT,
     Command('yemek'),
     StateFilter('*'),
 )
