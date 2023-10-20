@@ -103,6 +103,27 @@ class UserPersonalSettingsView(View):
 
 
 class UserMenuView(View):
+    reply_markup = ReplyKeyboardMarkup(
+        resize_keyboard=True,
+        keyboard=[
+            [
+                KeyboardButton(text='📩 Секретное сообщение'),
+                KeyboardButton(text='🖼️ Секретное медиа'),
+            ],
+            [
+                KeyboardButton(text='💰 Финансы'),
+                KeyboardButton(text='🍽️ Йемек'),
+            ],
+            [
+                KeyboardButton(text='🔐 Включить анонимные сообщения'),
+            ],
+            [
+                KeyboardButton(text='🎨 Настройки'),
+                KeyboardButton(text='👥 Контакты'),
+                KeyboardButton(text='💬 Teams'),
+            ],
+        ],
+    )
 
     def __init__(
             self,
@@ -128,25 +149,6 @@ class UserMenuView(View):
             f'💰 Баланс: 🐥${self.__balance}\n'
             '🔒 Режим анонимных сообщений:'
             f' {is_anonymous_messaging_enabled_emoji}\n'
-        )
-
-    def get_reply_markup(self) -> ReplyKeyboardMarkup:
-        return ReplyKeyboardMarkup(
-            resize_keyboard=True,
-            keyboard=[
-                [
-                    KeyboardButton(text='📩 Секретное сообщение'),
-                    KeyboardButton(text='🖼️ Секретное медиа'),
-                ],
-                [
-                    KeyboardButton(text='🔐 Включить анонимные сообщения'),
-                ],
-                [
-                    KeyboardButton(text='🎨 Настройки'),
-                    KeyboardButton(text='👥 Контакты'),
-                    KeyboardButton(text='💬 Teams'),
-                ],
-            ],
         )
 
 

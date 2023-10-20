@@ -1,12 +1,26 @@
 from aiogram import Router, F
-from aiogram.filters import StateFilter, Command, ExceptionTypeFilter
+from aiogram.filters import StateFilter, Command, ExceptionTypeFilter, or_f
 from aiogram.types import CallbackQuery, Message, ErrorEvent
 
 from exceptions import InsufficientFundsForWithdrawalError
 from repositories import BalanceRepository
-from views import UserBalanceView, render_message_or_callback_query
+from views import (
+    UserBalanceView,
+    render_message_or_callback_query,
+    FinanceMenuView,
+    answer_view,
+)
 
 router = Router(name=__name__)
+
+
+@router.message(
+    F.text == '💰 Финансы',
+    StateFilter('*'),
+)
+async def on_show_finance_menu(message: Message) -> None:
+    view = FinanceMenuView()
+    await answer_view(message=message, view=view)
 
 
 @router.error(ExceptionTypeFilter(InsufficientFundsForWithdrawalError))
@@ -22,7 +36,10 @@ async def on_insufficient_funds_for_withdrawal_error(event: ErrorEvent) -> None:
 
 
 @router.message(
-    Command('balance'),
+    or_f(
+        Command('balance'),
+        F.text == '💰 Мой баланс',
+    ),
     StateFilter('*'),
 )
 @router.callback_query(

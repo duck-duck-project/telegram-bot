@@ -5,6 +5,7 @@ from aiogram.filters import (
     Command,
     invert_f,
     ExceptionTypeFilter,
+    or_f,
 )
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message, ErrorEvent, CallbackQuery
@@ -25,7 +26,10 @@ router = Router(name=__name__)
 
 
 @router.message(
-    Command('send'),
+    or_f(
+        Command('send'),
+        F.text == '💳 Перевод средств',
+    ),
     F.chat.type == ChatType.PRIVATE,
     StateFilter('*'),
 )

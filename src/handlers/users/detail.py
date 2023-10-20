@@ -1,6 +1,6 @@
 from aiogram import Bot, Router, F
 from aiogram.enums import ChatType
-from aiogram.filters import StateFilter, Command, or_f
+from aiogram.filters import StateFilter, Command
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message, CallbackQuery
 
@@ -88,13 +88,12 @@ def register_handlers(router: Router) -> None:
     )
     router.message.register(
         on_show_settings,
-        or_f(
-            F.text.in_({
-                '/start',
-                '/settings',
-                '🔙 Отключить режим анонимных сообщений',
-            }),
-        ),
+        F.text.in_({
+            '/start',
+            '/settings',
+            '🔙 Назад',
+            '🔙 Отключить режим анонимных сообщений',
+        }),
         F.chat.type == ChatType.PRIVATE,
         StateFilter('*'),
     )
