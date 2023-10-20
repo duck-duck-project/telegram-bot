@@ -85,7 +85,10 @@ async def on_show_food_menu_for_specific_day(
 
 @router.message(
     F.content_type == ContentType.TEXT,
-    Command('yemek'),
+    or_f(
+        Command('yemek'),
+        F.text == '🍽️ Йемек',
+    ),
     StateFilter('*'),
 )
 async def on_show_food_menu_instructions(message: Message) -> None:
