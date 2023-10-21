@@ -24,11 +24,11 @@ async def on_contact_already_exists_error(event: ErrorEvent) -> None:
 
 
 def register_handlers(router: Router) -> None:
-    router.errors.register(
+    router.error.register(
         on_contact_does_not_exist_error,
         ExceptionTypeFilter(ContactDoesNotExistError),
     )
-    router.errors.register(
+    router.error.register(
         on_contact_already_exists_error,
         ExceptionTypeFilter(ContactAlreadyExistsError),
     )
