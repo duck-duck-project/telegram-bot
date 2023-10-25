@@ -1,7 +1,6 @@
 from aiogram import Router, F
 from aiogram.enums import ChatType
 from aiogram.filters import StateFilter
-from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery
 
 from callback_data import UserUpdateCallbackData
