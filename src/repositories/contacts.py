@@ -6,6 +6,7 @@ from exceptions import (
     ContactAlreadyExistsError,
     ServerAPIError,
     ContactDoesNotExistError,
+    InsufficientFundsForWithdrawalError,
 )
 from repositories.base import APIRepository
 
@@ -30,6 +31,12 @@ class ContactRepository(APIRepository):
         }
         url = '/contacts/'
         async with self._http_client.post(url, json=request_data) as response:
+            if response.status == 400:
+                response_data = await response.json()
+                error_detail = response_data.get('detail')
+                if error_detail == 'Insufficient funds for contact creation':
+                    amount = response_data['amount']
+                    raise InsufficientFundsForWithdrawalError(amount=amount)
             if response.status == 404:
                 raise UserDoesNotExistError(user_id=of_user_id)
             if response.status == 409:
