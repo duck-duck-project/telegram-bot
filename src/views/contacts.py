@@ -137,13 +137,21 @@ class ContactListChooseView(View):
         )
 
     def get_reply_markup(self) -> InlineKeyboardMarkup:
-        return InlineKeyboardMarkup(
-            inline_keyboard=[
-                [
-                    InlineKeyboardButton(
-                        text=contact.private_name,
-                        callback_data=str(contact.id),
-                    )
-                ] for contact in filter_not_hidden(self.__contacts)
-            ]
+        keyboard = InlineKeyboardBuilder()
+
+        for contact in filter_not_hidden(self.__contacts):
+            keyboard.row(
+                InlineKeyboardButton(
+                    text=contact.private_name,
+                    callback_data=str(contact.id),
+                ),
+            )
+
+        keyboard.row(
+            InlineKeyboardButton(
+                text='➕ Добавить контакт',
+                callback_data='create-contact',
+            ),
         )
+
+        return keyboard.as_markup()

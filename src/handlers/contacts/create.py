@@ -4,17 +4,19 @@ from aiogram.fsm.context import FSMContext
 from aiogram.types import Message
 
 from models import User
-from repositories import ContactRepository, UserRepository, BalanceRepository
+from repositories import ContactRepository, UserRepository
 from repositories import HTTPClientFactory
-from services import (
-    can_create_new_contact,
-    compute_new_contact_price,
-    BalanceNotifier,
-    is_user_already_contact,
-)
 from states import ContactCreateWaitForForwardedMessage
 
 __all__ = ('register_handlers',)
+
+
+async def on_add_bot_to_contacts(message: Message) -> None:
+    await message.reply('Вы не можете добавить бота в контакты')
+
+
+async def on_add_self_to_contacts(message: Message) -> None:
+    await message.reply('Вы не можете добавить себя в контакты')
 
 
 async def on_contact_create_via_forwarded_message(
@@ -26,16 +28,6 @@ async def on_contact_create_via_forwarded_message(
     async with closing_http_client_factory() as http_client:
         contact = ContactRepository(http_client)
         contacts = await contact.get_by_user_id(user.id)
-        if not can_create_new_contact(
-                contacts_count=len(contacts),
-                is_premium=user.is_premium,
-        ):
-            await message.reply(
-                '🤭 Вы не можете иметь больше 5 контактов за раз.'
-                '\nЧтобы убрать лимит,'
-                ' вы можете преобрести премиум подписку за 50 сомов/месяц'
-            )
-            return
 
         await contact.create(
             of_user_id=user.id,
@@ -75,18 +67,8 @@ async def on_add_contact(
         user: User,
         user_repository: UserRepository,
         contact_repository: ContactRepository,
-        balance_repository: BalanceRepository,
-        balance_notifier: BalanceNotifier,
 ) -> None:
     reply = message.reply_to_message
-    if reply.from_user.is_bot:
-        await message.reply('Вы не можете добавить бота в контакты')
-        return
-
-    if message.from_user.id == reply.from_user.id:
-        await message.reply('Вы хотите добавить себя в свои же контакты? 🤭')
-        return
-
     name = reply.from_user.username or reply.from_user.full_name
 
     to_user, is_to_user_created = await user_repository.get_or_create(
@@ -101,46 +83,19 @@ async def on_add_contact(
         )
         return
 
-    contacts = await contact_repository.get_by_user_id(message.from_user.id)
-    contacts_count = len(contacts)
-
-    if is_user_already_contact(
-            user_id=to_user.id,
-            contacts=contacts,
-    ):
-        await message.reply('🤭 Этот пользователь уже в ваших контактах')
-        return
-
-    user_balance = await balance_repository.get_user_balance(user.id)
-
-    new_contact_price = compute_new_contact_price(contacts_count)
-
-    if not can_create_new_contact(
-            contact_price=new_contact_price,
-            balance=user_balance.balance,
-    ):
-        await message.reply(
-            '❌ Недостаточно средств для добавления нового контакта.\n'
-            f'💸 Необходимый баланс: {new_contact_price} дак-дак коинов'
-        )
-        return
-
-    withdrawal = await balance_repository.create_withdrawal(
-        user_id=user.id,
-        amount=new_contact_price,
-        description='Добавление нового контакта',
-    )
     await contact_repository.create(
         of_user_id=user.id,
         to_user_id=to_user.id,
         private_name=name,
         public_name=name,
     )
-    await balance_notifier.send_withdrawal_notification(withdrawal)
     await message.reply('✅ Контакт успешно добавлен')
 
 
 def register_handlers(router: Router) -> None:
+    reply_to_user_is_bot = F.reply_to_message.from_user.is_bot
+    from_self = F.reply_to_message.from_user.id == F.from_user.id
+
     router.message.register(
         on_contact_command_is_not_replied_to_user,
         Command('contact'),
@@ -148,8 +103,19 @@ def register_handlers(router: Router) -> None:
         StateFilter('*'),
     )
     router.message.register(
+        on_add_bot_to_contacts,
+        Command('contact'),
+        reply_to_user_is_bot,
+        StateFilter('*'),
+    )
+    router.message.register(
+        on_add_self_to_contacts,
+        Command('contact'),
+        from_self,
+        StateFilter('*'),
+    )
+    router.message.register(
         on_add_contact,
         Command('contact'),
-        F.reply_to_message,
         StateFilter('*'),
     )
