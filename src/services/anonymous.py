@@ -63,7 +63,9 @@ def extract_file_id_from_message(message: Message) -> str:
         message.audio,
     )
     for media in medias:
-        if media.file_id is not None:
+        if media is not None:
+            if isinstance(media, list):
+                return media[-1].file_id
             return media.file_id
 
     raise UnsupportedContentTypeError(content_type=message.content_type)
