@@ -34,7 +34,7 @@ from repositories import (
     FoodMenuRepository,
 )
 from repositories.themes import ThemeRepository
-from services import BalanceNotifier
+from services import BalanceNotifier, AnonymousMessageSender
 
 logger: BoundLogger = structlog.get_logger('app')
 
@@ -93,6 +93,7 @@ async def main() -> None:
 
     balance_notifier = BalanceNotifier(bot)
 
+    dispatcher['anonymous_message_sender'] = AnonymousMessageSender(bot)
     dispatcher['bot_user'] = bot_user
     dispatcher['closing_http_client_factory'] = partial(
         aiohttp.ClientSession,

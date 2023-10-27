@@ -1,104 +1,34 @@
 from collections.abc import Callable, Awaitable
 from typing import TypeAlias, Protocol, Coroutine, Any
 
+from aiogram import Bot
+from aiogram.enums import ContentType
+from aiogram.exceptions import TelegramAPIError
 from aiogram.types import Message
 
+from exceptions import UnsupportedContentTypeError
 from models import SecretMediaType
+from views import AnonymousMessageSentView, answer_view
 
 __all__ = (
+    'extract_file_id_from_message',
+    'AnonymousMessageSender',
     'is_anonymous_messaging_enabled',
     'determine_media_file',
-    'determine_media_file_id_and_answer_method',
     'get_message_method_by_media_type',
 )
 
 ReturnsMessage: TypeAlias = Callable[..., Awaitable[Message]]
 
 
-class HasSendVideoPhotoAnimationVoiceAudioDocumentMethod(Protocol):
-
-    async def send_photo(
-            self,
-            chat_id: int | str,
-            file_id: str,
-            caption: str | None,
-    ) -> Message: ...
-
-    async def send_video(
-            self,
-            chat_id: int | str,
-            file_id: str,
-            caption: str | None,
-    ) -> Message: ...
-
-    async def send_animation(
-            self,
-            chat_id: int | str,
-            file_id: str,
-            caption: str | None,
-    ) -> Message: ...
-
-    async def send_voice(
-            self,
-            chat_id: int | str,
-            file_id: str,
-            caption: str | None,
-    ) -> Message: ...
-
-    async def send_audio(
-            self,
-            chat_id: int | str,
-            file_id: str,
-            caption: str | None,
-    ) -> Message: ...
-
-    async def send_document(
-            self,
-            chat_id: int | str,
-            file_id: str,
-            caption: str | None,
-    ) -> Message: ...
-
-
 class HasFileID(Protocol):
     file_id: str
-
-
-class HasVideoPhotoAnimationVoiceAudioDocument(Protocol):
-    photo: list[HasFileID]
-    video: HasFileID | None
-    animation: HasFileID | None
-    voice: HasFileID | None
-    audio: HasFileID | None
-    document: HasFileID | None
 
 
 def is_anonymous_messaging_enabled(state_name: str) -> bool:
     # rename it if state declaration will be changed
     # in anonymous_messaging.states.py file
     return state_name == 'AnonymousMessagingStates:enabled'
-
-
-def determine_media_file_id_and_answer_method(
-        bot: HasSendVideoPhotoAnimationVoiceAudioDocumentMethod,
-        message: HasVideoPhotoAnimationVoiceAudioDocument,
-) -> tuple[HasFileID, ReturnsMessage]:
-    """Determine media type and answer method."""
-
-    methods_and_medias = [
-        (bot.send_video, message.video),
-        (bot.send_animation, message.animation),
-        (bot.send_voice, message.voice),
-        (bot.send_audio, message.audio),
-        (bot.send_document, message.document),
-    ]
-    if message.photo:
-        methods_and_medias.append((bot.send_photo, message.photo[-1]))
-
-    for method, media in methods_and_medias:
-        if media is not None:
-            return media.file_id, method
-    raise ValueError('Unsupported media type')
 
 
 def determine_media_file(message: Message) -> tuple[str, SecretMediaType]:
@@ -121,6 +51,24 @@ def determine_media_file(message: Message) -> tuple[str, SecretMediaType]:
     raise ValueError('Unsupported media type')
 
 
+def extract_file_id_from_message(message: Message) -> str:
+    medias = (
+        message.photo,
+        message.voice,
+        message.animation,
+        message.video,
+        message.video_note,
+        message.sticker,
+        message.document,
+        message.audio,
+    )
+    for media in medias:
+        if media.file_id is not None:
+            return media.file_id
+
+    raise UnsupportedContentTypeError(content_type=message.content_type)
+
+
 def get_message_method_by_media_type(
         *,
         message: Message,
@@ -140,3 +88,62 @@ def get_message_method_by_media_type(
         return media_type_to_method[media_type]
     except KeyError:
         raise ValueError('Unsupported media type')
+
+
+class AnonymousMessageSender:
+
+    def __init__(self, bot: Bot):
+        self.__bot = bot
+
+    async def send_text(self, *, chat_id: int | str, message: Message) -> None:
+        try:
+            text = f'<b>💌 Анонимное сообщение</b>\n\n{message.text}'
+            await self.__bot.send_message(chat_id, text)
+        except TelegramAPIError as error:
+            await self.__bot.send_message(
+                chat_id=chat_id,
+                text=f'❌ Не получилось отправить. Ошибка: {str(error)}',
+            )
+        else:
+            await answer_view(message=message, view=AnonymousMessageSentView())
+
+    async def send_media(self, chat_id: int, message: Message) -> None:
+        text = '<b>💌 Анонимное сообщение</b>'
+        if message.caption is not None:
+            text += f'\n\n{message.caption}'
+
+        content_type = message.content_type
+        content_type_to_method: dict[str | ContentType, ReturnsMessage] = {
+            ContentType.PHOTO: self.__bot.send_photo,
+            ContentType.VIDEO: self.__bot.send_video,
+            ContentType.ANIMATION: self.__bot.send_animation,
+            ContentType.VOICE: self.__bot.send_voice,
+            ContentType.AUDIO: self.__bot.send_audio,
+            ContentType.DOCUMENT: self.__bot.send_document,
+            ContentType.VIDEO_NOTE: self.__bot.send_video_note,
+            ContentType.STICKER: self.__bot.send_sticker,
+        }
+
+        try:
+            method = content_type_to_method[content_type]
+        except KeyError:
+            raise UnsupportedContentTypeError(content_type=content_type)
+
+        file_id = extract_file_id_from_message(message)
+
+        # Due to Telegram API limitations, we can't send sticker or video note
+        # with caption, so we send media without caption
+        # and then send caption as a separate message.
+        try:
+            if content_type in {ContentType.STICKER, ContentType.VIDEO_NOTE}:
+                sent_media = await method(chat_id, file_id)
+                await sent_media.reply(text)
+            else:
+                await method(chat_id, file_id, caption=text)
+        except TelegramAPIError as error:
+            await self.__bot.send_message(
+                chat_id=chat_id,
+                text=f'❌ Не получилось отправить. Ошибка: {str(error)}',
+            )
+        else:
+            await answer_view(message=message, view=AnonymousMessageSentView())
