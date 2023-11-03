@@ -21,7 +21,7 @@ router = Router(name=__name__)
 @router.error(ExceptionTypeFilter(aiohttp.ClientConnectorError))
 async def on_client_connector_error(event: ErrorEvent) -> None:
     update = event.update
-    text = '❌ Ошибка подключения к серверу, попробуйте позже'
+    text = f'❌ Ошибка клиентского соединения:\n{str(event.exception)}'
     if update.message is not None:
         await update.message.answer(text)
     if update.callback_query is not None:
