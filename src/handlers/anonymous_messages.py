@@ -4,6 +4,7 @@ from aiogram.filters import Command, StateFilter, or_f
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message, User
 
+from repositories import BalanceRepository
 from services import AnonymousMessageSender
 from states import AnonymousMessagingStates
 from views import (
@@ -35,7 +36,13 @@ async def on_media_for_retranslation(
         message: Message,
         chat_id_for_retranslation: int | str,
         anonymous_message_sender: AnonymousMessageSender,
+        balance_repository: BalanceRepository,
 ) -> None:
+    await balance_repository.create_withdrawal(
+        user_id=message.from_user.id,
+        amount=10000,
+        description='Анонимное медиа',
+    )
     await anonymous_message_sender.send_media(
         chat_id=chat_id_for_retranslation,
         message=message,
@@ -51,7 +58,13 @@ async def on_send_anonymous_text(
         message: Message,
         chat_id_for_retranslation: int | str,
         anonymous_message_sender: AnonymousMessageSender,
+        balance_repository: BalanceRepository,
 ) -> None:
+    await balance_repository.create_withdrawal(
+        user_id=message.from_user.id,
+        amount=5000,
+        description='Анонимное сообщение',
+    )
     await anonymous_message_sender.send_text(
         chat_id=chat_id_for_retranslation,
         message=message,
