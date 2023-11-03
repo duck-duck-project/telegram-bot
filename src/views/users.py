@@ -113,6 +113,7 @@ class UserMenuView(View):
             [
                 KeyboardButton(text='💰 Финансы'),
                 KeyboardButton(text='🍽️ Йемек'),
+                KeyboardButton(text='🐾 Котик'),
             ],
             [
                 KeyboardButton(text='🔐 Включить анонимные сообщения'),

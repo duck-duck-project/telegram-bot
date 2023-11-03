@@ -1,5 +1,5 @@
-from aiogram import Router
-from aiogram.filters import StateFilter, Command
+from aiogram import Router, F
+from aiogram.filters import StateFilter, Command, or_f
 from aiogram.types import Message
 
 from repositories import BalanceRepository
@@ -10,7 +10,10 @@ router = Router(name=__name__)
 
 
 @router.message(
-    Command('meow'),
+    or_f(
+        Command('meow'),
+        F.text == '🐾 Котик',
+    ),
     StateFilter('*'),
 )
 async def on_send_cat_photo(
