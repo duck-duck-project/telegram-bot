@@ -33,12 +33,16 @@ ReplyMarkup: TypeAlias = (
 class View:
     text: str | None = None
     reply_markup: ReplyMarkup | None = None
+    disable_notification: bool | None = None
 
     def get_text(self) -> str | None:
         return self.text
 
     def get_reply_markup(self) -> ReplyMarkup | None:
         return self.reply_markup
+
+    def get_disable_notification(self) -> bool | None:
+        return self.disable_notification
 
 
 class InlineQueryView(View):
