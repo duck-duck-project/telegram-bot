@@ -71,6 +71,7 @@ class UserBalanceView(View):
 
 
 class WithdrawalNotificationView(View, MyBalanceReplyKeyboardMixin):
+    disable_notification = True
 
     def __init__(self, withdrawal: HasAmountAndDescription):
         self.__withdrawal = withdrawal
