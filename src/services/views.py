@@ -20,6 +20,7 @@ async def send_view(
             chat_id=chat_id,
             text=view.get_text(),
             reply_markup=view.get_reply_markup(),
+            disable_notification=view.get_disable_notification(),
         )
     except TelegramAPIError:
         await logger.aexception('Could not send view to user')
