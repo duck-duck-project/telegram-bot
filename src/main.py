@@ -43,6 +43,7 @@ def include_routers(dispatcher: Dispatcher) -> None:
     dispatcher.include_routers(
         handlers.balance.router,
         handlers.work.router,
+        handlers.cats.router,
         handlers.casino.router,
         handlers.food_menu.router,
         handlers.premium.router,

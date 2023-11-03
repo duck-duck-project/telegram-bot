@@ -1,6 +1,7 @@
 from . import (
     balance,
     contacts,
+    cats,
     casino,
     food_menu,
     secret_messages,
@@ -20,6 +21,7 @@ from . import (
 __all__ = (
     'balance',
     'casino',
+    'cats',
     'contacts',
     'food_menu',
     'secret_medias',
