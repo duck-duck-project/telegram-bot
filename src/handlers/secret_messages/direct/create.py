@@ -46,7 +46,7 @@ async def on_secret_message_typing(
         await inline_query.answer(items, cache_time=1, is_personal=True)
         return
 
-    message_length_limit = 200 if user.is_premium else 60
+    message_length_limit = 200
     if len(text) > message_length_limit:
         items = [
             TooLongSecretMessageTextInlineQueryView()
