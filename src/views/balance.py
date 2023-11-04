@@ -62,6 +62,16 @@ class FinanceMenuView(View):
 
 
 class UserBalanceView(View):
+    reply_markup = InlineKeyboardMarkup(
+        inline_keyboard=[
+            [
+                InlineKeyboardButton(
+                    text='💳 Купить дак-дак коины',
+                    url='https://t.me/usbtypec',
+                ),
+            ],
+        ],
+    )
 
     def __init__(self, user_balance: UserBalance):
         self.__user_balance = user_balance
