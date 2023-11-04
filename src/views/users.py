@@ -137,7 +137,6 @@ class UserMenuView(View):
         self.__balance = balance
 
     def get_text(self) -> str:
-        is_premium_emoji = '✅' if self.__user.is_premium else '❌'
         is_anonymous_messaging_enabled_emoji = (
             '✅' if self.__is_anonymous_messaging_enabled else '❌'
         )
@@ -146,7 +145,6 @@ class UserMenuView(View):
             name = f'<a href="{self.__user.profile_photo_url}">{name}</a>'
         return (
             f'🙎🏿‍♂️ Имя: {name}\n'
-            f'✨ Премиум: {is_premium_emoji}\n'
             f'💰 Баланс: 🐥${self.__balance}\n'
             '🔒 Режим анонимных сообщений:'
             f' {is_anonymous_messaging_enabled_emoji}\n'

@@ -13,7 +13,6 @@ from . import (
     users,
     anonymous_messages,
     common,
-    premium,
     server,
     work,
 )
@@ -33,7 +32,6 @@ __all__ = (
     'users',
     'anonymous_messages',
     'common',
-    'premium',
     'server',
     'work',
 )

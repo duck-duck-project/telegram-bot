@@ -10,7 +10,7 @@ from callback_data import (
     ContactDetailCallbackData,
 )
 from models import Contact
-from services import filter_not_hidden
+from services.filters import filter_not_hidden
 from views import View
 
 __all__ = (

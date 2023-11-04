@@ -4,7 +4,6 @@ __all__ = (
     'UserAlreadyExistsError',
     'UserDoesNotExistError',
     'ThemeDoesNotExistError',
-    'UserHasNoPremiumSubscriptionError',
 )
 
 
@@ -22,10 +21,6 @@ class UserAlreadyExistsError(Exception):
 
     def __str__(self):
         return f'User with Telegram ID {self.user_id} already exists'
-
-
-class UserHasNoPremiumSubscriptionError(Exception):
-    pass
 
 
 class ThemeDoesNotExistError(Exception):

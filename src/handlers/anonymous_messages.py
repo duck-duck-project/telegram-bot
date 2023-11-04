@@ -5,7 +5,7 @@ from aiogram.fsm.context import FSMContext
 from aiogram.types import Message, User
 
 from repositories import BalanceRepository
-from services import AnonymousMessageSender
+from services import AnonymousMessageSender, BalanceNotifier
 from states import AnonymousMessagingStates
 from views import (
     AnonymousMessagingToggledInGroupChatView,
@@ -37,8 +37,9 @@ async def on_media_for_retranslation(
         chat_id_for_retranslation: int | str,
         anonymous_message_sender: AnonymousMessageSender,
         balance_repository: BalanceRepository,
+        balance_notifier: BalanceNotifier,
 ) -> None:
-    await balance_repository.create_withdrawal(
+    withdrawal = await balance_repository.create_withdrawal(
         user_id=message.from_user.id,
         amount=10000,
         description='Анонимное медиа',
@@ -47,6 +48,7 @@ async def on_media_for_retranslation(
         chat_id=chat_id_for_retranslation,
         message=message,
     )
+    await balance_notifier.send_withdrawal_notification(withdrawal)
 
 
 @router.message(
@@ -59,8 +61,9 @@ async def on_send_anonymous_text(
         chat_id_for_retranslation: int | str,
         anonymous_message_sender: AnonymousMessageSender,
         balance_repository: BalanceRepository,
+        balance_notifier: BalanceNotifier,
 ) -> None:
-    await balance_repository.create_withdrawal(
+    withdrawal = await balance_repository.create_withdrawal(
         user_id=message.from_user.id,
         amount=5000,
         description='Анонимное сообщение',
@@ -69,6 +72,7 @@ async def on_send_anonymous_text(
         chat_id=chat_id_for_retranslation,
         message=message,
     )
+    await balance_notifier.send_withdrawal_notification(withdrawal)
 
 
 @router.message(

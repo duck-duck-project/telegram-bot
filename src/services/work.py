@@ -1,26 +1,28 @@
 import random
+from dataclasses import dataclass
 from typing import Self
 
-from models import ArithmeticExpression
+from models import ArithmeticExpression, HumanizedArithmeticExpression
 
 __all__ = (
     'ArithmeticProblem',
     'get_arithmetic_problem',
-    'get_operator_sign',
+    'get_random_operator',
     'get_arithmetic_expression',
-    'compute_final_reward',
 )
 
 
-def get_operator_sign() -> str:
-    """Returns a random operator sign. Plus, minus or multiply."""
-    return random.choice('+-*')
-
-
+@dataclass(frozen=True, slots=True)
 class ArithmeticProblem:
+    expression: ArithmeticExpression
 
-    def __init__(self, expression: ArithmeticExpression):
-        self.expression = expression
+    def __str__(self):
+        return self.get_humanized_expression()
+
+    def get_humanized_expression(self) -> HumanizedArithmeticExpression:
+        """Returns a humanized arithmetic expression."""
+        humanized_arithmetic_expression = self.expression.replace('**2', '²')
+        return HumanizedArithmeticExpression(humanized_arithmetic_expression)
 
     def compute_correct_answer(self) -> int:
         """Computes the correct answer for the problem."""
@@ -28,13 +30,13 @@ class ArithmeticProblem:
 
     def compute_reward_value(self) -> int:
         """Computes the reward value for solving the problem."""
-        operators_complexity_value = (
-                self.expression.count('+') * 3
-                + self.expression.count('-') * 5
-                + self.expression.count('*') * 5
+        humanized_expression = self.get_humanized_expression()
+        return (
+                humanized_expression.count('+') * 10
+                + humanized_expression.count('-') * 12
+                + humanized_expression.count('*') * 15
+                + humanized_expression.count('²') * 15
         )
-        answer_complexity = abs(self.compute_correct_answer()) // 10
-        return operators_complexity_value + answer_complexity
 
     @classmethod
     def from_text(cls, text: str) -> Self:
@@ -51,21 +53,46 @@ class ArithmeticProblem:
             text.split('\n')[0]
             .removeprefix('❓ Сколько будет: ')
             .removesuffix('?')
+            .replace('²', '**2')
         )
         return cls(expression=expression)
+
+
+def get_square_or_empty_string() -> str:
+    """
+    Returns a square sign or an empty string. Change to ² with 1/5 probability.
+
+    Returns:
+        A square sign or an empty string.
+    """
+    return '**2' if random.randint(0, 4) == 0 else ''
+
+
+def get_random_operator() -> str:
+    """
+    Returns a random operator sign. Plus, minus or multiply.
+
+    Returns:
+        A random operator sign (+, - or *).
+    """
+    return random.choice('+-*')
 
 
 def get_arithmetic_expression() -> ArithmeticExpression:
     """Returns an arithmetic expression with random operators and operands."""
     expression = (
-        f'{get_operator_sign()}'
-        f'{random.randint(1, 10)}'
-        f'{get_operator_sign()}'
-        f'{random.randint(1, 10)}'
-        f'{get_operator_sign()}'
-        f'{random.randint(1, 10)}'
-        f'{get_operator_sign()}'
-        f'{random.randint(1, 10)}'
+        f'{get_random_operator()}'
+        f'{random.randint(1, 9)}'
+        f'{get_square_or_empty_string()}'
+        f'{get_random_operator()}'
+        f'{random.randint(1, 9)}'
+        f'{get_square_or_empty_string()}'
+        f'{get_random_operator()}'
+        f'{random.randint(1, 9)}'
+        f'{get_square_or_empty_string()}'
+        f'{get_random_operator()}'
+        f'{random.randint(1, 9)}'
+        f'{get_square_or_empty_string()}'
     ).lstrip('+*')
     return ArithmeticExpression(expression)
 
@@ -74,26 +101,3 @@ def get_arithmetic_problem() -> ArithmeticProblem:
     """Returns an arithmetic problem with a random expression."""
     expression = get_arithmetic_expression()
     return ArithmeticProblem(expression)
-
-
-def compute_final_reward(
-        *,
-        reward_value: int,
-        premium_multiplier: int | float,
-        is_premium: bool,
-) -> int:
-    """
-    Computes the final reward value based on the premium status of the user.
-
-    Keyword Args:
-        reward_value: The reward value to compute.
-        premium_multiplier: The multiplier to apply to the reward value if the
-            user is premium.
-        is_premium: Whether the user is premium or not.
-
-    Returns:
-        The final reward value.
-    """
-    if is_premium:
-        return reward_value * premium_multiplier
-    return int(reward_value)

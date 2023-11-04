@@ -22,7 +22,6 @@ class User(BaseModel):
     id: int
     fullname: str
     username: str | None
-    is_premium: bool
     can_be_added_to_contacts: bool
     secret_message_theme: SecretMessageTheme | None
     profile_photo_url: HttpUrl | None
