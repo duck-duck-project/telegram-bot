@@ -5,11 +5,9 @@ from aiogram.fsm.context import FSMContext
 from aiogram.types import Message
 
 from filters import reply_message_from_bot_filter, integer_filter
-from models import User
 from repositories import BalanceRepository
 from services import (
     ArithmeticProblem,
-    compute_final_reward,
     get_arithmetic_problem,
     BalanceNotifier,
 )
@@ -54,7 +52,6 @@ async def on_arithmetic_expression_already_solved(message: Message) -> None:
 async def on_arithmetic_expression_answer(
         message: Message,
         number: int,
-        user: User,
         balance_repository: BalanceRepository,
         balance_notifier: BalanceNotifier,
 ) -> None:
@@ -66,13 +63,7 @@ async def on_arithmetic_expression_answer(
         await message.reply('Неправильно')
         return
 
-    premium_multiplier: int = 2
-    amount_to_deposit = compute_final_reward(
-        reward_value=arithmetic_problem.compute_reward_value(),
-        premium_multiplier=premium_multiplier,
-        is_premium=user.is_premium,
-    )
-
+    amount_to_deposit = arithmetic_problem.compute_correct_answer()
     await message.reply_to_message.edit_text(text)
     deposit = await balance_repository.create_deposit(
         user_id=message.from_user.id,
@@ -100,8 +91,7 @@ async def on_create_arithmetic_expression_to_solve(
 
     arithmetic_problem = get_arithmetic_problem()
     view = ArithmeticProblemView(
-        expression=arithmetic_problem.expression,
-        premium_multiplier=2,
+        expression=arithmetic_problem.get_humanized_expression(),
         reward=arithmetic_problem.compute_reward_value(),
     )
     await answer_view(message=message, view=view)
