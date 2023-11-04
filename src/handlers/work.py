@@ -63,7 +63,7 @@ async def on_arithmetic_expression_answer(
         await message.reply('Неправильно')
         return
 
-    amount_to_deposit = arithmetic_problem.compute_correct_answer()
+    amount_to_deposit = arithmetic_problem.compute_reward_value()
     await message.reply_to_message.edit_text(text)
     deposit = await balance_repository.create_deposit(
         user_id=message.from_user.id,
