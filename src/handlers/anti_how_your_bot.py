@@ -2,6 +2,7 @@ from aiogram import Router, F
 from aiogram.filters import StateFilter
 from aiogram.types import Message
 
+from exceptions import InsufficientFundsForWithdrawalError
 from repositories import BalanceRepository
 from services import BalanceNotifier
 
@@ -19,8 +20,13 @@ async def on_how_your_bot_message(
 ) -> None:
     price = 100
     user_id = message.from_user.id
-    user_balance = await balance_repository.get_user_balance(user_id)
-    if user_balance.balance < price:
+    try:
+        withdrawal = await balance_repository.create_withdrawal(
+            user_id=user_id,
+            amount=price,
+            description='Использование @HowYourBot',
+        )
+    except InsufficientFundsForWithdrawalError:
         if message.from_user.username is None:
             link = f'tg://openmessage?user_id={message.from_user.id}'
         else:
@@ -33,9 +39,4 @@ async def on_how_your_bot_message(
         )
         await message.delete()
     else:
-        withdrawal = await balance_repository.create_withdrawal(
-            user_id=user_id,
-            amount=price,
-            description='Использование @HowYourBot',
-        )
         await balance_notifier.send_withdrawal_notification(withdrawal)
