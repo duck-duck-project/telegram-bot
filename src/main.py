@@ -41,6 +41,7 @@ logger: BoundLogger = structlog.get_logger('app')
 
 def include_routers(dispatcher: Dispatcher) -> None:
     dispatcher.include_routers(
+        handlers.anti_how_your_bot.router,
         handlers.balance.router,
         handlers.work.router,
         handlers.cats.router,
