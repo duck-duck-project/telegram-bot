@@ -4,6 +4,7 @@ from aiogram.types import CallbackQuery, Message, ErrorEvent
 
 from exceptions import InsufficientFundsForWithdrawalError
 from repositories import BalanceRepository
+from services import BalanceNotifier
 from views import (
     UserBalanceView,
     render_message_or_callback_query,
@@ -33,6 +34,29 @@ async def on_insufficient_funds_for_withdrawal_error(event: ErrorEvent) -> None:
         await event.update.message.reply(text)
     if event.update.callback_query is not None:
         await event.update.callback_query.answer(text, show_alert=True)
+
+
+@router.message(
+    Command('balance'),
+    F.reply_to_message.as_('reply'),
+    StateFilter('*'),
+)
+async def on_show_other_user_balance(
+        message: Message,
+        reply: Message,
+        balance_repository: BalanceRepository,
+        balance_notifier: BalanceNotifier,
+) -> None:
+    withdrawal = await balance_repository.create_withdrawal(
+        user_id=message.from_user.id,
+        amount=100,
+        description='Просмотр чужого баланса',
+    )
+    await balance_notifier.send_withdrawal_notification(withdrawal)
+    user_id = reply.from_user.id
+    user_balance = await balance_repository.get_user_balance(user_id)
+    view = UserBalanceView(user_balance)
+    await answer_view(message=message, view=view)
 
 
 @router.message(
