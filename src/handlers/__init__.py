@@ -1,5 +1,6 @@
 from . import (
     anti_how_your_bot,
+    anti_stickers,
     balance,
     contacts,
     cats,
@@ -20,6 +21,7 @@ from . import (
 
 __all__ = (
     'anti_how_your_bot',
+    'anti_stickers',
     'balance',
     'casino',
     'cats',
