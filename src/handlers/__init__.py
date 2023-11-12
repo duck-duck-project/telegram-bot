@@ -1,4 +1,5 @@
 from . import (
+    probability,
     anti_how_your_bot,
     anti_stickers,
     balance,
@@ -20,6 +21,7 @@ from . import (
 )
 
 __all__ = (
+    'probability',
     'anti_how_your_bot',
     'anti_stickers',
     'balance',

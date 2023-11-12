@@ -1,5 +1,6 @@
 from .anonymous import *
 from .casino import *
+from .emoji import *
 from .filters import *
 from .notifiers import *
 from .photos import *
