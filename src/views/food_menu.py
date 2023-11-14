@@ -1,6 +1,7 @@
 import textwrap
 
 from aiogram.types import InputMediaPhoto
+from aiogram.utils.media_group import MediaGroupBuilder
 
 from models import DailyFoodMenu
 from views.base import View
@@ -32,16 +33,17 @@ class FoodMenuMediaGroupView(View):
         return '\n'.join(caption)
 
     def as_media_group(self) -> list[InputMediaPhoto]:
-        first = InputMediaPhoto(
-            media=str(self.__daily_food_menu.items[0].photo_url),
-            caption=self.get_text(),
-        )
-
-        return [first] + [
+        input_media_photos: list[InputMediaPhoto] = [
             InputMediaPhoto(
                 media=str(food_menu_item.photo_url),
-            ) for food_menu_item in self.__daily_food_menu.items[1:]
+                caption=self.get_text(),
+            ) for food_menu_item in self.__daily_food_menu.items
         ]
+        media_group_builder = MediaGroupBuilder(
+            media=input_media_photos,
+            caption=self.get_text(),
+        )
+        return media_group_builder.build()
 
 
 class FoodMenuFAQView(View):
