@@ -1,5 +1,11 @@
 from aiogram import Router, F
-from aiogram.filters import StateFilter, Command, ExceptionTypeFilter, or_f
+from aiogram.filters import (
+    StateFilter,
+    Command,
+    ExceptionTypeFilter,
+    or_f,
+    invert_f,
+)
 from aiogram.types import CallbackQuery, Message, ErrorEvent
 
 from exceptions import InsufficientFundsForWithdrawalError
@@ -39,6 +45,7 @@ async def on_insufficient_funds_for_withdrawal_error(event: ErrorEvent) -> None:
 @router.message(
     Command('balance'),
     F.reply_to_message.as_('reply'),
+    invert_f(F.reply_to_message.is_bot),
     StateFilter('*'),
 )
 async def on_show_other_user_balance(
