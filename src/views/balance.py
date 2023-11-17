@@ -73,11 +73,15 @@ class UserBalanceView(View):
         ],
     )
 
-    def __init__(self, user_balance: UserBalance):
+    def __init__(self, user_balance: UserBalance, user_fullname: str):
         self.__user_balance = user_balance
+        self.__user_fullname = user_fullname
 
     def get_text(self) -> str:
-        return f'💰 Баланс: {self.__user_balance.balance} дак-дак коинов'
+        return (
+            f'🙍🏿‍♂️ Пользователь: {self.__user_fullname}\n'
+            f'💰 Баланс: {self.__user_balance.balance} дак-дак коинов'
+        )
 
 
 class WithdrawalNotificationView(View, MyBalanceReplyKeyboardMixin):

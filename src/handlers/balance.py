@@ -1,5 +1,11 @@
 from aiogram import Router, F
-from aiogram.filters import StateFilter, Command, ExceptionTypeFilter, or_f
+from aiogram.filters import (
+    StateFilter,
+    Command,
+    ExceptionTypeFilter,
+    or_f,
+    invert_f,
+)
 from aiogram.types import CallbackQuery, Message, ErrorEvent
 
 from exceptions import InsufficientFundsForWithdrawalError
@@ -39,6 +45,7 @@ async def on_insufficient_funds_for_withdrawal_error(event: ErrorEvent) -> None:
 @router.message(
     Command('balance'),
     F.reply_to_message.as_('reply'),
+    invert_f(F.reply_to_message.is_bot),
     StateFilter('*'),
 )
 async def on_show_other_user_balance(
@@ -47,16 +54,16 @@ async def on_show_other_user_balance(
         balance_repository: BalanceRepository,
         balance_notifier: BalanceNotifier,
 ) -> None:
+    user_id = reply.from_user.id
+    user_balance = await balance_repository.get_user_balance(user_id)
+    view = UserBalanceView(user_balance, message.from_user.full_name)
+    await answer_view(message=message, view=view)
     withdrawal = await balance_repository.create_withdrawal(
         user_id=message.from_user.id,
         amount=100,
         description='Просмотр чужого баланса',
     )
     await balance_notifier.send_withdrawal_notification(withdrawal)
-    user_id = reply.from_user.id
-    user_balance = await balance_repository.get_user_balance(user_id)
-    view = UserBalanceView(user_balance)
-    await answer_view(message=message, view=view)
 
 
 @router.message(
@@ -76,7 +83,10 @@ async def on_show_user_balance(
 ) -> None:
     user_id = message_or_callback_query.from_user.id
     user_balance = await balance_repository.get_user_balance(user_id)
-    view = UserBalanceView(user_balance)
+    view = UserBalanceView(
+        user_balance=user_balance,
+        user_fullname=message_or_callback_query.from_user.full_name,
+    )
     await render_message_or_callback_query(
         message_or_callback_query=message_or_callback_query,
         view=view,
