@@ -1,3 +1,4 @@
+from aiogram import F
 from aiogram.types import Message, User
 
 __all__ = ('reply_message_from_bot_filter',)
