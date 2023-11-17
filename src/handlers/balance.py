@@ -55,7 +55,7 @@ async def on_show_other_user_balance(
     await balance_notifier.send_withdrawal_notification(withdrawal)
     user_id = reply.from_user.id
     user_balance = await balance_repository.get_user_balance(user_id)
-    view = UserBalanceView(user_balance)
+    view = UserBalanceView(user_balance, message.from_user.full_name)
     await answer_view(message=message, view=view)
 
 
@@ -76,7 +76,10 @@ async def on_show_user_balance(
 ) -> None:
     user_id = message_or_callback_query.from_user.id
     user_balance = await balance_repository.get_user_balance(user_id)
-    view = UserBalanceView(user_balance)
+    view = UserBalanceView(
+        user_balance=user_balance,
+        user_fullname=message_or_callback_query.from_user.full_name,
+    )
     await render_message_or_callback_query(
         message_or_callback_query=message_or_callback_query,
         view=view,
