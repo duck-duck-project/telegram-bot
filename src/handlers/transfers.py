@@ -74,9 +74,20 @@ async def on_transfer_operation_amount_invalid(
 
 
 @router.message(
+    Command('send'),
+    F.from_user.id == F.reply_to_message.from_user.id,
+    F.chat.type.in_({ChatType.GROUP, ChatType.SUPERGROUP}),
+    StateFilter('*'),
+)
+async def on_transfer_to_himself(message: Message) -> None:
+    await message.reply('🤨 Нельзя переводить самому себе')
+
+
+@router.message(
     F.reply_to_message,
     Command('send'),
     invert_f(F.reply_to_message.from_user.is_bot),
+    F.from_user.id != F.reply_to_message.from_user.id,
     transfer_operation_filter,
     StateFilter('*'),
 )
