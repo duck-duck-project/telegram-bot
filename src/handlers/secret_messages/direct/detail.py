@@ -1,4 +1,4 @@
-from aiogram import Router
+from aiogram import Router, Bot
 from aiogram.filters import StateFilter
 from aiogram.types import CallbackQuery
 
@@ -11,7 +11,10 @@ from repositories import (
     SecretMessageRepository,
     TeamMemberRepository,
 )
-from services import can_see_contact_secret, can_see_team_secret
+from services import (
+    can_see_contact_secret, can_see_team_secret,
+    notify_secret_message_read_attempt
+)
 
 __all__ = ('register_handlers',)
 
@@ -44,6 +47,7 @@ async def on_show_contact_message(
         callback_data: SecretMessageDetailCallbackData,
         contact_repository: ContactRepository,
         secret_message_repository: SecretMessageRepository,
+        bot: Bot,
 ) -> None:
     contact = await contact_repository.get_by_id(callback_data.contact_id)
     secret_message = await secret_message_repository.get_by_id(
@@ -55,6 +59,11 @@ async def on_show_contact_message(
             contact=contact,
     ):
         text = 'Это сообщение не предназначено для тебя 😉'
+        await notify_secret_message_read_attempt(
+            bot=bot,
+            contact=contact,
+            user_full_name=callback_query.from_user.full_name,
+        )
     else:
         text = secret_message.text
     await callback_query.answer(text, show_alert=True)
