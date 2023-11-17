@@ -52,9 +52,12 @@ async def notify_secret_message_read_attempt(
         f'❗️ {user_full_name} попытался'
         f' прочитать секретное сообщение'
     )
-    for chat_id in (contact.of_user.id, contact.to_user.id):
+    for user in (contact.of_user, contact.to_user):
+        if not user.can_receive_notifications:
+            continue
+
         with contextlib.suppress(TelegramAPIError):
             await bot.send_message(
-                chat_id=chat_id,
+                chat_id=user.id,
                 text=text,
             )
