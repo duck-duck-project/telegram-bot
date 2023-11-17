@@ -36,7 +36,6 @@ class FoodMenuMediaGroupView(View):
         input_media_photos: list[InputMediaPhoto] = [
             InputMediaPhoto(
                 media=str(food_menu_item.photo_url),
-                caption=self.get_text(),
             ) for food_menu_item in self.__daily_food_menu.items
         ]
         media_group_builder = MediaGroupBuilder(
