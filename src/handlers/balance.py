@@ -56,7 +56,7 @@ async def on_show_other_user_balance(
 ) -> None:
     user_id = reply.from_user.id
     user_balance = await balance_repository.get_user_balance(user_id)
-    view = UserBalanceView(user_balance, message.from_user.full_name)
+    view = UserBalanceView(user_balance, reply.from_user.full_name)
     await answer_view(message=message, view=view)
     withdrawal = await balance_repository.create_withdrawal(
         user_id=message.from_user.id,
