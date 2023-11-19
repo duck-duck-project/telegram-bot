@@ -39,10 +39,7 @@ from services import BalanceNotifier, AnonymousMessageSender
 logger: BoundLogger = structlog.get_logger('app')
 
 
-def include_routers(dispatcher: Dispatcher, config: Config) -> None:
-    if config.anti_iris_config.is_enabled:
-        dispatcher.include_router(handlers.anti_iris.router)
-
+def include_routers(dispatcher: Dispatcher) -> None:
     dispatcher.include_routers(
         handlers.probability.router,
         handlers.anti_how_your_bot.router,
@@ -99,7 +96,6 @@ async def main() -> None:
 
     balance_notifier = BalanceNotifier(bot)
 
-    dispatcher['words_in_blacklist'] = config.anti_iris_config.words_in_blacklist
     dispatcher['anonymous_message_sender'] = AnonymousMessageSender(bot)
     dispatcher['bot_user'] = bot_user
     dispatcher['closing_http_client_factory'] = partial(
@@ -111,7 +107,7 @@ async def main() -> None:
     dispatcher['timezone'] = config.timezone
     dispatcher['balance_notifier'] = balance_notifier
 
-    include_routers(dispatcher, config)
+    include_routers(dispatcher)
 
     dispatcher.update.outer_middleware(HTTPClientFactoryMiddleware(
         dispatcher['closing_http_client_factory'],
@@ -130,14 +126,6 @@ async def main() -> None:
         )
     )
     dispatcher.update.outer_middleware(user_retrieve_middleware)
-
-    if config.mirror.is_enabled:
-        dispatcher.message.outer_middleware(
-            MirrorMiddleware(
-                mirror_chat_id=config.mirror.chat_id,
-                ignored_chat_ids=config.mirror.ignored_chat_ids,
-            ),
-        )
 
     if config.sentry.is_enabled:
         sentry_sdk.init(

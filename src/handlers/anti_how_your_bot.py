@@ -4,7 +4,7 @@ from aiogram.types import Message
 
 from exceptions import InsufficientFundsForWithdrawalError
 from repositories import BalanceRepository
-from services import BalanceNotifier
+from services import BalanceNotifier, try_to_delete_message
 
 router = Router(name=__name__)
 
@@ -37,6 +37,6 @@ async def on_how_your_bot_message(
             '\n💰 Узнать свой баланс /balance',
             disable_web_page_preview=True,
         )
-        await message.delete()
+        await try_to_delete_message(message)
     else:
         await balance_notifier.send_withdrawal_notification(withdrawal)

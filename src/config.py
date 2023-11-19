@@ -9,7 +9,6 @@ __all__ = (
     'LoggingConfig',
     'RedisConfig',
     'SentryConfig',
-    'AntiIrisConfig',
     'Config',
     'load_config_from_file_path',
     'load_commands_from_file',
@@ -17,14 +16,7 @@ __all__ = (
 )
 
 from aiogram.types import BotCommand
-from pydantic import TypeAdapter, BaseModel
-
-
-@dataclass(frozen=True, slots=True)
-class MirrorConfig:
-    is_enabled: bool
-    chat_id: int
-    ignored_chat_ids: set[int]
+from pydantic import TypeAdapter
 
 
 @dataclass(frozen=True, slots=True)
@@ -53,15 +45,9 @@ class CloudinaryConfig:
     api_secret: str
 
 
-class AntiIrisConfig(BaseModel):
-    is_enabled: bool
-    words_in_blacklist: set[str]
-
-
 @dataclass(frozen=True, slots=True)
 class Config:
     logging: LoggingConfig
-    anti_iris_config: AntiIrisConfig
     cloudinary: CloudinaryConfig
     telegram_bot_token: str
     redis: RedisConfig
@@ -69,17 +55,12 @@ class Config:
     server_api_base_url: str
     main_chat_id: int | str
     timezone: ZoneInfo
-    mirror: MirrorConfig
 
 
 def parse_config(config: Mapping) -> Config:
     return Config(
         logging=LoggingConfig(
             level=config['logging']['level'],
-        ),
-        anti_iris_config=AntiIrisConfig(
-            is_enabled=config['anti_iris']['is_enabled'],
-            words_in_blacklist=config['anti_iris']['words_in_blacklist'],
         ),
         cloudinary=CloudinaryConfig(
             cloud_name=config['cloudinary']['cloud_name'],
@@ -100,11 +81,6 @@ def parse_config(config: Mapping) -> Config:
         server_api_base_url=config['server_api']['base_url'],
         main_chat_id=config['main_chat_id'],
         timezone=ZoneInfo(config['timezone']),
-        mirror=MirrorConfig(
-            is_enabled=config['mirror']['is_enabled'],
-            chat_id=config['mirror']['chat_id'],
-            ignored_chat_ids=set(config['mirror']['ignored_chat_ids']),
-        ),
     )
 
 

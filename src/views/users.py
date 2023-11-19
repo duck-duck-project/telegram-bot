@@ -82,12 +82,6 @@ class UserPersonalSettingsView(View):
                 ],
                 [
                     InlineKeyboardButton(
-                        text='🌟 Премиум подписка',
-                        callback_data='show-premium-subscription',
-                    ),
-                ],
-                [
-                    InlineKeyboardButton(
                         text='🎨 Тема',
                         callback_data='show-themes-list',
                     ),
