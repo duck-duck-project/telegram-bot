@@ -20,6 +20,6 @@ async def on_ask_for_probability(message: Message):
     view = ProbabilityAnswerView(
         question=message.text,
         answer_emoji=get_random_emoji(),
-        probability=random.randint(0, 100),
+        probability_percent=random.randint(0, 100),
     )
     await reply_view(message=message, view=view)

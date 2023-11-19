@@ -15,12 +15,11 @@ from redis.asyncio import Redis
 from structlog.stdlib import BoundLogger
 
 import handlers
-from config import load_config_from_file_path, load_commands_from_file, Config
+from config import load_config_from_file_path, load_commands_from_file
 from logger import setup_logging
 from middlewares import (
     HTTPClientFactoryMiddleware,
     APIRepositoriesInitializerMiddleware,
-    MirrorMiddleware,
     user_retrieve_middleware,
 )
 from repositories import (

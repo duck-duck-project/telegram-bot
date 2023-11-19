@@ -10,7 +10,7 @@ __all__ = (
 )
 
 
-def bet_amount_filter(message: Message, bet_amount: int) -> bool | int:
+def bet_amount_filter(_: Message, bet_amount: int) -> bool | int:
     return 10 <= bet_amount <= 1_000_000
 
 
