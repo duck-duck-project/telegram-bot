@@ -29,3 +29,7 @@ api_secret = ""
 is_enabled = true
 chat_id = -1001938259721
 ignored_chat_ids = []
+
+[anti_iris]
+is_enabled = false
+words_in_blacklist = []
