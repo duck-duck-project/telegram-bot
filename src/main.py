@@ -15,7 +15,7 @@ from redis.asyncio import Redis
 from structlog.stdlib import BoundLogger
 
 import handlers
-from config import load_config_from_file_path, load_commands_from_file
+from config import load_config_from_file_path, load_commands_from_file, Config
 from logger import setup_logging
 from middlewares import (
     HTTPClientFactoryMiddleware,
@@ -39,7 +39,10 @@ from services import BalanceNotifier, AnonymousMessageSender
 logger: BoundLogger = structlog.get_logger('app')
 
 
-def include_routers(dispatcher: Dispatcher) -> None:
+def include_routers(dispatcher: Dispatcher, config: Config) -> None:
+    if config.anti_iris_config.is_enabled:
+        dispatcher.include_router(handlers.anti_iris.router)
+
     dispatcher.include_routers(
         handlers.probability.router,
         handlers.anti_how_your_bot.router,
@@ -96,6 +99,7 @@ async def main() -> None:
 
     balance_notifier = BalanceNotifier(bot)
 
+    dispatcher['words_in_blacklist'] = config.anti_iris_config.words_in_blacklist
     dispatcher['anonymous_message_sender'] = AnonymousMessageSender(bot)
     dispatcher['bot_user'] = bot_user
     dispatcher['closing_http_client_factory'] = partial(
@@ -107,7 +111,7 @@ async def main() -> None:
     dispatcher['timezone'] = config.timezone
     dispatcher['balance_notifier'] = balance_notifier
 
-    include_routers(dispatcher)
+    include_routers(dispatcher, config)
 
     dispatcher.update.outer_middleware(HTTPClientFactoryMiddleware(
         dispatcher['closing_http_client_factory'],
