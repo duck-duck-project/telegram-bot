@@ -9,7 +9,6 @@ __all__ = (
     'LoggingConfig',
     'RedisConfig',
     'SentryConfig',
-    'AntiIrisConfig',
     'Config',
     'load_config_from_file_path',
     'load_commands_from_file',
@@ -17,7 +16,7 @@ __all__ = (
 )
 
 from aiogram.types import BotCommand
-from pydantic import TypeAdapter, BaseModel
+from pydantic import TypeAdapter
 
 
 @dataclass(frozen=True, slots=True)
@@ -53,15 +52,9 @@ class CloudinaryConfig:
     api_secret: str
 
 
-class AntiIrisConfig(BaseModel):
-    is_enabled: bool
-    words_in_blacklist: set[str]
-
-
 @dataclass(frozen=True, slots=True)
 class Config:
     logging: LoggingConfig
-    anti_iris_config: AntiIrisConfig
     cloudinary: CloudinaryConfig
     telegram_bot_token: str
     redis: RedisConfig
@@ -76,10 +69,6 @@ def parse_config(config: Mapping) -> Config:
     return Config(
         logging=LoggingConfig(
             level=config['logging']['level'],
-        ),
-        anti_iris_config=AntiIrisConfig(
-            is_enabled=config['anti_iris']['is_enabled'],
-            words_in_blacklist=config['anti_iris']['words_in_blacklist'],
         ),
         cloudinary=CloudinaryConfig(
             cloud_name=config['cloudinary']['cloud_name'],
