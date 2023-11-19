@@ -5,6 +5,7 @@ from aiogram.filters import StateFilter
 from aiogram.types import Message
 
 from services import get_random_emoji
+from views import ProbabilityAnswerView, reply_view
 
 __all__ = ('router',)
 
@@ -12,12 +13,13 @@ router = Router(name=__name__)
 
 
 @router.message(
-    F.text.lower().startswith('вероятность того что'),
+    F.text.lower().startswith('вероятность'),
     StateFilter('*'),
 )
 async def on_ask_for_probability(message: Message):
-    text = (
-        f'<i>❓ {message.text}</i>\n'
-        f'{get_random_emoji()} <b>{random.randint(0, 100)}%</b>'
+    view = ProbabilityAnswerView(
+        question=message.text,
+        answer_emoji=get_random_emoji(),
+        probability=random.randint(0, 100),
     )
-    await message.reply(text)
+    await reply_view(message=message, view=view)
