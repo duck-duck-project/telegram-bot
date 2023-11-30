@@ -1,4 +1,4 @@
-from typing import TypeAlias
+from typing import TypeAlias, assert_never
 from uuid import uuid4
 
 from aiogram.types import (
@@ -8,7 +8,8 @@ from aiogram.types import (
     ReplyKeyboardRemove,
     Message,
     InlineQueryResultArticle,
-    InputTextMessageContent, CallbackQuery,
+    InputTextMessageContent,
+    CallbackQuery,
 )
 
 __all__ = (
@@ -34,6 +35,7 @@ class View:
     text: str | None = None
     reply_markup: ReplyMarkup | None = None
     disable_notification: bool | None = None
+    disable_web_page_preview: bool | None = None
 
     def get_text(self) -> str | None:
         return self.text
@@ -43,6 +45,9 @@ class View:
 
     def get_disable_notification(self) -> bool | None:
         return self.disable_notification
+
+    def get_disable_web_page_preview(self) -> bool | None:
+        return self.disable_web_page_preview
 
 
 class InlineQueryView(View):
@@ -89,12 +94,12 @@ async def answer_view(
         *,
         message: Message,
         view: View,
-        disable_web_page_preview: bool | None = None,
 ) -> Message:
     return await message.answer(
         text=view.get_text(),
         reply_markup=view.get_reply_markup(),
-        disable_web_page_preview=disable_web_page_preview,
+        disable_web_page_preview=view.get_disable_web_page_preview(),
+        disable_notification=view.get_disable_notification(),
     )
 
 
@@ -102,12 +107,12 @@ async def reply_view(
         *,
         message: Message,
         view: View,
-        disable_web_page_preview: bool | None = None,
 ) -> Message:
     return await message.reply(
         text=view.get_text(),
         reply_markup=view.get_reply_markup(),
-        disable_web_page_preview=disable_web_page_preview,
+        disable_notification=view.get_disable_notification(),
+        disable_web_page_preview=view.get_disable_web_page_preview(),
     )
 
 
@@ -115,12 +120,11 @@ async def edit_message_by_view(
         *,
         message: Message,
         view: View,
-        disable_web_page_preview: bool | None = None,
 ) -> Message:
     return await message.edit_text(
         text=view.get_text(),
         reply_markup=view.get_reply_markup(),
-        disable_web_page_preview=disable_web_page_preview,
+        disable_web_page_preview=view.get_disable_web_page_preview(),
     )
 
 
@@ -128,23 +132,20 @@ async def render_message_or_callback_query(
         *,
         message_or_callback_query: Message | CallbackQuery,
         view: View,
-        disable_web_page_preview: bool | None = None,
 ) -> Message:
     match message_or_callback_query:
         case Message():
             return await answer_view(
                 message=message_or_callback_query,
                 view=view,
-                disable_web_page_preview=disable_web_page_preview,
             )
         case CallbackQuery():
             return await edit_message_by_view(
                 message=message_or_callback_query.message,
                 view=view,
-                disable_web_page_preview=disable_web_page_preview,
             )
         case _:
-            raise ValueError('Unknown type')
+            assert_never(message_or_callback_query)
 
 
 async def send_view(
@@ -157,4 +158,6 @@ async def send_view(
         chat_id=chat_id,
         text=view.get_text(),
         reply_markup=view.get_reply_markup(),
+        disable_notification=view.get_disable_notification(),
+        disable_web_page_preview=view.get_disable_web_page_preview(),
     )

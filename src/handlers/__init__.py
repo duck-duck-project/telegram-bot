@@ -1,7 +1,7 @@
 from . import (
     probability,
     anti_how_your_bot,
-    anti_stickers,
+    anti_media,
     balance,
     contacts,
     cats,
@@ -23,7 +23,7 @@ from . import (
 __all__ = (
     'probability',
     'anti_how_your_bot',
-    'anti_stickers',
+    'anti_media',
     'balance',
     'casino',
     'cats',

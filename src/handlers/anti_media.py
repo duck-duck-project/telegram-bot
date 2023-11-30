@@ -1,11 +1,12 @@
 from aiogram import Router, F
 from aiogram.enums import ChatType
-from aiogram.filters import StateFilter
+from aiogram.filters import StateFilter, or_f
 from aiogram.types import Message
 
 from exceptions import InsufficientFundsForWithdrawalError
 from repositories import BalanceRepository
 from services import BalanceNotifier, try_to_delete_message
+from views import InsufficientFundsForSendingMediaView, answer_view
 
 __all__ = ('router',)
 
@@ -14,10 +15,14 @@ router = Router(name=__name__)
 
 @router.message(
     F.chat.type.in_({ChatType.GROUP, ChatType.SUPERGROUP}),
-    F.sticker,
+    or_f(
+        F.sticker,
+        F.animation,
+        F.video,
+    ),
     StateFilter('*'),
 )
-async def on_sticker_in_group_chat(
+async def on_media_in_group_chat(
         message: Message,
         balance_repository: BalanceRepository,
         balance_notifier: BalanceNotifier,
@@ -26,19 +31,11 @@ async def on_sticker_in_group_chat(
         withdrawal = await balance_repository.create_withdrawal(
             user_id=message.from_user.id,
             amount=100,
-            description='Отправка стикера в групповом чате',
+            description='Отправка медиа в групповом чате',
         )
     except InsufficientFundsForWithdrawalError:
-        if message.from_user.username is None:
-            link = f'tg://openmessage?user_id={message.from_user.id}'
-        else:
-            link = f'https://t.me/{message.from_user.username}'
-        await message.answer(
-            f'❗️ <a href="{link}">{message.from_user.full_name}</a>'
-            ' пополните баланс чтобы отправить стикер'
-            '\n💰 Узнать свой баланс /balance',
-            disable_web_page_preview=True,
-        )
+        view = InsufficientFundsForSendingMediaView(user=message.from_user)
+        await answer_view(view=view, message=message)
         await try_to_delete_message(message)
     else:
         await balance_notifier.send_withdrawal_notification(withdrawal)

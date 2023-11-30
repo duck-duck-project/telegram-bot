@@ -5,6 +5,7 @@ from aiogram.types import Message
 from exceptions import InsufficientFundsForWithdrawalError
 from repositories import BalanceRepository
 from services import BalanceNotifier, try_to_delete_message
+from views import InsufficientFundsForHowYourBotView, answer_view
 
 router = Router(name=__name__)
 
@@ -27,16 +28,8 @@ async def on_how_your_bot_message(
             description='Использование @HowYourBot',
         )
     except InsufficientFundsForWithdrawalError:
-        if message.from_user.username is None:
-            link = f'tg://openmessage?user_id={message.from_user.id}'
-        else:
-            link = f'https://t.me/{message.from_user.username}'
-        await message.answer(
-            f'❗️ <a href="{link}">{message.from_user.full_name}</a>'
-            ' пополните баланс чтобы использовать @HowYourBot.'
-            '\n💰 Узнать свой баланс /balance',
-            disable_web_page_preview=True,
-        )
+        view = InsufficientFundsForHowYourBotView(user=message.from_user)
+        await answer_view(message=message, view=view)
         await try_to_delete_message(message)
     else:
         await balance_notifier.send_withdrawal_notification(withdrawal)
