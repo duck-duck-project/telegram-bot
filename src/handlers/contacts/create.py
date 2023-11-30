@@ -10,6 +10,8 @@ from states import ContactCreateWaitForForwardedMessage
 
 __all__ = ('register_handlers',)
 
+SHAHADAT_USER_ID = 5419409600
+
 
 async def on_add_bot_to_contacts(message: Message) -> None:
     await message.reply('Вы не можете добавить бота в контакты')
@@ -67,14 +69,19 @@ async def on_add_contact(
         user: User,
         user_repository: UserRepository,
         contact_repository: ContactRepository,
+        reply_to_message: Message,
 ) -> None:
-    reply = message.reply_to_message
-    name = reply.from_user.username or reply.from_user.full_name
+    if SHAHADAT_USER_ID in (user.id, reply_to_message.from_user.id):
+        print('Shahadat is trying to add himself to contacts')
+        return
+
+    from_user = reply_to_message.from_user
+    name = from_user.username or from_user.full_name
 
     to_user, is_to_user_created = await user_repository.get_or_create(
-        user_id=reply.from_user.id,
-        fullname=reply.from_user.full_name,
-        username=reply.from_user.username,
+        user_id=from_user.id,
+        fullname=from_user.full_name,
+        username=from_user.username,
     )
 
     if not to_user.can_be_added_to_contacts:
@@ -117,5 +124,6 @@ def register_handlers(router: Router) -> None:
     router.message.register(
         on_add_contact,
         Command('contact'),
+        F.reply_to_message.as_('reply_to_message'),
         StateFilter('*'),
     )
