@@ -5,6 +5,7 @@ from aiogram.types import (
     InlineKeyboardButton,
     ReplyKeyboardMarkup,
     KeyboardButton,
+    User,
 )
 
 from models import UserBalance, Transfer
@@ -18,6 +19,8 @@ __all__ = (
     'TransferAskForDescriptionView',
     'TransferConfirmView',
     'TransferSuccessfullyExecutedView',
+    'InsufficientFundsForSendingMediaView',
+    'InsufficientFundsForHowYourBotView',
 )
 
 
@@ -185,4 +188,32 @@ class TransferSuccessfullyExecutedView(View):
             '✅ Перевод успешно выполнен\n'
             f'💰 Сумма: {self.__transfer.amount} дак-дак коинов\n'
             f'📝 Описание: {self.__transfer.description or "отсутствует"}'
+        )
+
+
+class InsufficientFundsForSendingMediaView(View):
+    disable_web_page_preview = True
+
+    def __init__(self, user: User):
+        self.__user = user
+
+    def get_text(self) -> str:
+        return (
+            f'❗️ <a href="{self.__user.url}">{self.__user.full_name}</a>'
+            ' пополните баланс чтобы отправить стикер/GIF/видео'
+            '\n💰 Узнать свой баланс /balance'
+        )
+
+
+class InsufficientFundsForHowYourBotView(View):
+    disable_web_page_preview = True
+
+    def __init__(self, user: User):
+        self.__user = user
+
+    def get_text(self) -> str:
+        return (
+            f'❗️ <a href="{self.__user.url}">{self.__user.full_name}</a>'
+            ' пополните баланс чтобы использовать @HowYourBot'
+            '\n💰 Узнать свой баланс /balance'
         )

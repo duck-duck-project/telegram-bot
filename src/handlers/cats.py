@@ -1,5 +1,3 @@
-import random
-
 from aiogram import Router, F
 from aiogram.filters import StateFilter, Command, or_f
 from aiogram.types import Message, URLInputFile

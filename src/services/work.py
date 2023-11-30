@@ -32,10 +32,10 @@ class ArithmeticProblem:
         """Computes the reward value for solving the problem."""
         humanized_expression = self.get_humanized_expression()
         return (
-                humanized_expression.count('+') * 10
-                + humanized_expression.count('-') * 12
-                + humanized_expression.count('*') * 15
-                + humanized_expression.count('²') * 15
+                humanized_expression.count('+') * 23
+                + humanized_expression.count('-') * 26
+                + humanized_expression.count('*') * 30
+                + humanized_expression.count('²') * 35
         )
 
     @classmethod

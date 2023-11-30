@@ -42,7 +42,7 @@ def include_routers(dispatcher: Dispatcher) -> None:
     dispatcher.include_routers(
         handlers.probability.router,
         handlers.anti_how_your_bot.router,
-        handlers.anti_stickers.router,
+        handlers.anti_media.router,
         handlers.balance.router,
         handlers.work.router,
         handlers.cats.router,
