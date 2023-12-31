@@ -7,7 +7,6 @@ from .secret_medias import *
 from .secret_messages import *
 from .teams import *
 from .themes import *
-from .transaction_sources import *
 from .transfers import *
 from .users import *
 from .work import *
