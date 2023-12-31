@@ -3,7 +3,6 @@ from uuid import UUID
 
 from pydantic import BaseModel
 
-from models.transaction_sources import TransactionSource
 from models.users import UserPartial
 
 __all__ = ('UserBalance', 'SystemTransaction')
@@ -19,7 +18,6 @@ class SystemTransaction(BaseModel):
     user: UserPartial
     amount: int
     description: str
-    source: TransactionSource
     created_at: datetime
 
     class Config:
