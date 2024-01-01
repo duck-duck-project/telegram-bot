@@ -6,8 +6,7 @@ from aiogram.types import CallbackQuery, Message
 from callback_data import ContactUpdateCallbackData
 from repositories import ContactRepository
 from repositories import HTTPClientFactory
-from views import edit_message_by_view
-from views.contacts import ContactDetailView
+from views import edit_message_by_view, ContactDetailView
 
 __all__ = ('register_handlers',)
 
