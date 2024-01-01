@@ -7,9 +7,16 @@ from callback_data import ContactDetailCallbackData
 from repositories import ContactRepository
 from views import edit_message_by_view, ContactDetailView
 
-__all__ = ('register_handlers',)
+__all__ = ('router',)
+
+router = Router(name=__name__)
 
 
+@router.callback_query(
+    ContactDetailCallbackData.filter(),
+    F.message.chat.type == ChatType.PRIVATE,
+    StateFilter('*'),
+)
 async def on_show_contact_detail(
         callback_query: CallbackQuery,
         callback_data: ContactDetailCallbackData,
@@ -20,13 +27,4 @@ async def on_show_contact_detail(
     await edit_message_by_view(
         message=callback_query.message,
         view=view,
-    )
-
-
-def register_handlers(router: Router) -> None:
-    router.callback_query.register(
-        on_show_contact_detail,
-        ContactDetailCallbackData.filter(),
-        F.message.chat.type == ChatType.PRIVATE,
-        StateFilter('*'),
     )

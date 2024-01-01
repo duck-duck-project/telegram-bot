@@ -1,5 +1,5 @@
 from aiogram import Router, F
-from aiogram.filters import Command, invert_f, StateFilter
+from aiogram.filters import Command, invert_f, StateFilter, or_f
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message
 
@@ -8,15 +8,27 @@ from repositories import ContactRepository, UserRepository
 from repositories import HTTPClientFactory
 from states import ContactCreateWaitForForwardedMessage
 
-__all__ = ('register_handlers',)
+__all__ = ('router',)
+
+router = Router(name=__name__)
 
 SHAHADAT_USER_ID = 5419409600
 
 
+@router.message(
+    Command('contact'),
+    F.reply_to_message.from_user.is_bot,
+    StateFilter('*'),
+)
 async def on_add_bot_to_contacts(message: Message) -> None:
     await message.reply('Вы не можете добавить бота в контакты')
 
 
+@router.message(
+    Command('contact'),
+    F.reply_to_message.from_user.id == F.from_user.id,
+    StateFilter('*'),
+)
 async def on_add_self_to_contacts(message: Message) -> None:
     await message.reply('Вы не можете добавить себя в контакты')
 
@@ -54,6 +66,11 @@ async def on_enable_contact_create_via_forwarded_message_mode(
     )
 
 
+@router.message(
+    Command('contact'),
+    invert_f(F.reply_to_message),
+    StateFilter('*'),
+)
 async def on_contact_command_is_not_replied_to_user(
         message: Message,
 ) -> None:
@@ -64,6 +81,23 @@ async def on_contact_command_is_not_replied_to_user(
     )
 
 
+@router.message(
+    Command('contact'),
+    or_f(
+        F.reply_to_message.from_user.id == SHAHADAT_USER_ID,
+        F.from_user.id == SHAHADAT_USER_ID,
+    ),
+    StateFilter('*'),
+)
+async def on_add_shahadat_to_contacts(message: Message) -> None:
+    await message.reply('Вы не можете добавить этого пользователя в контакты')
+
+
+@router.message(
+    Command('contact'),
+    F.reply_to_message.as_('reply_to_message'),
+    StateFilter('*'),
+)
 async def on_add_contact(
         message: Message,
         user: User,
@@ -72,7 +106,6 @@ async def on_add_contact(
         reply_to_message: Message,
 ) -> None:
     if SHAHADAT_USER_ID in (user.id, reply_to_message.from_user.id):
-        print('Shahadat is trying to add himself to contacts')
         return
 
     from_user = reply_to_message.from_user
@@ -97,33 +130,3 @@ async def on_add_contact(
         public_name=name,
     )
     await message.reply('✅ Контакт успешно добавлен')
-
-
-def register_handlers(router: Router) -> None:
-    reply_to_user_is_bot = F.reply_to_message.from_user.is_bot
-    from_self = F.reply_to_message.from_user.id == F.from_user.id
-
-    router.message.register(
-        on_contact_command_is_not_replied_to_user,
-        Command('contact'),
-        invert_f(F.reply_to_message),
-        StateFilter('*'),
-    )
-    router.message.register(
-        on_add_bot_to_contacts,
-        Command('contact'),
-        reply_to_user_is_bot,
-        StateFilter('*'),
-    )
-    router.message.register(
-        on_add_self_to_contacts,
-        Command('contact'),
-        from_self,
-        StateFilter('*'),
-    )
-    router.message.register(
-        on_add_contact,
-        Command('contact'),
-        F.reply_to_message.as_('reply_to_message'),
-        StateFilter('*'),
-    )

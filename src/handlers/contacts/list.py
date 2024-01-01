@@ -5,12 +5,23 @@ from aiogram.fsm.context import FSMContext
 from aiogram.types import Message, CallbackQuery
 
 from repositories import ContactRepository
-from views import render_message_or_callback_query
-from views.contacts import ContactListView
+from views import render_message_or_callback_query, ContactListView
 
-__all__ = ('register_handlers',)
+__all__ = ('router',)
+
+router = Router(name=__name__)
 
 
+@router.callback_query(
+    F.data == 'show-contacts-list',
+    F.message.chat.type == ChatType.PRIVATE,
+    StateFilter('*'),
+)
+@router.message(
+    F.text == '👥 Контакты',
+    F.chat.type == ChatType.PRIVATE,
+    StateFilter('*'),
+)
 async def on_show_contacts_list(
         message_or_callback_query: Message | CallbackQuery,
         contact_repository: ContactRepository,
@@ -23,19 +34,4 @@ async def on_show_contacts_list(
     await render_message_or_callback_query(
         message_or_callback_query=message_or_callback_query,
         view=view,
-    )
-
-
-def register_handlers(router: Router) -> None:
-    router.message.register(
-        on_show_contacts_list,
-        F.text == '👥 Контакты',
-        F.chat.type == ChatType.PRIVATE,
-        StateFilter('*'),
-    )
-    router.callback_query.register(
-        on_show_contacts_list,
-        F.data == 'show-contacts-list',
-        F.message.chat.type == ChatType.PRIVATE,
-        StateFilter('*'),
     )

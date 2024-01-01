@@ -9,9 +9,16 @@ from repositories import ContactRepository
 from states import ContactUpdateStates
 from views import answer_view, ContactDetailView
 
-__all__ = ('register_handlers',)
+__all__ = ('router',)
+
+router = Router(name=__name__)
 
 
+@router.callback_query(
+    ContactUpdateCallbackData.filter(F.field == 'private_name'),
+    F.message.chat.type == ChatType.PRIVATE,
+    StateFilter('*'),
+)
 async def on_start_contact_private_name_update_flow(
         callback_query: CallbackQuery,
         callback_data: ContactUpdateCallbackData,
@@ -24,6 +31,10 @@ async def on_start_contact_private_name_update_flow(
     )
 
 
+@router.message(
+    F.chat.type == ChatType.PRIVATE,
+    StateFilter(ContactUpdateStates.private_name),
+)
 async def on_contact_new_private_name_input(
         message: Message,
         state: FSMContext,
@@ -45,17 +56,3 @@ async def on_contact_new_private_name_input(
     await message.reply('✅ Приватное имя контакта обновлено')
     view = ContactDetailView(contact)
     await answer_view(message=message, view=view)
-
-
-def register_handlers(router: Router) -> None:
-    router.message.register(
-        on_contact_new_private_name_input,
-        F.chat.type == ChatType.PRIVATE,
-        StateFilter(ContactUpdateStates.private_name),
-    )
-    router.callback_query.register(
-        on_start_contact_private_name_update_flow,
-        ContactUpdateCallbackData.filter(F.field == 'private_name'),
-        F.message.chat.type == ChatType.PRIVATE,
-        StateFilter('*'),
-    )
