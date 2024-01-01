@@ -147,11 +147,4 @@ class ContactListChooseView(View):
                 ),
             )
 
-        keyboard.row(
-            InlineKeyboardButton(
-                text='➕ Добавить контакт',
-                callback_data='create-contact',
-            ),
-        )
-
         return keyboard.as_markup()

@@ -5,12 +5,18 @@ from aiogram.types import CallbackQuery
 
 from callback_data import ContactDeleteCallbackData
 from repositories import ContactRepository
-from views import edit_message_by_view
-from views.contacts import ContactListView
+from views import edit_message_by_view, ContactListView
 
-__all__ = ('register_handlers',)
+__all__ = ('router',)
+
+router = Router(name=__name__)
 
 
+@router.callback_query(
+    ContactDeleteCallbackData.filter(),
+    F.message.chat.type == ChatType.PRIVATE,
+    StateFilter('*'),
+)
 async def on_delete_contact(
         callback_query: CallbackQuery,
         callback_data: ContactDeleteCallbackData,
@@ -29,13 +35,4 @@ async def on_delete_contact(
     await edit_message_by_view(
         message=callback_query.message,
         view=view,
-    )
-
-
-def register_handlers(router: Router) -> None:
-    router.callback_query.register(
-        on_delete_contact,
-        ContactDeleteCallbackData.filter(),
-        F.message.chat.type == ChatType.PRIVATE,
-        StateFilter('*'),
     )

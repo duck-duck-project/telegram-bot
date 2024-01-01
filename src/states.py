@@ -7,14 +7,9 @@ __all__ = (
     'TeamCreateStates',
     'TeamDeleteStates',
     'TeamMemberCreateStates',
-    'ContactCreateWaitForForwardedMessage',
     'ProfilePhotoUpdateStates',
     'TransferStates',
 )
-
-
-class ContactCreateWaitForForwardedMessage(StatesGroup):
-    enabled = State()
 
 
 class AnonymousMessagingStates(StatesGroup):
