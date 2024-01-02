@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import date, datetime
 
 from pydantic import BaseModel
 
@@ -18,3 +18,4 @@ class ManasId(BaseModel):
     gender: Gender
     student_id: str | None
     obis_password: str | None
+    created_at: datetime
