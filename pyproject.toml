@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "duck-duck-bot"
-version = "1.17.6"
+version = "1.18.0"
 description = ""
 authors = ["Eldos <eldos.baktybekov@gmail.com>"]
 readme = "README.md"
