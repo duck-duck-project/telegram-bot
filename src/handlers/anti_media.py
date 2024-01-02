@@ -4,7 +4,8 @@ from aiogram.filters import StateFilter, or_f
 from aiogram.types import Message
 
 from exceptions import InsufficientFundsForWithdrawalError
-from repositories import BalanceRepository
+from exceptions.manas_id import ManasIdDoesNotExistError
+from repositories import BalanceRepository, ManasIdRepository
 from services import BalanceNotifier, try_to_delete_message
 from views import InsufficientFundsForSendingMediaView, answer_view
 
@@ -19,6 +20,10 @@ router = Router(name=__name__)
         F.sticker,
         F.animation,
         F.video,
+        F.photo,
+        F.voice,
+        F.video_note,
+        F.document,
     ),
     StateFilter('*'),
 )
@@ -26,11 +31,21 @@ async def on_media_in_group_chat(
         message: Message,
         balance_repository: BalanceRepository,
         balance_notifier: BalanceNotifier,
+        manas_id_repository: ManasIdRepository,
 ) -> None:
+    user_id = message.from_user.id
+
+    try:
+        await manas_id_repository.get_manas_id_by_user_id(user_id)
+    except ManasIdDoesNotExistError:
+        price = 10000
+    else:
+        price = 1000
+
     try:
         withdrawal = await balance_repository.create_withdrawal(
             user_id=message.from_user.id,
-            amount=100,
+            amount=price,
             description='Отправка медиа в групповом чате',
         )
     except InsufficientFundsForWithdrawalError:
