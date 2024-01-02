@@ -4,6 +4,7 @@ from .base import *
 from .casino import *
 from .contacts import *
 from .food_menu import *
+from .manas_id import *
 from .probability import *
 from .problems import *
 from .secret_messaging import *
