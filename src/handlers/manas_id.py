@@ -1,49 +1,38 @@
 from aiogram import Router, F
-from aiogram.filters import StateFilter
-from aiogram.types import Message
+from aiogram.filters import StateFilter, or_f, and_f
+from aiogram.types import Message, URLInputFile
 
 from exceptions.manas_id import ManasIdDoesNotExistError
 from repositories import ManasIdRepository
-from views import ManasIdView, answer_view
+from views import ManasIdView
 
 router = Router(name=__name__)
 
 
 @router.message(
-    F.text.lower() == 'кто ты',
-    F.reply_to_message.as_('reply_to_message'),
-    StateFilter('*'),
-)
-async def on_show_other_user_manas_id(
-        message: Message,
-        manas_id_repository: ManasIdRepository,
-        reply_to_message: Message,
-) -> None:
-    user_id = reply_to_message.from_user.id
-    try:
-        manas_id = await manas_id_repository.get_manas_id_by_user_id(user_id)
-    except ManasIdDoesNotExistError:
-        await message.reply(
-            'Пользователь отсутствует в моем реестре студентов Манаса\n'
-            'Пройти регистрацию https://forms.gle/ku52NNyKmqda8HSN9',
-            disable_web_page_preview=True,
-        )
-        return
-    view = ManasIdView(manas_id)
-    await answer_view(message=message, view=view)
-
-
-@router.message(
-    F.text.lower() == 'кто я',
+    or_f(
+        and_f(
+            F.text.lower().in_({'кто ты', 'ты кто'}),
+            F.reply_to_message.as_('reply_to_message'),
+        ),
+        F.text.lower().in_({'кто я', 'профиль'}),
+    ),
     StateFilter('*'),
 )
 async def on_show_my_manas_id(
         message: Message,
         manas_id_repository: ManasIdRepository,
 ) -> None:
-    user_id = message.from_user.id
+    from_user = (
+        message.from_user
+        if message.reply_to_message is None
+        else message.reply_to_message.from_user
+    )
+
     try:
-        manas_id = await manas_id_repository.get_manas_id_by_user_id(user_id)
+        manas_id = await manas_id_repository.get_manas_id_by_user_id(
+            user_id=from_user.id,
+        )
     except ManasIdDoesNotExistError:
         await message.reply(
             'Пользователь отсутствует в моем реестре студентов Манаса\n'
@@ -51,5 +40,20 @@ async def on_show_my_manas_id(
             disable_web_page_preview=True,
         )
         return
-    view = ManasIdView(manas_id)
-    await answer_view(message=message, view=view)
+
+    profile_photos = await from_user.get_profile_photos()
+    if not profile_photos.photos:
+        url = (
+            'https://api.thecatapi.com/v1/'
+            'images/search?format=src&mime_types=jpg,png'
+        )
+        photo = URLInputFile(url)
+    else:
+        photo = profile_photos.photos[0][-1].file_id
+
+    view = ManasIdView(manas_id, photo)
+
+    await message.answer_photo(
+        photo=view.get_photo(),
+        caption=view.get_caption(),
+    )

@@ -9,7 +9,7 @@ from aiogram.types import (
     Message,
     InlineQueryResultArticle,
     InputTextMessageContent,
-    CallbackQuery,
+    CallbackQuery, InputFile,
 )
 
 __all__ = (
@@ -21,6 +21,7 @@ __all__ = (
     'render_message_or_callback_query',
     'send_view',
     'reply_view',
+    'PhotoView',
 )
 
 ReplyMarkup: TypeAlias = (
@@ -48,6 +49,17 @@ class View:
 
     def get_disable_web_page_preview(self) -> bool | None:
         return self.disable_web_page_preview
+
+
+class PhotoView:
+    photo: str | InputFile
+    caption: str | None = None
+
+    def get_photo(self) -> str | InputFile:
+        return self.photo
+
+    def get_caption(self) -> str | None:
+        return self.caption
 
 
 class InlineQueryView(View):
