@@ -1,17 +1,20 @@
+from aiogram.types import InputFile
+
 from enums import Course, Gender
 from models import ManasId
 from services.dates import compute_age
-from views.base import View
+from views import PhotoView
 
 __all__ = ('ManasIdView',)
 
 
-class ManasIdView(View):
+class ManasIdView(PhotoView):
 
-    def __init__(self, manas_id: ManasId):
+    def __init__(self, manas_id: ManasId, photo: str | InputFile):
         self.__manas_id = manas_id
+        self.__photo = photo
 
-    def get_text(self) -> str:
+    def get_caption(self) -> str:
         course_name = {
             Course.BACHELOR_FIRST: '1 бакалавр',
             Course.BACHELOR_SECOND: '2 бакалавр',
@@ -38,3 +41,6 @@ class ManasIdView(View):
             f'Направление: {self.__manas_id.department.name}\n'
             f'Курс: {course_name}'
         )
+
+    def get_photo(self) -> str | InputFile:
+        return self.__photo
