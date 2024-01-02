@@ -1,6 +1,6 @@
 from aiogram import Router, F
 from aiogram.enums import ChatType
-from aiogram.filters import StateFilter, or_f
+from aiogram.filters import StateFilter, or_f, invert_f
 from aiogram.types import Message
 
 from exceptions import InsufficientFundsForWithdrawalError
@@ -15,6 +15,30 @@ router = Router(name=__name__)
 
 
 @router.message(
+    F.chat.type.in_({ChatType.GROUP, ChatType.SUPERGROUP}),
+    F.text,
+    F.from_user.id.in_({5895029052}),
+    StateFilter('*'),
+)
+async def on_message(
+        message: Message,
+        balance_repository: BalanceRepository,
+        balance_notifier: BalanceNotifier,
+) -> None:
+    try:
+        withdrawal = await balance_repository.create_withdrawal(
+            user_id=message.from_user.id,
+            amount=500,
+            description='Отправка сообщения в групповом чате',
+        )
+    except InsufficientFundsForWithdrawalError:
+        await try_to_delete_message(message)
+    else:
+        await balance_notifier.send_withdrawal_notification(withdrawal)
+
+
+@router.message(
+    invert_f(F.from_user.id.in_({5185621939})),
     F.chat.type.in_({ChatType.GROUP, ChatType.SUPERGROUP}),
     or_f(
         F.sticker,
