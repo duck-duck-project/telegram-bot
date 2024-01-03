@@ -13,6 +13,7 @@ class ManasId(BaseModel):
     department: Department
     first_name: str
     last_name: str
+    patronymic: str | None
     born_at: date
     course: Course
     gender: Gender
@@ -20,3 +21,4 @@ class ManasId(BaseModel):
     obis_password: str | None
     created_at: datetime
     personality_type: str | None
+    document_number: str
