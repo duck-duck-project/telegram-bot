@@ -6,4 +6,5 @@ __all__ = ('Department',)
 class Department(BaseModel):
     id: int
     name: str
-    code: str
+    emoji: str | None
+    code: str | None
