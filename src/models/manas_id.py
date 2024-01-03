@@ -22,3 +22,6 @@ class ManasId(BaseModel):
     created_at: datetime
     personality_type: str | None
     document_number: str
+    nationality: str | None
+    region: str | None
+    country: str | None

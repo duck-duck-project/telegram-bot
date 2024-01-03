@@ -15,7 +15,7 @@ router = Router(name=__name__)
             F.text.lower().in_({'кто ты', 'ты кто'}),
             F.reply_to_message.as_('reply_to_message'),
         ),
-        F.text.lower().in_({'кто я', 'профиль'}),
+        F.text.lower().in_({'кто я', 'профиль', 'id', 'мой id', 'паспорт'}),
     ),
     StateFilter('*'),
 )
