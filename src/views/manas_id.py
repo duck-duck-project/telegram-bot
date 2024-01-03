@@ -59,7 +59,7 @@ class ManasIdView(PhotoView):
             '<b>📲 Личная информация:</b>',
             f'ФИО: {full_name}',
             f'Дата рождения: {self.__manas_id.born_at:%d.%m.%Y}',
-            f'Возраст: {compute_age(self.__manas_id.born_at)} {age_suffix}'
+            f'Возраст: {compute_age(self.__manas_id.born_at)} {age_suffix}',
             f'Живёт на Земле: {living_days} дней',
             f'Пол: {gender_name}',
             f'Страна: {country}',
