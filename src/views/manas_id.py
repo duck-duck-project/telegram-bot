@@ -48,13 +48,21 @@ class ManasIdView(PhotoView):
         if self.__manas_id.patronymic is not None:
             full_name = f'{full_name} {self.__manas_id.patronymic}'
 
+        country = self.__manas_id.country or 'не определено'
+        region = self.__manas_id.region or 'не определено'
+        nationality = self.__manas_id.nationality or 'не определено'
+
         lines = [
             '<b>🪪 Карточка студента</b>\n',
             '<b>📲 Личная информация:</b>',
             f'ФИО: {full_name}',
             f'Дата рождения: {self.__manas_id.born_at:%d.%m.%Y}',
             f'Возраст: {compute_age(self.__manas_id.born_at)} {age_suffix}',
-            f'Пол: {gender_name}\n',
+            f'Пол: {gender_name}',
+            f'Страна: {country}',
+            f'Регион: {region}',
+            f'Национальность: {nationality}',
+            '\n',
             f'<b>🎓 Информация о студенте:</b>',
             f'Направление: {self.__manas_id.department.name}',
             f'Курс: {course_name}\n',
