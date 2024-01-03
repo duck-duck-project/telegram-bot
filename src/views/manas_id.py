@@ -5,7 +5,7 @@ from models import ManasId
 from services.dates import compute_age
 from services.manas_id import (
     humanize_personality_type,
-    determine_zodiac_sign,
+    determine_zodiac_sign, compute_living_days,
 )
 from views import PhotoView
 
@@ -52,17 +52,20 @@ class ManasIdView(PhotoView):
         region = self.__manas_id.region or 'не определено'
         nationality = self.__manas_id.nationality or 'не определено'
 
+        living_days = compute_living_days(self.__manas_id.born_at)
+
         lines = [
             '<b>🪪 Карточка студента</b>\n',
             '<b>📲 Личная информация:</b>',
             f'ФИО: {full_name}',
             f'Дата рождения: {self.__manas_id.born_at:%d.%m.%Y}',
-            f'Возраст: {compute_age(self.__manas_id.born_at)} {age_suffix}',
+            f'Возраст: {compute_age(self.__manas_id.born_at)} {age_suffix}'
+            f'Живёт на Земле: {living_days} дней',
             f'Пол: {gender_name}',
             f'Страна: {country}',
             f'Регион: {region}',
             f'Национальность: {nationality}',
-            '\n',
+            '\n'
             f'<b>🎓 Информация о студенте:</b>',
             f'Направление: {self.__manas_id.department.name}',
             f'Курс: {course_name}\n',
