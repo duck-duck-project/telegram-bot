@@ -26,16 +26,16 @@ class SecretMediaRepository(APIRepository):
             'name': description,
             'contact_id': contact_id,
         }
-        async with self._http_client.post(url, json=request_data) as response:
-            if response.status == 409:
-                raise SecretMediaAlreadyExistsError
-            response_data = await response.json()
+        response = await self._http_client.post(url, json=request_data)
+        if response.status_code == 409:
+            raise SecretMediaAlreadyExistsError
+        response_data = response.json()
         return models.SecretMedia.model_validate(response_data)
 
     async def get_by_id(self, secret_media_id: UUID) -> models.SecretMedia:
         url = f'/secret-medias/{secret_media_id}/'
-        async with self._http_client.get(url) as response:
-            if response.status == 404:
-                raise SecretMediaDoesNotExistError
-            response_data = await response.json()
+        response = await self._http_client.get(url)
+        if response.status_code == 404:
+            raise SecretMediaDoesNotExistError
+        response_data = response.json()
         return models.SecretMedia.model_validate(response_data)

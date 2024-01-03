@@ -27,14 +27,14 @@ class BalanceRepository(APIRepository):
             'amount': amount,
             'description': description,
         }
-        async with self._http_client.post(url, json=request_data) as response:
-            if response.status == 400:
-                response_data = await response.json()
-                if response_data[0] == 'Insufficient funds for transfer':
-                    raise InsufficientFundsForTransferError
-            if response.status != 201:
-                raise ServerAPIError
-            response_data = await response.json()
+        response = await self._http_client.post(url, json=request_data)
+        if response.status_code == 400:
+            response_data = response.json()
+            if response_data[0] == 'Insufficient funds for transfer':
+                raise InsufficientFundsForTransferError
+        if response.status_code != 201:
+            raise ServerAPIError
+        response_data = response.json()
         return Transfer.model_validate(response_data)
 
     async def create_withdrawal(
@@ -50,14 +50,14 @@ class BalanceRepository(APIRepository):
             'amount': amount,
             'description': description,
         }
-        async with self._http_client.post(url, json=request_data) as response:
-            if response.status == 400:
-                response_data = await response.json()
-                if response_data[0] == 'Insufficient funds for withdrawal':
-                    raise InsufficientFundsForWithdrawalError(amount=amount)
-            if response.status != 201:
-                raise ServerAPIError
-            response_data = await response.json()
+        response = await self._http_client.post(url, json=request_data)
+        if response.status_code == 400:
+            response_data = response.json()
+            if response_data[0] == 'Insufficient funds for withdrawal':
+                raise InsufficientFundsForWithdrawalError(amount=amount)
+        if response.status_code != 201:
+            raise ServerAPIError
+        response_data = response.json()
         return SystemTransaction.model_validate(response_data)
 
     async def create_deposit(
@@ -73,20 +73,20 @@ class BalanceRepository(APIRepository):
             'amount': amount,
             'description': description,
         }
-        async with self._http_client.post(url, json=request_data) as response:
-            if response.status != 201:
-                raise ServerAPIError
-            response_data = await response.json()
+        response = await self._http_client.post(url, json=request_data)
+        if response.status_code != 201:
+            raise ServerAPIError
+        response_data = response.json()
         return SystemTransaction.model_validate(response_data)
 
     async def get_user_balance(self, user_id: int) -> UserBalance:
         url = f'/economics/balance/users/{user_id}/'
-        async with self._http_client.get(url) as response:
-            if response.status == 404:
-                raise UserDoesNotExistError(user_id=user_id)
-            if response.status != 200:
-                raise ServerAPIError
-            response_data = await response.json()
+        response = await self._http_client.get(url)
+        if response.status_code == 404:
+            raise UserDoesNotExistError(user_id=user_id)
+        if response.status_code != 200:
+            raise ServerAPIError
+        response_data = response.json()
         return UserBalance.model_validate(response_data)
 
     async def create_richest_users_statistics_task(
@@ -100,6 +100,6 @@ class BalanceRepository(APIRepository):
             'chat_id': chat_id,
             'user_id': user_id,
         }
-        async with self._http_client.post(url, json=request_data) as response:
-            if response.status != 202:
-                raise ServerAPIError
+        response = await self._http_client.post(url, json=request_data)
+        if response.status_code != 202:
+            raise ServerAPIError

@@ -27,12 +27,12 @@ class UserRepository(APIRepository):
             ServerAPIError: If server returns unexpected response status code.
         """
         url = f'/users/{user_id}/'
-        async with self._http_client.get(url) as response:
-            if response.status == 404:
-                raise UserDoesNotExistError(user_id=user_id)
-            if response.status != 200:
-                raise ServerAPIError
-            response_data = await response.json()
+        response = await self._http_client.get(url)
+        if response.status_code == 404:
+            raise UserDoesNotExistError(user_id=user_id)
+        if response.status_code != 200:
+            raise ServerAPIError
+        response_data = response.json()
         return models.User.model_validate(response_data)
 
     async def create(
@@ -62,12 +62,12 @@ class UserRepository(APIRepository):
             'username': username,
         }
         url = '/users/'
-        async with self._http_client.post(url, json=request_data) as response:
-            if response.status == 409:
-                raise UserAlreadyExistsError(user_id=user_id)
-            if response.status != 201:
-                raise ServerAPIError
-            response_data = await response.json()
+        response = await self._http_client.post(url, json=request_data)
+        if response.status_code == 409:
+            raise UserAlreadyExistsError(user_id=user_id)
+        if response.status_code != 201:
+            raise ServerAPIError
+        response_data = response.json()
         return models.User.model_validate(response_data)
 
     async def update(
@@ -108,11 +108,11 @@ class UserRepository(APIRepository):
             'profile_photo_url': profile_photo_url,
         }
         url = f'/users/{user_id}/'
-        async with self._http_client.put(url, json=request_data) as response:
-            if response.status == 404:
-                raise UserDoesNotExistError(user_id=user_id)
-            if response.status != 204:
-                raise ServerAPIError
+        response = await self._http_client.put(url, json=request_data)
+        if response.status_code == 404:
+            raise UserDoesNotExistError(user_id=user_id)
+        if response.status_code != 204:
+            raise ServerAPIError
 
     async def get_or_create(
             self,

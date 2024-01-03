@@ -30,20 +30,20 @@ class ContactRepository(APIRepository):
             'public_name': public_name,
         }
         url = '/contacts/'
-        async with self._http_client.post(url, json=request_data) as response:
-            if response.status == 400:
-                response_data = await response.json()
-                error_detail = response_data.get('detail')
-                if error_detail == 'Insufficient funds for contact creation':
-                    amount = response_data['amount']
-                    raise InsufficientFundsForWithdrawalError(amount=amount)
-            if response.status == 404:
-                raise UserDoesNotExistError(user_id=of_user_id)
-            if response.status == 409:
-                raise ContactAlreadyExistsError
-            if response.status != 201:
-                raise ServerAPIError
-            response_data = await response.json()
+        response = await self._http_client.post(url, json=request_data)
+        if response.status_code == 400:
+            response_data = response.json()
+            error_detail = response_data.get('detail')
+            if error_detail == 'Insufficient funds for contact creation':
+                amount = response_data['amount']
+                raise InsufficientFundsForWithdrawalError(amount=amount)
+        if response.status_code == 404:
+            raise UserDoesNotExistError(user_id=of_user_id)
+        if response.status_code == 409:
+            raise ContactAlreadyExistsError
+        if response.status_code != 201:
+            raise ServerAPIError
+        response_data = response.json()
         return models.Contact.model_validate(response_data)
 
     async def get_by_user_id(
@@ -51,19 +51,19 @@ class ContactRepository(APIRepository):
             user_id: int,
     ) -> list[models.Contact]:
         url = f'/users/{user_id}/contacts/'
-        async with self._http_client.get(url) as response:
-            if response.status != 200:
-                raise ServerAPIError
-            response_data = await response.json()
+        response = await self._http_client.get(url)
+        if response.status_code != 200:
+            raise ServerAPIError
+        response_data = response.json()
         type_adapter = TypeAdapter(list[models.Contact])
         return type_adapter.validate_python(response_data)
 
     async def get_by_id(self, contact_id: int) -> models.Contact:
         url = f'/contacts/{contact_id}/'
-        async with self._http_client.get(url) as response:
-            if response.status == 404:
-                raise ContactDoesNotExistError(contact_id=contact_id)
-            response_data = await response.json()
+        response = await self._http_client.get(url)
+        if response.status_code == 404:
+            raise ContactDoesNotExistError(contact_id=contact_id)
+        response_data = response.json()
         return models.Contact.model_validate(response_data)
 
     async def update(
@@ -80,16 +80,16 @@ class ContactRepository(APIRepository):
             'public_name': public_name,
             'is_hidden': is_hidden,
         }
-        async with self._http_client.put(url, json=request_data) as response:
-            if response.status == 404:
-                raise ContactDoesNotExistError(contact_id=contact_id)
-            if response.status != 204:
-                raise ServerAPIError
+        response = await self._http_client.put(url, json=request_data)
+        if response.status_code == 404:
+            raise ContactDoesNotExistError(contact_id=contact_id)
+        if response.status_code != 204:
+            raise ServerAPIError
 
     async def delete_by_id(self, contact_id: int) -> None:
         url = f'/contacts/{contact_id}/'
-        async with self._http_client.delete(url) as response:
-            if response.status == 404:
-                raise ContactDoesNotExistError(contact_id=contact_id)
-            if response.status != 204:
-                raise ServerAPIError
+        response = await self._http_client.delete(url)
+        if response.status_code == 404:
+            raise ContactDoesNotExistError(contact_id=contact_id)
+        if response.status_code != 204:
+            raise ServerAPIError

@@ -2,15 +2,14 @@ import asyncio
 import pathlib
 from functools import partial
 
-import aiohttp
 import cloudinary
+import httpx
 import humanize
 import sentry_sdk
 import structlog
 from aiogram import Bot, Dispatcher
 from aiogram.enums import ParseMode
 from aiogram.fsm.storage.redis import RedisStorage
-from aiohttp import ClientTimeout
 from redis.asyncio import Redis
 from structlog.stdlib import BoundLogger
 
@@ -100,9 +99,9 @@ async def main() -> None:
     dispatcher['anonymous_message_sender'] = AnonymousMessageSender(bot)
     dispatcher['bot_user'] = bot_user
     dispatcher['closing_http_client_factory'] = partial(
-        aiohttp.ClientSession,
+        httpx.AsyncClient,
         base_url=config.server_api_base_url,
-        timeout=ClientTimeout(60),
+        timeout=60,
     )
     dispatcher['chat_id_for_retranslation'] = config.main_chat_id
     dispatcher['timezone'] = config.timezone

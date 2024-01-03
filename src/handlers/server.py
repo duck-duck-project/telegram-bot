@@ -1,4 +1,4 @@
-import aiohttp
+import httpx
 import structlog
 from aiogram import Router
 from aiogram.filters import ExceptionTypeFilter
@@ -18,7 +18,7 @@ logger: BoundLogger = structlog.get_logger('app')
 router = Router(name=__name__)
 
 
-@router.error(ExceptionTypeFilter(aiohttp.ClientConnectorError))
+@router.error(ExceptionTypeFilter(httpx.ConnectError))
 async def on_client_connector_error(event: ErrorEvent) -> None:
     update = event.update
     text = f'❌ Ошибка клиентского соединения:\n{str(event.exception)}'
