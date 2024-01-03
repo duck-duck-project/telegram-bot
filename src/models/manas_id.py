@@ -19,3 +19,4 @@ class ManasId(BaseModel):
     student_id: str | None
     obis_password: str | None
     created_at: datetime
+    personality_type: str | None
