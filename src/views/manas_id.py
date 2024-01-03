@@ -4,8 +4,8 @@ from enums import Course, Gender
 from models import ManasId
 from services.dates import compute_age
 from services.manas_id import (
-    generate_manas_id_number,
-    humanize_personality_type, determine_zodiac_sign
+    humanize_personality_type,
+    determine_zodiac_sign,
 )
 from views import PhotoView
 
@@ -31,10 +31,8 @@ class ManasIdView(PhotoView):
             Gender.FEMALE: 'женский',
         }[self.__manas_id.gender]
 
-        manas_id_number = generate_manas_id_number(self.__manas_id)
-
         age = compute_age(self.__manas_id.born_at)
-        if 1 <= age % 10 <= 4 and age // 10 != 1:
+        if 4 >= age % 10 >= 1 != age // 10:
             age_suffix = 'года'
         else:
             age_suffix = 'лет'
@@ -46,11 +44,14 @@ class ManasIdView(PhotoView):
             month=self.__manas_id.born_at.month,
             day=self.__manas_id.born_at.day,
         )
+        full_name = f'{self.__manas_id.last_name} {self.__manas_id.first_name}'
+        if self.__manas_id.patronymic is not None:
+            full_name = f'{full_name} {self.__manas_id.patronymic}'
 
         lines = [
             '<b>🪪 Карточка студента</b>\n',
             '<b>📲 Личная информация:</b>',
-            f'ФИО: {self.__manas_id.last_name} {self.__manas_id.first_name}',
+            f'ФИО: {full_name}',
             f'Дата рождения: {self.__manas_id.born_at:%d.%m.%Y}',
             f'Возраст: {compute_age(self.__manas_id.born_at)} {age_suffix}',
             f'Пол: {gender_name}\n',
@@ -58,7 +59,7 @@ class ManasIdView(PhotoView):
             f'Направление: {self.__manas_id.department.name}',
             f'Курс: {course_name}\n',
             f'<b>☁️ Система:</b>',
-            f'ID номер: {manas_id_number}',
+            f'ID номер: {self.__manas_id.document_number}',
             f'Дата выдачи: {self.__manas_id.created_at:%d.%m.%Y}\n',
             f'<b>✏️ Прочее:</b>',
             f'Тип личности: {personality_type}',
