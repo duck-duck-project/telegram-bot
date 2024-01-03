@@ -1,22 +1,7 @@
-from models import ManasId
-
 __all__ = (
-    'generate_manas_id_number',
     'humanize_personality_type',
+    'determine_zodiac_sign',
 )
-
-
-def generate_manas_id_number(manas_id: ManasId) -> str:
-    fullname = f'{manas_id.last_name} {manas_id.first_name}'.upper()
-    abbreviated_full_name = ''.join(
-        word[0] for word in fullname.split(' ')
-    )
-    return (
-        f'{manas_id.gender}'
-        f'{abbreviated_full_name}'
-        f'{manas_id.born_at:%d%m%y}'
-        f'{manas_id.department.code}'
-    )
 
 
 def humanize_personality_type(personality_type: str | None) -> str:
@@ -36,7 +21,7 @@ def humanize_personality_type(personality_type: str | None) -> str:
         'ENFP': 'Борец',
         'ISTJ': 'Администратор',
         'ISFJ': 'Защитник',
-        'ESTJ': 'Консул',
+        'ESTJ': 'Менеджер',
         'ESFJ': 'Консул',
         'ISTP': 'Виртуоз',
         'ISFP': 'Артист',
