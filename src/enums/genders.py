@@ -4,5 +4,5 @@ __all__ = ('Gender',)
 
 
 class Gender(IntEnum):
-    MALE = 1
-    FEMALE = 2
+    FEMALE = 1
+    MALE = 2
