@@ -1,4 +1,4 @@
-import aiohttp
+import httpx
 from aiogram import BaseMiddleware
 from aiogram.types import Update
 
@@ -19,7 +19,7 @@ class APIRepositoriesInitializerMiddleware(BaseMiddleware):
             event: Update,
             data: ContextData,
     ) -> HandlerReturn:
-        http_client: aiohttp.ClientSession = data['http_client']
+        http_client: httpx.AsyncClient = data['http_client']
         for name, api_repository_type in self.__name_to_api_repository.items():
             data[name] = api_repository_type(http_client)
         return await handler(event, data)

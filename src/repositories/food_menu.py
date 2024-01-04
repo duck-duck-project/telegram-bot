@@ -10,9 +10,9 @@ __all__ = ('FoodMenuRepository',)
 class FoodMenuRepository(APIRepository):
 
     async def get_all(self) -> list[DailyFoodMenu]:
-        async with self._http_client.get('/food-menu/') as response:
-            if response.status != 200:
-                raise ServerAPIError
-            response_data = await response.json()
+        response = await self._http_client.get('/food-menu/')
+        if response.status_code != 200:
+            raise ServerAPIError
+        response_data = response.json()
         type_adapter = TypeAdapter(list[DailyFoodMenu])
         return type_adapter.validate_python(response_data['food_menus'])

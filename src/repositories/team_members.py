@@ -13,30 +13,30 @@ class TeamMemberRepository(APIRepository):
         url = f'/teams/{team_id}/members/'
         request_data = {'user_id': user_id}
         response = await self._http_client.post(url, json=request_data)
-        if response.status != 201:
+        if response.status_code != 201:
             raise ServerAPIError
-        response_data = await response.json()
+        response_data = response.json()
         return TeamMember.model_validate(response_data)
 
     async def delete_by_id(self, team_member_id: int) -> None:
         url = f'/team-members/{team_member_id}/'
         response = await self._http_client.delete(url)
-        if response.status != 204:
+        if response.status_code != 204:
             raise ServerAPIError
 
     async def get_by_team_id(self, team_id: int) -> list[TeamMember]:
         url = f'/teams/{team_id}/members/'
         response = await self._http_client.get(url)
-        if response.status != 200:
+        if response.status_code != 200:
             raise ServerAPIError
-        response_data = await response.json()
+        response_data = response.json()
         type_adapter = TypeAdapter(list[TeamMember])
         return type_adapter.validate_python(response_data)
 
     async def get_by_id(self, team_member_id: int) -> TeamMember:
         url = f'/team-members/{team_member_id}/'
         response = await self._http_client.get(url)
-        if response.status != 200:
+        if response.status_code != 200:
             raise ServerAPIError
-        response_data = await response.json()
+        response_data = response.json()
         return TeamMember.model_validate(response_data)

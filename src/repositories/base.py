@@ -1,7 +1,7 @@
 from collections.abc import Callable
 from typing import TypeAlias
 
-import aiohttp
+import httpx
 from redis.asyncio import Redis
 
 __all__ = (
@@ -10,12 +10,12 @@ __all__ = (
     'RedisRepository',
 )
 
-HTTPClientFactory: TypeAlias = Callable[..., aiohttp.ClientSession]
+HTTPClientFactory: TypeAlias = Callable[..., httpx.AsyncClient]
 
 
 class APIRepository:
 
-    def __init__(self, http_client: aiohttp.ClientSession):
+    def __init__(self, http_client: httpx.AsyncClient):
         self._http_client = http_client
 
 

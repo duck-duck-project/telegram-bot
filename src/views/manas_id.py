@@ -76,6 +76,12 @@ class ManasIdView(PhotoView):
             f'Тип личности: {personality_type}',
             f'Знак зодиака: {zodiac_sign}',
         ]
+
+        if self.__manas_id.extra_preferences:
+            lines.append('\n<b>✨ Дополнительная информация:</b>')
+            for preference in self.__manas_id.extra_preferences:
+                lines.append(f'{preference.name}: {preference.value}')
+
         return '\n'.join(lines)
 
     def get_photo(self) -> str | InputFile:
