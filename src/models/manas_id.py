@@ -8,6 +8,11 @@ from models.departments import Department
 __all__ = ('ManasId',)
 
 
+class ExtraPreference(BaseModel):
+    name: str
+    value: str
+
+
 class ManasId(BaseModel):
     user_id: int
     department: Department
@@ -25,3 +30,4 @@ class ManasId(BaseModel):
     nationality: str | None
     region: str | None
     country: str | None
+    extra_preferences: list[ExtraPreference]
