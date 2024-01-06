@@ -87,7 +87,9 @@ async def on_transfer_to_himself(message: Message) -> None:
     F.reply_to_message,
     or_f(
         Command('send'),
-        F.text.lower().in_({'отправить', 'перевод', 'send', 'pay'}),
+        F.text.lower().startswith('pay '),
+        F.text.lower().startswith('отправить '),
+        F.text.lower().startswith('send '),
     ),
     invert_f(F.reply_to_message.from_user.is_bot),
     F.from_user.id != F.reply_to_message.from_user.id,
