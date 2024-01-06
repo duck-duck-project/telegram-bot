@@ -85,7 +85,10 @@ async def on_transfer_to_himself(message: Message) -> None:
 
 @router.message(
     F.reply_to_message,
-    Command('send'),
+    or_f(
+        Command('send'),
+        F.text.lower().in_({'отправить', 'перевод', 'send', 'pay'}),
+    ),
     invert_f(F.reply_to_message.from_user.is_bot),
     F.from_user.id != F.reply_to_message.from_user.id,
     transfer_operation_filter,
