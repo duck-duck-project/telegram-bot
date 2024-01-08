@@ -1,4 +1,4 @@
-  from datetime import date
+from datetime import date
 
 __all__ = (
     'humanize_personality_type',
