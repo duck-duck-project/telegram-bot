@@ -21,6 +21,7 @@ __all__ = (
     'TransferSuccessfullyExecutedView',
     'InsufficientFundsForSendingMediaView',
     'InsufficientFundsForHowYourBotView',
+    'TransferExecutedView',
 )
 
 
@@ -216,4 +217,18 @@ class InsufficientFundsForHowYourBotView(View):
             f'❗️ <a href="{self.__user.url}">{self.__user.full_name}</a>'
             ' пополните баланс чтобы использовать @HowYourBot'
             '\n💰 Узнать свой баланс /balance'
+        )
+
+
+class TransferExecutedView(View):
+
+    def __init__(self, transfer: Transfer):
+        self.__transfer = transfer
+
+    def get_text(self) -> str:
+        return (
+            '✅ Перевод успешно выполнен\n'
+            f'💰 Сумма: {self.__transfer.amount} дак-дак коинов\n'
+            f'📝 Описание: {self.__transfer.description or "отсутствует"}\n'
+            f'🆔 Номер перевода: {self.__transfer.id.hex}'
         )

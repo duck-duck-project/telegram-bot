@@ -1,3 +1,5 @@
+from uuid import UUID
+
 from aiogram import Router, F
 from aiogram.enums import ChatType
 from aiogram.filters import (
@@ -10,8 +12,17 @@ from aiogram.filters import (
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message, ErrorEvent, CallbackQuery
 
-from exceptions import InsufficientFundsForTransferError
-from filters import transfer_operation_filter
+from exceptions import (
+    InsufficientFundsForTransferError,
+    TransactionDoesNotExistError, TransferRollbackExpiredError,
+    TransactionDoesNotBelongToUserError,
+    InsufficientFundsForTransferRollbackError
+)
+from filters import (
+    transfer_operation_filter,
+    transfer_rollback_filter,
+    reply_message_from_bot_filter,
+)
 from repositories import BalanceRepository, ContactRepository
 from services import BalanceNotifier
 from states import TransferStates
@@ -19,10 +30,79 @@ from views import (
     ContactListChooseView,
     answer_view,
     TransferAskForDescriptionView,
-    TransferConfirmView, edit_message_by_view, TransferSuccessfullyExecutedView,
+    TransferConfirmView,
+    edit_message_by_view,
+    TransferSuccessfullyExecutedView,
+    TransferExecutedView,
+    reply_view,
 )
 
 router = Router(name=__name__)
+
+
+@router.error(ExceptionTypeFilter(TransactionDoesNotExistError))
+async def on_transaction_does_not_exist_error(
+        event: ErrorEvent,
+) -> None:
+    await event.update.message.reply('❌ Перевод не найден')
+
+
+@router.error(ExceptionTypeFilter(TransferRollbackExpiredError))
+async def on_transfer_rollback_expired_error(
+        event: ErrorEvent,
+) -> None:
+    await event.update.message.reply(
+        '❌ Перевод может быть отменён только в течение 10 минут',
+    )
+
+
+@router.error(ExceptionTypeFilter(TransactionDoesNotBelongToUserError))
+async def on_transaction_does_not_belong_to_user_error(
+        event: ErrorEvent,
+) -> None:
+    await event.update.message.reply('❌ Вы не являетесь отправителем перевода')
+
+
+@router.error(ExceptionTypeFilter(InsufficientFundsForTransferRollbackError))
+async def on_insufficient_funds_for_transfer_rollback_error(
+        event: ErrorEvent,
+) -> None:
+    await event.update.message.reply(
+        '❌ Недостаточно средств у получателя для отмены перевода',
+    )
+
+
+@router.message(
+    F.reply_to_message.text,
+    or_f(
+        Command('rollback'),
+        F.text.lower().in_(
+            {
+                'отменить',
+                'откатить',
+                'rollback',
+                'cancel',
+            },
+        ),
+    ),
+    reply_message_from_bot_filter,
+    transfer_rollback_filter,
+    F.chat.type.in_({ChatType.GROUP, ChatType.SUPERGROUP}),
+    StateFilter('*'),
+)
+async def on_rollback_transfer(
+        message: Message,
+        balance_repository: BalanceRepository,
+        transfer_id: UUID,
+) -> None:
+    await balance_repository.rollback_transfer(
+        transfer_id=transfer_id,
+        user_id=message.from_user.id,
+    )
+    await message.reply('✅ Перевод успешно отменён')
+    await message.reply_to_message.edit_text(
+        text=f'{message.text}\n\n<i>[Отменён]</i>'
+    )
 
 
 @router.message(
@@ -114,9 +194,8 @@ async def on_create_transfer_in_group_chat(
         amount=amount,
         description=description,
     )
-    await message.reply(
-        text=f'✅ Перевод на сумму в {amount} дак-дак коинов успешно выполнен',
-    )
+    view = TransferExecutedView(transfer)
+    await reply_view(message=message, view=view)
     await balance_notifier.send_transfer_notification(transfer)
 
 
