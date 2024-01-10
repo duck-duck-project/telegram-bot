@@ -101,7 +101,7 @@ async def on_rollback_transfer(
     )
     await message.reply('✅ Перевод успешно отменён')
     await message.reply_to_message.edit_text(
-        text=f'{message.text}\n\n<i>[Отменён]</i>'
+        text=f'{message.reply_to_message.text}\n\n<i>[Отменён]</i>'
     )
 
 
