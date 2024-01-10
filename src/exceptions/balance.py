@@ -4,6 +4,10 @@ __all__ = (
     'InsufficientFundsForWithdrawalError',
     'InsufficientFundsForTransferError',
     'InsufficientFundsForBetError',
+    'TransactionDoesNotExistError',
+    'TransferRollbackExpiredError',
+    'TransactionDoesNotBelongToUserError',
+    'InsufficientFundsForTransferRollbackError',
 )
 
 
@@ -20,4 +24,20 @@ class InsufficientFundsForTransferError(Exception):
 
 
 class InsufficientFundsForBetError(Exception):
+    pass
+
+
+class TransactionDoesNotExistError(Exception):
+    pass
+
+
+class TransferRollbackExpiredError(Exception):
+    pass
+
+
+class TransactionDoesNotBelongToUserError(Exception):
+    pass
+
+
+class InsufficientFundsForTransferRollbackError(Exception):
     pass

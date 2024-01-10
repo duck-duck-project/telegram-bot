@@ -1,8 +1,14 @@
+from uuid import UUID
+
 from exceptions import (
     ServerAPIError,
     UserDoesNotExistError,
     InsufficientFundsForWithdrawalError,
     InsufficientFundsForTransferError,
+    TransactionDoesNotExistError,
+    TransferRollbackExpiredError,
+    TransactionDoesNotBelongToUserError,
+    InsufficientFundsForTransferRollbackError,
 )
 from models import SystemTransaction, UserBalance, Transfer
 from repositories.base import APIRepository
@@ -11,6 +17,32 @@ __all__ = ('BalanceRepository',)
 
 
 class BalanceRepository(APIRepository):
+
+    async def rollback_transfer(
+            self,
+            *,
+            transfer_id: UUID,
+            user_id: int,
+    ) -> None:
+        request_query_params = {
+            'transaction_id': str(transfer_id),
+            'user_id': user_id,
+        }
+        url = '/economics/transfers/'
+        response = await self._http_client.delete(
+            url=url,
+            params=request_query_params,
+        )
+        if response.status_code == 404:
+            raise TransactionDoesNotExistError
+        if response.status_code == 400:
+            match response.json():
+                case ['Transfer rollback time expired']:
+                    raise TransferRollbackExpiredError
+                case ['Transaction does not belong to user']:
+                    raise TransactionDoesNotBelongToUserError
+                case ['Insufficient funds for transfer rollback']:
+                    raise InsufficientFundsForTransferRollbackError
 
     async def create_transfer(
             self,
