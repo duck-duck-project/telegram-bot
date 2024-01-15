@@ -1,19 +1,6 @@
-from uuid import UUID
-
 from aiogram.types import Message
 
-__all__ = ('transfer_operation_filter', 'transfer_rollback_filter')
-
-
-def transfer_rollback_filter(message: Message) -> bool | dict:
-    lines = message.reply_to_message.text.splitlines()
-    last_line = lines[-1]
-    transfer_id = last_line.removeprefix('🆔 Номер перевода: ')
-    try:
-        transfer_id = UUID(transfer_id)
-    except ValueError:
-        return False
-    return {'transfer_id': transfer_id}
+__all__ = ('transfer_operation_filter',)
 
 
 def transfer_operation_filter(message: Message) -> bool | dict:
