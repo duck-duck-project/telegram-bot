@@ -8,6 +8,7 @@ from aiogram.types import (
     User,
 )
 
+from callback_data import TransferRollbackCallbackData
 from models import UserBalance, Transfer
 from views.base import View
 
@@ -230,5 +231,18 @@ class TransferExecutedView(View):
             '✅ Перевод успешно выполнен\n'
             f'💰 Сумма: {self.__transfer.amount} дак-дак коинов\n'
             f'📝 Описание: {self.__transfer.description or "отсутствует"}\n'
-            f'🆔 Номер перевода: {self.__transfer.id.hex}'
+        )
+
+    def get_reply_markup(self) -> InlineKeyboardMarkup:
+        return InlineKeyboardMarkup(
+            inline_keyboard=[
+                [
+                    InlineKeyboardButton(
+                        text='🔙 Отменить',
+                        callback_data=TransferRollbackCallbackData(
+                            transfer_id=self.__transfer.id,
+                        ).pack(),
+                    ),
+                ],
+            ],
         )
