@@ -10,6 +10,7 @@ from aiogram.types import (
 
 from callback_data import TransferRollbackCallbackData
 from models import UserBalance, Transfer
+from services.text import int_gaps
 from views.base import View
 
 __all__ = (
@@ -19,7 +20,6 @@ __all__ = (
     'DepositNotificationView',
     'TransferAskForDescriptionView',
     'TransferConfirmView',
-    'TransferSuccessfullyExecutedView',
     'InsufficientFundsForSendingMediaView',
     'InsufficientFundsForHowYourBotView',
     'TransferExecutedView',
@@ -85,7 +85,7 @@ class UserBalanceView(View):
     def get_text(self) -> str:
         return (
             f'🙍🏿‍♂️ Пользователь: {self.__user_fullname}\n'
-            f'💰 Баланс: {self.__user_balance.balance} дак-дак коинов'
+            f'💰 Баланс: {int_gaps(self.__user_balance.balance)} дак-дак коинов'
         )
 
 
@@ -97,7 +97,8 @@ class WithdrawalNotificationView(View, MyBalanceReplyKeyboardMixin):
 
     def get_text(self) -> str:
         lines = [
-            f'🔥 Списание на сумму {self.__withdrawal.amount} дак-дак коинов',
+            f'🔥 Списание на сумму'
+            f' {int_gaps(self.__withdrawal.amount)} дак-дак коинов',
         ]
         if self.__withdrawal.description is not None:
             lines.append(f'ℹ <i>{self.__withdrawal.description}</i>')
@@ -121,7 +122,8 @@ class DepositNotificationView(View, MyBalanceReplyKeyboardMixin):
 
     def get_text(self) -> str:
         lines = [
-            f'✅ Пополнение на сумму {self.__deposit.amount} дак-дак коинов',
+            f'✅ Пополнение на сумму'
+            f' {int_gaps(self.__deposit.amount)} дак-дак коинов',
         ]
         if self.__deposit.description is not None:
             lines.append(f'ℹ <i>{self.__deposit.description}</i>')
@@ -153,12 +155,12 @@ class TransferConfirmView(View):
         if self.__description is None:
             return (
                 '❓ Вы уверены что хотите совершить перевод'
-                f' на сумму в {self.__amount}'
+                f' на сумму в {int_gaps(self.__amount)}'
                 f' дак-дак коинов контакту {self.__recipient_name}'
             )
         return (
             '❓ Вы уверены что хотите совершить перевод'
-            f' на сумму в {self.__amount}'
+            f' на сумму в {int_gaps(self.__amount)}'
             f' дак-дак коинов контакту {self.__recipient_name}'
             f' с описанием <i>{self.__description}</i>'
         )
@@ -177,19 +179,6 @@ class TransferConfirmView(View):
                     ),
                 ],
             ],
-        )
-
-
-class TransferSuccessfullyExecutedView(View):
-
-    def __init__(self, transfer: Transfer):
-        self.__transfer = transfer
-
-    def get_text(self) -> str:
-        return (
-            '✅ Перевод успешно выполнен\n'
-            f'💰 Сумма: {self.__transfer.amount} дак-дак коинов\n'
-            f'📝 Описание: {self.__transfer.description or "отсутствует"}'
         )
 
 
@@ -229,7 +218,7 @@ class TransferExecutedView(View):
     def get_text(self) -> str:
         return (
             '✅ Перевод успешно выполнен\n'
-            f'💰 Сумма: {self.__transfer.amount} дак-дак коинов\n'
+            f'💰 Сумма: {int_gaps(self.__transfer.amount)} дак-дак коинов\n'
             f'📝 Описание: {self.__transfer.description or "отсутствует"}\n'
         )
 
