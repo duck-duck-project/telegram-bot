@@ -1,8 +1,12 @@
 import textwrap
 
-from aiogram.types import InputMediaPhoto
+from aiogram.types import (
+    InputMediaPhoto, InlineKeyboardMarkup,
+    InlineKeyboardButton
+)
 from aiogram.utils.media_group import MediaGroupBuilder
 
+from callback_data import FoodMenuDetailCallbackData
 from models import DailyFoodMenu
 from views.base import View
 
@@ -55,9 +59,6 @@ class FoodMenuFAQView(View):
     🍏На завтра:
     <code>/yemek tomorrow</code>
     
-    🍏На неделю вперёд:
-    <code>/yemek week</code>
-    
     <b>🧐Так же можно просматривать на N дней вперёд:</b>
     
     •<code>/yemek {N}</code>
@@ -69,3 +70,29 @@ class FoodMenuFAQView(View):
     <b>👇 Так же можете посмотреть меню в онлайн режиме:</b>
     https://t.me/duck_duck_robot/yemek
     ''')
+    reply_markup = InlineKeyboardMarkup(
+        inline_keyboard=[
+            [
+                InlineKeyboardButton(
+                    text='🕕 Сегодня',
+                    callback_data=FoodMenuDetailCallbackData(
+                        days_skip_count=0,
+                    ).pack(),
+                ),
+                InlineKeyboardButton(
+                    text='🕒 Завтра',
+                    callback_data=FoodMenuDetailCallbackData(
+                        days_skip_count=1,
+                    ).pack(),
+                ),
+            ],
+            [
+                InlineKeyboardButton(
+                    text='🕞 Послезавтра',
+                    callback_data=FoodMenuDetailCallbackData(
+                        days_skip_count=2,
+                    ).pack(),
+                ),
+            ],
+        ],
+    )

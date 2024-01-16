@@ -1,5 +1,3 @@
-from uuid import UUID
-
 from aiogram import Router, F
 from aiogram.enums import ChatType
 from aiogram.filters import (
@@ -12,17 +10,15 @@ from aiogram.filters import (
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message, ErrorEvent, CallbackQuery
 
+from callback_data import TransferRollbackCallbackData
 from exceptions import (
     InsufficientFundsForTransferError,
-    TransactionDoesNotExistError, TransferRollbackExpiredError,
+    TransactionDoesNotExistError,
+    TransferRollbackExpiredError,
     TransactionDoesNotBelongToUserError,
-    InsufficientFundsForTransferRollbackError
+    InsufficientFundsForTransferRollbackError,
 )
-from filters import (
-    transfer_operation_filter,
-    transfer_rollback_filter,
-    reply_message_from_bot_filter,
-)
+from filters import transfer_operation_filter
 from repositories import BalanceRepository, ContactRepository
 from services import BalanceNotifier
 from states import TransferStates
@@ -32,7 +28,6 @@ from views import (
     TransferAskForDescriptionView,
     TransferConfirmView,
     edit_message_by_view,
-    TransferSuccessfullyExecutedView,
     TransferExecutedView,
     reply_view,
 )
@@ -44,15 +39,19 @@ router = Router(name=__name__)
 async def on_transaction_does_not_exist_error(
         event: ErrorEvent,
 ) -> None:
-    await event.update.message.reply('❌ Перевод не найден')
+    await event.update.callback_query.answer(
+        text='❌ Перевод не найден',
+        show_alert=True,
+    )
 
 
 @router.error(ExceptionTypeFilter(TransferRollbackExpiredError))
 async def on_transfer_rollback_expired_error(
         event: ErrorEvent,
 ) -> None:
-    await event.update.message.reply(
-        '❌ Перевод может быть отменён только в течение 10 минут',
+    await event.update.callback_query.answer(
+        text='❌ Перевод может быть отменён только в течение 10 минут',
+        show_alert=True,
     )
 
 
@@ -60,48 +59,38 @@ async def on_transfer_rollback_expired_error(
 async def on_transaction_does_not_belong_to_user_error(
         event: ErrorEvent,
 ) -> None:
-    await event.update.message.reply('❌ Вы не являетесь отправителем перевода')
+    await event.update.callback_query.answer(
+        text='❌ Вы не являетесь отправителем перевода',
+        show_alert=True,
+    )
 
 
 @router.error(ExceptionTypeFilter(InsufficientFundsForTransferRollbackError))
 async def on_insufficient_funds_for_transfer_rollback_error(
         event: ErrorEvent,
 ) -> None:
-    await event.update.message.reply(
-        '❌ Недостаточно средств у получателя для отмены перевода',
+    await event.update.callback_query.answer(
+        text='❌ Недостаточно средств у получателя для отмены перевода',
+        show_alert=True,
     )
 
 
-@router.message(
-    F.reply_to_message.text,
-    or_f(
-        Command('rollback'),
-        F.text.lower().in_(
-            {
-                'отменить',
-                'откатить',
-                'rollback',
-                'cancel',
-            },
-        ),
-    ),
-    reply_message_from_bot_filter,
-    transfer_rollback_filter,
-    F.chat.type.in_({ChatType.GROUP, ChatType.SUPERGROUP}),
+@router.callback_query(
+    TransferRollbackCallbackData.filter(),
     StateFilter('*'),
 )
 async def on_rollback_transfer(
-        message: Message,
+        callback_query: CallbackQuery,
+        callback_data: TransferRollbackCallbackData,
         balance_repository: BalanceRepository,
-        transfer_id: UUID,
 ) -> None:
     await balance_repository.rollback_transfer(
-        transfer_id=transfer_id,
-        user_id=message.from_user.id,
+        transfer_id=callback_data.transfer_id,
+        user_id=callback_query.from_user.id,
     )
-    await message.reply('✅ Перевод успешно отменён')
-    await message.reply_to_message.edit_text(
-        text=f'{message.reply_to_message.text}\n\n<i>[Отменён]</i>'
+    await callback_query.message.delete_reply_markup()
+    await callback_query.message.edit_text(
+        text=f'{callback_query.message.text}\n\n<i>[Отменён]</i>'
     )
 
 
@@ -237,7 +226,7 @@ async def on_transfer_confirm(
         description=description,
     )
     await balance_notifier.send_transfer_notification(transfer)
-    view = TransferSuccessfullyExecutedView(transfer)
+    view = TransferExecutedView(transfer)
     await edit_message_by_view(message=callback_query.message, view=view)
 
 
