@@ -43,7 +43,10 @@ async def on_insufficient_funds_for_withdrawal_error(event: ErrorEvent) -> None:
 
 
 @router.message(
-    Command('balance'),
+    or_f(
+        Command('balance'),
+        F.text.lower().in_({'баланс', 'остаток', 'счет'}),
+    ),
     F.reply_to_message.as_('reply'),
     invert_f(F.reply_to_message.is_bot),
     StateFilter('*'),
@@ -69,7 +72,7 @@ async def on_show_other_user_balance(
 @router.message(
     or_f(
         Command('balance'),
-        F.text == '💰 Мой баланс',
+        F.text.lower().in_({'баланс', 'остаток', 'счет', '💰 Мой баланс'}),
     ),
     StateFilter('*'),
 )
