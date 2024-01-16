@@ -227,7 +227,7 @@ async def on_transfer_confirm(
         description=description,
     )
     await balance_notifier.send_transfer_notification(transfer)
-    view = TransferSuccessfullyExecutedView(transfer)
+    view = TransferExecutedView(transfer)
     await edit_message_by_view(message=callback_query.message, view=view)
 
 
