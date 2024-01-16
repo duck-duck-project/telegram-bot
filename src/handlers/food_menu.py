@@ -1,10 +1,9 @@
-import asyncio
-
 from aiogram import Router, F
 from aiogram.enums import ContentType
 from aiogram.filters import StateFilter, Command, or_f
-from aiogram.types import Message
+from aiogram.types import Message, CallbackQuery
 
+from callback_data import FoodMenuDetailCallbackData
 from filters import (
     food_menu_for_tomorrow_filter,
     food_menu_for_today_filter,
@@ -19,33 +18,41 @@ __all__ = ('router',)
 router = Router(name=__name__)
 
 
-@router.message(
-    F.content_type == ContentType.TEXT,
-    F.text == '/yemek week',
+@router.callback_query(
+    FoodMenuDetailCallbackData.filter(),
     StateFilter('*'),
 )
-async def on_show_food_menu_for_week_ahead(
-        message: Message,
+async def on_show_food_menu_for_specific_day_callback(
+        callback_query: CallbackQuery,
+        callback_data: FoodMenuDetailCallbackData,
         balance_repository: BalanceRepository,
         balance_notifier: BalanceNotifier,
         food_menu_repository: FoodMenuRepository,
 ) -> None:
     food_menus = await food_menu_repository.get_all()
 
-    withdrawal = await balance_repository.create_withdrawal(
-        user_id=message.from_user.id,
-        amount=560,
-        description='Просмотр йемека на неделю вперёд',
-    )
-    await balance_notifier.send_withdrawal_notification(withdrawal)
+    try:
+        food_menu = food_menus[callback_data.days_skip_count]
+    except IndexError:
+        await callback_query.answer(
+            text='❌ Нет данных о меню на указанный день',
+            show_alert=True,
+        )
+    else:
+        withdrawal = await balance_repository.create_withdrawal(
+            user_id=callback_query.from_user.id,
+            amount=80,
+            description='Просмотр йемека на сегодня',
+        )
+        await balance_notifier.send_withdrawal_notification(withdrawal)
 
-    for daily_food_menu in food_menus[:7]:
-        view = FoodMenuMediaGroupView(daily_food_menu)
-        await message.answer_media_group(
+        view = FoodMenuMediaGroupView(food_menu)
+        await callback_query.message.answer_media_group(
             media=view.as_media_group(),
             disable_notification=True,
         )
-        await asyncio.sleep(0.5)
+    finally:
+        await callback_query.message.delete()
 
 
 @router.message(
