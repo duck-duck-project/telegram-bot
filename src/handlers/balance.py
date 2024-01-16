@@ -6,11 +6,10 @@ from aiogram.filters import (
     or_f,
     invert_f,
 )
-from aiogram.types import CallbackQuery, Message, ErrorEvent
+from aiogram.types import CallbackQuery, Message, ErrorEvent, User
 
 from exceptions import InsufficientFundsForWithdrawalError
 from repositories import BalanceRepository
-from services import BalanceNotifier
 from views import (
     UserBalanceView,
     render_message_or_callback_query,
@@ -45,53 +44,41 @@ async def on_insufficient_funds_for_withdrawal_error(event: ErrorEvent) -> None:
 @router.message(
     or_f(
         Command('balance'),
-        F.text.lower().in_({'баланс', 'остаток', 'счет'}),
+        F.text.lower().in_({'баланс', 'остаток', 'счет', 'balance'}),
     ),
-    F.reply_to_message.as_('reply'),
+    or_f(
+        F.reply_to_message.from_user.as_('from_user'),
+        F.from_user.as_('from_user'),
+    ),
     invert_f(F.reply_to_message.is_bot),
     StateFilter('*'),
 )
 async def on_show_other_user_balance(
         message: Message,
-        reply: Message,
+        from_user: User,
         balance_repository: BalanceRepository,
-        balance_notifier: BalanceNotifier,
 ) -> None:
-    user_id = reply.from_user.id
-    user_balance = await balance_repository.get_user_balance(user_id)
-    view = UserBalanceView(user_balance, reply.from_user.full_name)
+    user_balance = await balance_repository.get_user_balance(from_user.id)
+    view = UserBalanceView(user_balance, from_user.full_name)
     await answer_view(message=message, view=view)
-    withdrawal = await balance_repository.create_withdrawal(
-        user_id=message.from_user.id,
-        amount=100,
-        description='Просмотр чужого баланса',
-    )
-    await balance_notifier.send_withdrawal_notification(withdrawal)
 
 
-@router.message(
-    or_f(
-        Command('balance'),
-        F.text.lower().in_({'баланс', 'остаток', 'счет', '💰 Мой баланс'}),
-    ),
-    StateFilter('*'),
-)
 @router.callback_query(
     F.data == 'show-user-balance',
     StateFilter('*'),
 )
 async def on_show_user_balance(
-        message_or_callback_query: Message | CallbackQuery,
+        callback_query: CallbackQuery,
         balance_repository: BalanceRepository,
 ) -> None:
-    user_id = message_or_callback_query.from_user.id
-    user_balance = await balance_repository.get_user_balance(user_id)
+    from_user = callback_query.from_user
+    user_balance = await balance_repository.get_user_balance(from_user.id)
     view = UserBalanceView(
         user_balance=user_balance,
-        user_fullname=message_or_callback_query.from_user.full_name,
+        user_fullname=from_user.full_name,
     )
     await render_message_or_callback_query(
-        message_or_callback_query=message_or_callback_query,
+        message_or_callback_query=callback_query,
         view=view,
     )
 
