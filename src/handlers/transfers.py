@@ -28,7 +28,6 @@ from views import (
     TransferAskForDescriptionView,
     TransferConfirmView,
     edit_message_by_view,
-    TransferSuccessfullyExecutedView,
     TransferExecutedView,
     reply_view,
 )
