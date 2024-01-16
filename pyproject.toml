@@ -15,6 +15,7 @@ structlog = "^23.2.0"
 humanize = "^4.9.0"
 cloudinary = "^1.36.0"
 httpx = "^0.26.0"
+fast-depends = "^2.3.1"
 
 
 [tool.poetry.group.dev.dependencies]

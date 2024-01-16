@@ -295,6 +295,27 @@ files = [
 python-dateutil = ">=2.4"
 
 [[package]]
+name = "fast-depends"
+version = "2.3.1"
+description = "FastDepends - extracted and cleared from HTTP domain logic FastAPI Dependency Injection System. Async and sync are both supported."
+category = "main"
+optional = false
+python-versions = ">=3.8"
+files = [
+    {file = "fast_depends-2.3.1-py3-none-any.whl", hash = "sha256:1264fcca7f90eb908ba9ef060ca5cc56b381a4232860214695bf3176af40dece"},
+    {file = "fast_depends-2.3.1.tar.gz", hash = "sha256:f7a7d56f5425506be2104561176c4a92ddbe10d23e5a7d6a7e04c593cd0bc76b"},
+]
+
+[package.dependencies]
+anyio = ">=3.0.0,<5.0.0"
+pydantic = ">=1.7.4,<1.8 || >1.8,<1.8.1 || >1.8.1,<3.0.0"
+
+[package.extras]
+dev = ["fast-depends[doc]", "fast-depends[test]", "mypy (>=1.8.0)", "ruff (==0.1.11)"]
+doc = ["mdx-include (>=1.4.1,<2.0.0)", "mkdocs-markdownextradata-plugin (>=0.1.7,<0.3.0)", "mkdocs-material (>=9.4.0,<10.0.0)", "mkdocs-minify-plugin (>=0.7.0,<1.0.0)"]
+test = ["coverage[toml] (>=7.2.0,<8.0.0)", "pytest (>=7.4.0,<8)"]
+
+[[package]]
 name = "frozenlist"
 version = "1.4.0"
 description = "A list-like structure which implements collections.abc.MutableSequence"
@@ -991,4 +1012,4 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "b251eb3512cb2060156d8e926454c58a637b765b5c068ba9eaff6d5968618877"
+content-hash = "62bb3281ada61dc528cdcd15eac6a90e554039d1f229638e2d1e2fac0a946605"
