@@ -1,5 +1,5 @@
-from aiogram import Router
-from aiogram.filters import StateFilter, Command, ExceptionTypeFilter
+from aiogram import Router, F
+from aiogram.filters import StateFilter, Command, ExceptionTypeFilter, or_f
 from aiogram.types import Message, ErrorEvent
 from fast_depends import Depends, inject
 
@@ -19,7 +19,7 @@ from services import (
     process_roulette_failed,
     validate_user_balance, CasinoRoulette,
 )
-from views import CasinoFAQView, reply_view
+from views import CasinoFAQView, answer_photo_view
 
 router = Router(name=__name__)
 
@@ -164,8 +164,11 @@ async def on_make_bet_on_even_or_odd_number(
 
 
 @router.message(
-    Command('bet'),
+    or_f(
+        Command('bet'),
+        F.text.lower().in_({'казино', 'казиныч', 'казик', 'bet'}),
+    ),
     StateFilter('*'),
 )
 async def on_bet(message: Message) -> None:
-    await reply_view(view=CasinoFAQView(), message=message)
+    await answer_photo_view(view=CasinoFAQView(), message=message)
