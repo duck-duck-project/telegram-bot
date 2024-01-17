@@ -22,6 +22,7 @@ __all__ = (
     'send_view',
     'reply_view',
     'PhotoView',
+    'answer_photo_view',
 )
 
 ReplyMarkup: TypeAlias = (
@@ -112,6 +113,17 @@ async def answer_view(
         reply_markup=view.get_reply_markup(),
         disable_web_page_preview=view.get_disable_web_page_preview(),
         disable_notification=view.get_disable_notification(),
+    )
+
+
+async def answer_photo_view(
+        *,
+        message: Message,
+        view: PhotoView,
+) -> Message:
+    return await message.answer_photo(
+        photo=view.get_photo(),
+        caption=view.get_caption(),
     )
 
 
