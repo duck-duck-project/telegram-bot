@@ -1,6 +1,7 @@
-from aiogram import Router
-from aiogram.filters import StateFilter, Command, ExceptionTypeFilter
+from aiogram import Router, F
+from aiogram.filters import StateFilter, Command, ExceptionTypeFilter, or_f
 from aiogram.types import Message, ErrorEvent
+from fast_depends import Depends, inject
 
 from exceptions import InsufficientFundsForBetError
 from filters import (
@@ -16,9 +17,9 @@ from services import (
     get_roulette_with_random_number,
     process_roulette_won,
     process_roulette_failed,
-    validate_user_balance,
+    validate_user_balance, CasinoRoulette,
 )
-from views import CasinoFAQView, reply_view
+from views import CasinoFAQView, answer_photo_view
 
 router = Router(name=__name__)
 
@@ -36,6 +37,7 @@ async def on_insufficient_funds_for_bet_error(event: ErrorEvent) -> None:
     bet_amount_filter,
     StateFilter('*'),
 )
+@inject
 async def on_make_bet_on_specific_color(
         message: Message,
         target_color: BetColor,
@@ -43,9 +45,8 @@ async def on_make_bet_on_specific_color(
         balance_repository: BalanceRepository,
         user: User,
         balance_notifier: BalanceNotifier,
+        roulette: CasinoRoulette = Depends(get_roulette_with_random_number),
 ) -> None:
-    roulette = get_roulette_with_random_number()
-
     await validate_user_balance(
         balance_repository=balance_repository,
         user_id=user.id,
@@ -79,6 +80,7 @@ async def on_make_bet_on_specific_color(
     bet_amount_filter,
     StateFilter('*'),
 )
+@inject
 async def on_make_bet_on_specific_number(
         message: Message,
         target_number: int,
@@ -86,9 +88,8 @@ async def on_make_bet_on_specific_number(
         balance_repository: BalanceRepository,
         user: User,
         balance_notifier: BalanceNotifier,
+        roulette: CasinoRoulette = Depends(get_roulette_with_random_number),
 ) -> None:
-    roulette = get_roulette_with_random_number()
-
     await validate_user_balance(
         balance_repository=balance_repository,
         user_id=user.id,
@@ -123,6 +124,7 @@ async def on_make_bet_on_specific_number(
     bet_amount_filter,
     StateFilter('*'),
 )
+@inject
 async def on_make_bet_on_even_or_odd_number(
         message: Message,
         target_even_or_odd: BetEvenOrOdd,
@@ -130,9 +132,8 @@ async def on_make_bet_on_even_or_odd_number(
         balance_repository: BalanceRepository,
         user: User,
         balance_notifier: BalanceNotifier,
+        roulette: CasinoRoulette = Depends(get_roulette_with_random_number),
 ) -> None:
-    roulette = get_roulette_with_random_number()
-
     await validate_user_balance(
         balance_repository=balance_repository,
         user_id=user.id,
@@ -163,8 +164,11 @@ async def on_make_bet_on_even_or_odd_number(
 
 
 @router.message(
-    Command('bet'),
+    or_f(
+        Command('bet'),
+        F.text.lower().in_({'казино', 'казиныч', 'казик', 'bet'}),
+    ),
     StateFilter('*'),
 )
 async def on_bet(message: Message) -> None:
-    await reply_view(view=CasinoFAQView(), message=message)
+    await answer_photo_view(view=CasinoFAQView(), message=message)

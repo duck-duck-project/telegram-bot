@@ -1,3 +1,4 @@
+from views import PhotoView
 from views.base import View
 
 __all__ = (
@@ -7,8 +8,9 @@ __all__ = (
 )
 
 
-class CasinoFAQView(View):
-    text = (
+class CasinoFAQView(PhotoView):
+    photo = 'https://i.imgur.com/NIre34c.jpg'
+    caption = (
         '🎲 Сделать ставку:'
         '\n\n'
         '🎨 <b>1. По цвету</b>'
