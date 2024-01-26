@@ -1,6 +1,7 @@
 from .anonymous_messaging import *
 from .balance import *
 from .base import *
+from .birthdays import *
 from .casino import *
 from .contacts import *
 from .food_menu import *

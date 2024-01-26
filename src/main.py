@@ -44,6 +44,7 @@ def include_routers(dispatcher: Dispatcher) -> None:
         handlers.anti_how_your_bot.router,
         handlers.anti_media.router,
         handlers.balance.router,
+        handlers.birthdays.router,
         handlers.work.router,
         handlers.cats.router,
         handlers.casino.router,
