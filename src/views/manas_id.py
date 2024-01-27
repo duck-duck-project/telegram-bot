@@ -25,6 +25,7 @@ class ManasIdView(PhotoView):
             Course.BACHELOR_THIRD: '3 бакалавр',
             Course.BACHELOR_FOURTH: '4 бакалавр',
             Course.PREPARATION: 'хазырлык',
+            Course.APPLICANT: 'абитуриент',
         }[self.__manas_id.course]
         gender_name = {
             Gender.MALE: 'мужской',
