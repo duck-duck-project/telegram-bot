@@ -14,6 +14,8 @@ def transfer_operation_filter(message: Message) -> bool | dict:
         _, amount, *description = args
         description = ' '.join(description)
 
+    amount = amount.replace('к', '000')
+
     try:
         amount = int(amount)
     except ValueError:
