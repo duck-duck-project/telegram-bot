@@ -49,7 +49,7 @@ async def on_show_my_manas_id(
         )
         photos = [URLInputFile(url)]
     else:
-        photos = [profile_photos[-1].file_id]
+        photos = [profile_photos.photos[0][-1].file_id]
 
     view = ManasIdView(manas_id, photos)
     await answer_media_group_view(message=message, view=view)
