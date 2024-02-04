@@ -8,17 +8,18 @@ from aiogram.utils.media_group import MediaGroupBuilder
 
 from callback_data import FoodMenuDetailCallbackData
 from models import DailyFoodMenu
+from views import MediaGroupView
 from views.base import View
 
 __all__ = ('FoodMenuMediaGroupView', 'FoodMenuFAQView')
 
 
-class FoodMenuMediaGroupView(View):
+class FoodMenuMediaGroupView(MediaGroupView):
 
     def __init__(self, daily_food_menu: DailyFoodMenu):
         self.__daily_food_menu = daily_food_menu
 
-    def get_text(self) -> str:
+    def get_caption(self) -> str:
         caption: list[str] = [
             f'🍽️ <b>Меню на {self.__daily_food_menu.at:%d.%m.%Y}</b> 🍽️\n'
         ]
@@ -36,17 +37,12 @@ class FoodMenuMediaGroupView(View):
         caption.append(f'<b>Сумма калорий: {total_calories_count}</b>')
         return '\n'.join(caption)
 
-    def as_media_group(self) -> list[InputMediaPhoto]:
-        input_media_photos: list[InputMediaPhoto] = [
+    def get_medias(self) -> list[InputMediaPhoto]:
+        return [
             InputMediaPhoto(
                 media=str(food_menu_item.photo_url),
             ) for food_menu_item in self.__daily_food_menu.items
         ]
-        media_group_builder = MediaGroupBuilder(
-            media=input_media_photos,
-            caption=self.get_text(),
-        )
-        return media_group_builder.build()
 
 
 class FoodMenuFAQView(View):
