@@ -23,7 +23,11 @@ __all__ = (
     'reply_view',
     'PhotoView',
     'answer_photo_view',
+    'MediaGroupView',
+    'answer_media_group_view',
 )
+
+from aiogram.utils.media_group import MediaType, MediaGroupBuilder
 
 ReplyMarkup: TypeAlias = (
         InlineKeyboardMarkup
@@ -61,6 +65,24 @@ class PhotoView:
 
     def get_caption(self) -> str | None:
         return self.caption
+
+
+class MediaGroupView:
+    medias: list[MediaType] | None = None
+    caption: str | None = None
+
+    def get_caption(self) -> str | None:
+        return self.caption
+
+    def get_medias(self) -> list[MediaType] | None:
+        return self.medias
+
+    def as_media_group(self) -> list[MediaType]:
+        media_group_builder = MediaGroupBuilder(
+            media=self.get_medias(),
+            caption=self.get_caption(),
+        )
+        return media_group_builder.build()
 
 
 class InlineQueryView(View):
@@ -101,6 +123,16 @@ class InlineQueryView(View):
             thumb_width=self.get_thumbnail_width(),
             thumb_height=self.get_thumbnail_height(),
         )
+
+
+async def answer_media_group_view(
+        *,
+        message: Message,
+        view: MediaGroupView,
+) -> list[Message]:
+    return await message.answer_media_group(
+        media=view.as_media_group(),
+    )
 
 
 async def answer_view(
