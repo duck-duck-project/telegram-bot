@@ -11,7 +11,7 @@ from filters import (
 )
 from repositories import BalanceRepository, FoodMenuRepository
 from services import BalanceNotifier
-from views import FoodMenuMediaGroupView, answer_view, FoodMenuFAQView
+from views import FoodMenuMediaGroupView, answer_view, FoodMenuFAQView, answer_media_group_view
 
 __all__ = ('router',)
 
@@ -47,10 +47,7 @@ async def on_show_food_menu_for_specific_day_callback(
         await balance_notifier.send_withdrawal_notification(withdrawal)
 
         view = FoodMenuMediaGroupView(food_menu)
-        await callback_query.message.answer_media_group(
-            media=view.as_media_group(),
-            disable_notification=True,
-        )
+        await answer_media_group_view(message=callback_query.message, view=view)
     finally:
         await callback_query.message.delete()
 
@@ -87,7 +84,7 @@ async def on_show_food_menu_for_specific_day(
         return
 
     view = FoodMenuMediaGroupView(food_menu)
-    await message.answer_media_group(media=view.as_media_group())
+    await answer_media_group_view(message=message, view=view)
 
 
 @router.message(
