@@ -50,7 +50,7 @@ async def on_show_my_manas_id(
         )
         photos = [URLInputFile(url)]
     else:
-        photos = [photo[-1].file_id for photo in profile_photos.photos]
+        photos = [photo[-1].file_id for photo in profile_photos.photos[:10]]
 
     view = ManasIdView(manas_id, photos)
 
