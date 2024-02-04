@@ -7,12 +7,11 @@ __all__ = (
 )
 
 
-@dataclass(frozen=True, slots=True)
 class UserDoesNotExistError(Exception):
-    user_id: int
 
-    def __str__(self):
-        return f'User with Telegram ID {self.user_id} does not exist'
+    def __init__(self, user_id: int):
+        self.user_id = user_id
+        super().__init__()
 
 
 @dataclass(frozen=True, slots=True)

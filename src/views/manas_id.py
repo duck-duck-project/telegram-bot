@@ -1,22 +1,25 @@
-from aiogram.types import InputFile
+from collections.abc import Iterable
+
+from aiogram.types import InputMediaPhoto
 
 from enums import Course, Gender
 from models import ManasId
 from services.dates import compute_age
 from services.manas_id import (
     humanize_personality_type,
-    determine_zodiac_sign, compute_living_days,
+    determine_zodiac_sign,
+    compute_living_days,
 )
-from views import PhotoView
+from views import MediaGroupView
 
 __all__ = ('ManasIdView',)
 
 
-class ManasIdView(PhotoView):
+class ManasIdView(MediaGroupView):
 
-    def __init__(self, manas_id: ManasId, photo: str | InputFile):
+    def __init__(self, manas_id: ManasId, photos: Iterable[str]):
         self.__manas_id = manas_id
-        self.__photo = photo
+        self.__photos = tuple(photos)
 
     def get_caption(self) -> str:
         course_name = {
@@ -85,5 +88,8 @@ class ManasIdView(PhotoView):
 
         return '\n'.join(lines)
 
-    def get_photo(self) -> str | InputFile:
-        return self.__photo
+    def get_medias(self) -> list[InputMediaPhoto]:
+        return [
+            InputMediaPhoto(media=photo_file_id)
+            for photo_file_id in self.__photos
+        ]

@@ -4,7 +4,7 @@ from aiogram.types import Message, URLInputFile
 
 from exceptions.manas_id import ManasIdDoesNotExistError
 from repositories import ManasIdRepository
-from views import ManasIdView
+from views import ManasIdView, answer_media_group_view
 
 router = Router(name=__name__)
 
@@ -47,13 +47,9 @@ async def on_show_my_manas_id(
             'https://api.thecatapi.com/v1/'
             'images/search?format=src&mime_types=jpg,png'
         )
-        photo = URLInputFile(url)
+        photos = [URLInputFile(url)]
     else:
-        photo = profile_photos.photos[0][-1].file_id
+        photos = [profile_photo[-1].file_id for profile_photo in profile_photos.photos[:10]]
 
-    view = ManasIdView(manas_id, photo)
-
-    await message.answer_photo(
-        photo=view.get_photo(),
-        caption=view.get_caption(),
-    )
+    view = ManasIdView(manas_id, photos)
+    await answer_media_group_view(message=message, view=view)
