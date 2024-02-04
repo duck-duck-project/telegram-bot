@@ -1,4 +1,5 @@
 from aiogram import Router, F
+from aiogram.exceptions import TelegramBadRequest
 from aiogram.filters import StateFilter, or_f, and_f
 from aiogram.types import Message, URLInputFile
 
@@ -49,7 +50,12 @@ async def on_show_my_manas_id(
         )
         photos = [URLInputFile(url)]
     else:
-        photos = [profile_photos.photos[0][-1].file_id]
+        photos = [photo[-1].file_id for photo in profile_photos.photos]
 
     view = ManasIdView(manas_id, photos)
-    await answer_media_group_view(message=message, view=view)
+
+    try:
+        await answer_media_group_view(message=message, view=view)
+    except TelegramBadRequest:
+        view = ManasIdView(manas_id, photos[:1])
+        await answer_media_group_view(message=message, view=view)
