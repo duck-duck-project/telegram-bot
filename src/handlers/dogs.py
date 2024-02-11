@@ -29,7 +29,7 @@ async def on_send_dog_photo(
     withdrawal = await balance_repository.create_withdrawal(
         user_id=message.from_user.id,
         amount=100,
-        description='🐱 Фото собачки',
+        description='🐶 Фото собачки',
     )
     await message.reply_photo(URLInputFile(url))
     await balance_notifier.send_withdrawal_notification(withdrawal)
