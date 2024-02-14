@@ -31,7 +31,7 @@ async def on_show_closest_birthdays(
     manas_ids = await manas_id_repository.get_all()
     withdrawal = await balance_repository.create_withdrawal(
         user_id=message.from_user.id,
-        amount=10000,
+        amount=1000,
         description='Просмотр ближайших дней рождений',
     )
     view = ClosestBirthdaysView(
