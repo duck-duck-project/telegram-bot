@@ -1,6 +1,6 @@
-from aiogram import Router, F
+from aiogram import F, Router
 from aiogram.enums import ChatType
-from aiogram.filters import Command, invert_f, StateFilter, or_f
+from aiogram.filters import Command, StateFilter, invert_f, or_f
 from aiogram.types import Message
 
 from models import User
@@ -9,8 +9,6 @@ from repositories import ContactRepository, UserRepository
 __all__ = ('router',)
 
 router = Router(name=__name__)
-
-SHAHADAT_USER_ID = 5419409600
 
 
 @router.message(
@@ -52,19 +50,6 @@ async def on_contact_command_is_not_replied_to_user(
 @router.message(
     F.chat.type.in_({ChatType.GROUP, ChatType.SUPERGROUP}),
     Command('contact'),
-    or_f(
-        F.reply_to_message.from_user.id == SHAHADAT_USER_ID,
-        F.from_user.id == SHAHADAT_USER_ID,
-    ),
-    StateFilter('*'),
-)
-async def on_add_shahadat_to_contacts(message: Message) -> None:
-    await message.reply('Вы не можете добавить этого пользователя в контакты')
-
-
-@router.message(
-    F.chat.type.in_({ChatType.GROUP, ChatType.SUPERGROUP}),
-    Command('contact'),
     F.reply_to_message.as_('reply_to_message'),
     StateFilter('*'),
 )
@@ -75,9 +60,6 @@ async def on_add_contact(
         contact_repository: ContactRepository,
         reply_to_message: Message,
 ) -> None:
-    if SHAHADAT_USER_ID in (user.id, reply_to_message.from_user.id):
-        return
-
     from_user = reply_to_message.from_user
     name = from_user.username or from_user.full_name
 
