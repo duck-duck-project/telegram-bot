@@ -1,5 +1,7 @@
 from aiogram.types import Message
 
+from services import parse_abbreviated_number
+
 __all__ = ('transfer_operation_filter',)
 
 
@@ -14,10 +16,8 @@ def transfer_operation_filter(message: Message) -> bool | dict:
         _, amount, *description = args
         description = ' '.join(description)
 
-    amount = amount.replace('к', '000')
-
     try:
-        amount = int(amount)
+        amount = parse_abbreviated_number(amount)
     except ValueError:
         return False
 
