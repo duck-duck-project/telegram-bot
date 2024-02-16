@@ -1,4 +1,3 @@
-from datetime import date
 from typing import Protocol
 
 from pydantic import BaseModel, HttpUrl
@@ -27,4 +26,3 @@ class User(BaseModel):
     profile_photo_url: HttpUrl | None
     is_banned: bool
     can_receive_notifications: bool
-    born_at: date | None

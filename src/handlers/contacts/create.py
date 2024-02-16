@@ -81,7 +81,7 @@ async def on_add_contact(
     from_user = reply_to_message.from_user
     name = from_user.username or from_user.full_name
 
-    to_user, is_to_user_created = await user_repository.get_or_create(
+    to_user, is_to_user_created = await user_repository.upsert(
         user_id=from_user.id,
         fullname=from_user.full_name,
         username=from_user.username,

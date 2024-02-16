@@ -1,8 +1,8 @@
 from aiogram.enums import ChatType
 from aiogram.types import Update
 
-from exceptions import UserDoesNotExistError
 from middlewares.common import Handler, ContextData, HandlerReturn
+from repositories import UserRepository
 from services import extract_user_from_update
 
 __all__ = ('user_retrieve_middleware',)
@@ -32,14 +32,11 @@ async def user_retrieve_middleware(
 
     from_user = extract_user_from_update(event)
 
-    user_repository = data['user_repository']
-    try:
-        user = await user_repository.get_by_id(from_user.id)
-    except UserDoesNotExistError:
-        user = await user_repository.create(
-            user_id=from_user.id,
-            fullname=from_user.full_name,
-            username=from_user.username,
-        )
+    user_repository: UserRepository = data['user_repository']
+    user, _ = await user_repository.upsert(
+        user_id=from_user.id,
+        fullname=from_user.full_name,
+        username=from_user.username,
+    )
     data['user'] = user
     return await handler(event, data)
