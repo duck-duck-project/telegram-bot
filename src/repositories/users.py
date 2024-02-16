@@ -57,9 +57,7 @@ class UserRepository(APIRepository):
             request_data['profile_photo_url'] = profile_photo_url
 
         url = '/users/'
-        print(request_data)
         response = await self._http_client.post(url, json=request_data)
-        print(response.json())
 
         if response.status_code == 201:
             response_data = response.json()['result']
