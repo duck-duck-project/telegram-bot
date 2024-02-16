@@ -42,14 +42,13 @@ async def on_profile_photo_input(
     if user.secret_message_theme is not None:
         secret_message_theme_id = user.secret_message_theme.id
 
-    await user_repository.update(
+    await user_repository.upsert(
         user_id=user.id,
         fullname=user.fullname,
         username=user.username,
         can_be_added_to_contacts=user.can_be_added_to_contacts,
         secret_messages_theme_id=secret_message_theme_id,
         can_receive_notifications=user.can_receive_notifications,
-        born_at=user.born_at,
         profile_photo_url=new_profile_photo_url,
     )
     await message.reply('✅ Фото обновлено')

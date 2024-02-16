@@ -1,10 +1,10 @@
 import textwrap
 
 from aiogram.types import (
-    InputMediaPhoto, InlineKeyboardMarkup,
-    InlineKeyboardButton
+    InputMediaPhoto,
+    InlineKeyboardMarkup,
+    InlineKeyboardButton,
 )
-from aiogram.utils.media_group import MediaGroupBuilder
 
 from callback_data import FoodMenuDetailCallbackData
 from models import DailyFoodMenu

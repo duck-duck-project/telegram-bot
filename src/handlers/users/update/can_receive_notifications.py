@@ -20,17 +20,19 @@ async def on_toggle_can_receive_notifications(
     if user.secret_message_theme is not None:
         secret_message_theme_id = user.secret_message_theme.id
 
-    await user_repository.update(
+    profile_photo_url = user.profile_photo_url
+    if profile_photo_url is not None:
+        profile_photo_url = str(profile_photo_url)
+
+    user, _ = await user_repository.upsert(
         user_id=callback_query.from_user.id,
         fullname=callback_query.from_user.full_name,
         username=callback_query.from_user.username,
         can_be_added_to_contacts=user.can_be_added_to_contacts,
         secret_messages_theme_id=secret_message_theme_id,
         can_receive_notifications=not user.can_receive_notifications,
-        born_at=user.born_at,
-        profile_photo_url=str(user.profile_photo_url),
+        profile_photo_url=profile_photo_url,
     )
-    user = await user_repository.get_by_id(user.id)
     view = UserPersonalSettingsView(user)
     await edit_message_by_view(message=callback_query.message, view=view)
 

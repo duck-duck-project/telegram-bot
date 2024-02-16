@@ -8,7 +8,7 @@ from exceptions import (
 )
 from filters import theme_update_command_filter
 from models import User
-from repositories import UserRepository, BalanceRepository
+from repositories import BalanceRepository, UserRepository
 from repositories.themes import ThemeRepository
 from services import BalanceNotifier
 from views import ThemeSuccessfullyUpdatedView, answer_view
@@ -30,15 +30,18 @@ async def on_update_user_theme(
     if theme.is_hidden:
         raise ThemeDoesNotExistError
 
-    await user_repository.update(
+    profile_photo_url = user.profile_photo_url
+    if profile_photo_url is not None:
+        profile_photo_url = str(profile_photo_url)
+
+    await user_repository.upsert(
         user_id=user.id,
         fullname=user.fullname,
         username=user.username,
         can_be_added_to_contacts=user.can_be_added_to_contacts,
         secret_messages_theme_id=theme_id,
         can_receive_notifications=user.can_receive_notifications,
-        born_at=user.born_at,
-        profile_photo_url=str(user.profile_photo_url),
+        profile_photo_url=profile_photo_url,
     )
 
     withdrawal = await balance_repository.create_withdrawal(
