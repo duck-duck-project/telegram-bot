@@ -48,7 +48,7 @@ class UserRepository(APIRepository):
         if can_be_added_to_contacts is not None:
             request_data['can_be_added_to_contacts'] = can_be_added_to_contacts
         if secret_messages_theme_id is not None:
-            request_data['secret_messages_theme_id'] = secret_messages_theme_id
+            request_data['secret_message_theme_id'] = secret_messages_theme_id
         if can_receive_notifications is not None:
             request_data['can_receive_notifications'] = (
                 can_receive_notifications
