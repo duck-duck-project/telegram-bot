@@ -44,10 +44,8 @@ async def on_message(
         F.sticker,
         F.animation,
         F.video,
-        F.photo,
         F.voice,
         F.video_note,
-        F.document,
     ),
     StateFilter('*'),
 )
