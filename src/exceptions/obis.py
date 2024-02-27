@@ -1,0 +1,2 @@
+class ObisLoginError(Exception):
+    pass
