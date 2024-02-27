@@ -1,6 +1,6 @@
 from aiogram import F, Router
 from aiogram.enums import ChatType
-from aiogram.filters import Command, StateFilter
+from aiogram.filters import Command, StateFilter, or_f
 from aiogram.types import Message
 
 from exceptions.manas_id import ManasIdDoesNotExistError
@@ -13,9 +13,26 @@ __all__ = ('router',)
 
 router = Router(name=__name__)
 
+@router.message(
+    or_f(
+        Command('login_obis'),
+        F.text == '🚀 Войти в OBIS',
+    ),
+    F.chat.type != ChatType.PRIVATE,
+    StateFilter('*'),
+)
+async def on_login_to_obis_in_group_chat(message: Message) -> None:
+    await message.reply(
+        '🚀 В целях безопасности,'
+        ' вход в OBIS доступен только в личных сообщениях'
+    )
+
 
 @router.message(
-    Command('login_obis'),
+    or_f(
+        Command('login_obis'),
+        F.text == '🚀 Войти в OBIS',
+    ),
     F.chat.type == ChatType.PRIVATE,
     StateFilter('*'),
 )
