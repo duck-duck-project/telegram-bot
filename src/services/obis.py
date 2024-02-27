@@ -13,7 +13,7 @@ async def login_to_obis(*, login: str, password: str) -> str:
     }
     async with httpx.AsyncClient() as http_client:
         try:
-            await http_client.post(url, data=request_data)
+            response = await http_client.post(url, data=request_data)
         except httpx.HTTPError:
             raise ObisLoginError('Ошибка соедниения с OBIS\'ом')
 
@@ -24,5 +24,11 @@ async def login_to_obis(*, login: str, password: str) -> str:
                 'Не удалось авторизоваться в OBIS\'е.'
                 ' Проверьте логин и пароль.'
             )
+
+    if 'Mail kullanıcı adı ve şifrenizle birlikte sisteme giriş yapabilirsiniz.' not in response.text:
+        raise ObisLoginError(
+            'Не удалось авторизоваться в OBIS\'е.'
+            ' Проверьте логин и пароль.'
+        )
 
     return f'{url}?page=bilgiler&PHPSESSID={session_id}'
