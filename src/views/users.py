@@ -113,6 +113,9 @@ class UserMenuView(View):
                 KeyboardButton(text='🐶 Собачка'),
             ],
             [
+                KeyboardButton(text='🚀 Войти в OBIS'),
+            ],
+            [
                 KeyboardButton(text='🔐 Включить анонимные сообщения'),
             ],
             [
