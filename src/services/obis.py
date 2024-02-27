@@ -1,3 +1,5 @@
+import asyncio
+
 import httpx
 
 from exceptions.obis import ObisLoginError
@@ -25,7 +27,7 @@ async def login_to_obis(*, login: str, password: str) -> str:
                 ' Проверьте логин и пароль.'
             )
 
-    if 'Kullanıcı Girişi' in response.text:
+    if 'Cep Telefon' not in response.text:
         raise ObisLoginError(
             'Не удалось авторизоваться в OBIS\'е.'
             ' Проверьте логин и пароль.'
