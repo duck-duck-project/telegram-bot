@@ -1,4 +1,5 @@
-from aiogram import Router
+from aiogram import F, Router
+from aiogram.enums import ChatType
 from aiogram.filters import Command, StateFilter
 from aiogram.types import Message
 
@@ -8,11 +9,14 @@ from repositories import ManasIdRepository
 from services.obis import login_to_obis
 from views import ObisLoginView, answer_view
 
+__all__ = ('router',)
+
 router = Router(name=__name__)
 
 
 @router.message(
     Command('login_obis'),
+    F.chat.type == ChatType.PRIVATE,
     StateFilter('*'),
 )
 async def on_login_to_obis(
