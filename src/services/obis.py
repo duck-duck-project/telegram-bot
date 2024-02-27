@@ -25,7 +25,7 @@ async def login_to_obis(*, login: str, password: str) -> str:
                 ' Проверьте логин и пароль.'
             )
 
-    if 'Mail kullanıcı adı ve şifrenizle birlikte sisteme giriş yapabilirsiniz.' not in response.text:
+    if 'Kullanıcı Girişi' in response.text:
         raise ObisLoginError(
             'Не удалось авторизоваться в OBIS\'е.'
             ' Проверьте логин и пароль.'
