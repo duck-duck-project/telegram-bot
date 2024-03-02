@@ -62,7 +62,7 @@ async def on_media_in_group_chat(
     except ManasIdDoesNotExistError:
         price = 10000
     else:
-        price = 1000
+        price = 500
 
     try:
         withdrawal = await balance_repository.create_withdrawal(
