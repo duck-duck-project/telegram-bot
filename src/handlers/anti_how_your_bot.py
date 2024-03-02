@@ -19,7 +19,7 @@ async def on_how_your_bot_message(
         balance_repository: BalanceRepository,
         balance_notifier: BalanceNotifier,
 ) -> None:
-    price = 100
+    price = 10000
     user_id = message.from_user.id
     try:
         withdrawal = await balance_repository.create_withdrawal(
