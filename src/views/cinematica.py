@@ -94,13 +94,14 @@ class MovieDetailView(PhotoView):
     def get_reply_markup(self) -> InlineKeyboardMarkup:
         keyboard = InlineKeyboardBuilder()
 
-        trailer_url = f'https://cinematica.kg{self.__movie.file_trailer}'
-        keyboard.row(
-            InlineKeyboardButton(
-                text='🎬 Смотреть трейлер',
-                url=trailer_url,
-            ),
-        )
+        if self.__movie.file_trailer is not None:
+            trailer_url = f'https://cinematica.kg{self.__movie.file_trailer}'
+            keyboard.row(
+                InlineKeyboardButton(
+                    text='🎬 Смотреть трейлер',
+                    url=trailer_url,
+                ),
+            )
 
         cinematica_url = f'https://cinematica.kg/movies/{self.__movie.id}'
         keyboard.row(

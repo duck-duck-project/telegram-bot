@@ -20,7 +20,7 @@ class Movie(BaseModel):
     details: list[MovieDetail]
     file_poster: str
     file_poster_vertical: str
-    file_trailer: str
+    file_trailer: str | None = None
     is_hit: bool = Field(alias='hit')
     rating: float | None = None
     vote_count: int | None = None
