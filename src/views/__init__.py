@@ -3,6 +3,7 @@ from .balance import *
 from .base import *
 from .birthdays import *
 from .casino import *
+from .cinematica import *
 from .contacts import *
 from .food_menu import *
 from .manas_id import *

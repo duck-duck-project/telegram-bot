@@ -1,6 +1,7 @@
 from .anonymous import *
 from .bot import *
 from .casino import *
+from .cinematica import *
 from .emoji import *
 from .filters import *
 from .notifiers import *

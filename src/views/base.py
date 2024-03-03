@@ -59,12 +59,16 @@ class View:
 class PhotoView:
     photo: str | InputFile
     caption: str | None = None
+    reply_markup: ReplyMarkup | None = None
 
     def get_photo(self) -> str | InputFile:
         return self.photo
 
     def get_caption(self) -> str | None:
         return self.caption
+
+    def get_reply_markup(self) -> ReplyMarkup | None:
+        return self.reply_markup
 
 
 class MediaGroupView:
@@ -156,6 +160,7 @@ async def answer_photo_view(
     return await message.answer_photo(
         photo=view.get_photo(),
         caption=view.get_caption(),
+        reply_markup=view.get_reply_markup(),
     )
 
 
