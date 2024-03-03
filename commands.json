@@ -8,6 +8,10 @@
     "description": "🐱 Фоточка котика"
   },
   {
+    "command": "login_obis",
+    "description": "🔑 Войти в OBIS"
+  },
+  {
     "command": "work",
     "description": "👩‍🚒 Работать"
   },

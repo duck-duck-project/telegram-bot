@@ -7,6 +7,7 @@ from .cinematica import *
 from .contacts import *
 from .food_menu import *
 from .manas_id import *
+from .obis import *
 from .probability import *
 from .problems import *
 from .secret_messaging import *

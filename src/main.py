@@ -54,6 +54,7 @@ def include_routers(dispatcher: Dispatcher) -> None:
         handlers.server.router,
         handlers.users.router,
         handlers.manas_id.router,
+        handlers.obis.router,
         handlers.teams.router,
         handlers.team_members.router,
         handlers.themes.router,
