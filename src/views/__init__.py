@@ -10,6 +10,7 @@ from .manas_id import *
 from .obis import *
 from .probability import *
 from .problems import *
+from .role_play import *
 from .secret_messaging import *
 from .server import *
 from .team_members import *

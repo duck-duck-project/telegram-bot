@@ -14,7 +14,10 @@ from redis.asyncio import Redis
 from structlog.stdlib import BoundLogger
 
 import handlers
-from config import load_config_from_file_path, load_commands_from_file
+from config import (
+    load_config_from_file_path, load_commands_from_file,
+    load_role_play_actions_from_file,
+)
 from logger import setup_logging
 from middlewares import (
     HTTPClientFactoryMiddleware,
@@ -34,6 +37,7 @@ from repositories import (
 )
 from repositories.themes import ThemeRepository
 from services import BalanceNotifier, AnonymousMessageSender
+from services.role_play_actions import RolePlayActions
 
 logger: BoundLogger = structlog.get_logger('app')
 
@@ -59,6 +63,7 @@ def include_routers(dispatcher: Dispatcher) -> None:
         handlers.team_members.router,
         handlers.themes.router,
         handlers.transfers.router,
+        handlers.role_play.router,
         handlers.secret_messages.router,
         handlers.secret_medias.router,
         handlers.contacts.router,
@@ -75,6 +80,13 @@ async def main() -> None:
 
     commands_file_path = pathlib.Path(__file__).parent.parent / 'commands.json'
     commands = load_commands_from_file(commands_file_path)
+
+    role_play_actions_file_path = (
+            pathlib.Path(__file__).parent.parent / 'role_play_actions.json'
+    )
+    role_play_actions = load_role_play_actions_from_file(
+        file_path=role_play_actions_file_path,
+    )
 
     setup_logging(config.logging.level)
 
@@ -110,6 +122,7 @@ async def main() -> None:
     dispatcher['chat_id_for_retranslation'] = config.main_chat_id
     dispatcher['timezone'] = config.timezone
     dispatcher['balance_notifier'] = balance_notifier
+    dispatcher['role_play_actions'] = RolePlayActions(role_play_actions)
 
     include_routers(dispatcher)
 
