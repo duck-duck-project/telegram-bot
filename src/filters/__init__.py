@@ -1,5 +1,6 @@
 from .bot import *
 from .casino import *
+from .choice import *
 from .food_menu import *
 from .photo import *
 from .role_play import *
