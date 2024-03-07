@@ -16,5 +16,5 @@ class RolePlayActions:
         message_text = message.text.lower()
         for role_play_action in self.role_play_actions:
             for trigger in role_play_action.triggers:
-                if trigger in message_text:
+                if trigger == message_text:
                     return role_play_action
