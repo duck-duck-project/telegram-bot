@@ -13,10 +13,13 @@ __all__ = (
     'load_config_from_file_path',
     'load_commands_from_file',
     'parse_config',
+    'load_role_play_actions_from_file',
 )
 
 from aiogram.types import BotCommand
 from pydantic import TypeAdapter
+
+from models import RolePlayAction
 
 
 @dataclass(frozen=True, slots=True)
@@ -95,3 +98,11 @@ def load_commands_from_file(file_path: pathlib.Path) -> list[BotCommand]:
     commands = json.loads(commands_text)
     type_adapter = TypeAdapter(list[BotCommand])
     return type_adapter.validate_python(commands)
+
+
+def load_role_play_actions_from_file(
+        file_path: pathlib.Path,
+) -> list[RolePlayAction]:
+    actions_text = file_path.read_text(encoding='utf-8')
+    type_adapter = TypeAdapter(list[RolePlayAction])
+    return type_adapter.validate_json(actions_text)
