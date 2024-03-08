@@ -403,5 +403,5 @@
     ],
     "emoji": "😊",
     "action_template": "{of_user_full_name} обижен(-а) на {to_user_full_name}"
-  },
+  }
 ]
