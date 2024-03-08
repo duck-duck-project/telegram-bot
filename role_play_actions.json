@@ -376,7 +376,7 @@
     ],
     "emoji": "🥺",
     "action_template": "{of_user_full_name} поблагодарил(-а) {to_user_full_name}"
-  }
+  },
   {
     "triggers": [
       "усыпить",
