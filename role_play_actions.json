@@ -376,5 +376,32 @@
     ],
     "emoji": "🥺",
     "action_template": "{of_user_full_name} поблагодарил(-а) {to_user_full_name}"
+  },
+  {
+    "triggers": [
+      "усыпить",
+      "спи",
+      "спать"
+    ],
+    "emoji": "😴",
+    "action_template": "{of_user_full_name} усыпил(-а) {to_user_full_name}"
+  },
+  {
+    "triggers": [
+      "обосрать",
+      "фу",
+      "иу"
+    ],
+    "emoji": "🤢",
+    "action_template": "{of_user_full_name} обосрал(-а) {to_user_full_name}"
+  },
+  {
+    "triggers": [
+      "обиделась",
+      "обида",
+      "мм" 
+    ],
+    "emoji": "😊",
+    "action_template": "{of_user_full_name} обижен(-а) на {to_user_full_name}"
   }
 ]
