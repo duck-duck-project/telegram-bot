@@ -410,6 +410,6 @@
       "пуньк"
     ],
     "emoji": "🐽🤏",
-    "action_template": "{of_user_full_namw} попунькал(-а) в носик {to_user_full_name}"
+    "action_template": "{of_user_full_name} попунькал(-а) в носик {to_user_full_name}"
   }
 ]
