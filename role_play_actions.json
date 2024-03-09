@@ -399,9 +399,17 @@
     "triggers": [
       "обиделась",
       "обида",
-      "мм" 
+      "мм",
+      "ясно"
     ],
     "emoji": "😊",
     "action_template": "{of_user_full_name} обижен(-а) на {to_user_full_name}"
+  },
+  {
+    "triggers": [
+      "пуньк"
+    ],
+    "emoji": "🐽🤏",
+    "action_template": "{of_user_full_namw} попунькал(-а) в носик {to_user_full_name}"
   }
 ]
