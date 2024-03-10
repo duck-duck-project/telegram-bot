@@ -22,7 +22,7 @@ async def on_delete_secret_message(
     secret_message = await secret_message_repository.get_by_id(
         secret_message_id=callback_data.secret_message_id,
     )
-    if secret_message.sender_id != callback_query.from_user.id:
+    if secret_message.sender.id != callback_query.from_user.id:
         await callback_query.answer(
             '❌ Вы не можете удалить это сообщение',
             show_alert=True,
