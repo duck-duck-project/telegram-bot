@@ -1,20 +1,15 @@
 from uuid import UUID
 
-from aiogram import Bot, Router, F
+from aiogram import Bot, F, Router
 from aiogram.filters import StateFilter, invert_f, or_f
 from aiogram.fsm.context import FSMContext
-from aiogram.types import Message, ChosenInlineResult, InlineQuery
+from aiogram.types import ChosenInlineResult, InlineQuery, Message
 
 from filters import secret_message_valid_format_chosen_inline_result_filter
-from repositories import (
-    SecretMessageRepository,
-    ContactRepository
-)
-from services import send_view
+from repositories import (SecretMessageRepository)
 from views import (
-    answer_view,
-    SecretMessagePromptView,
-    SecretMessageTextMissingInlineQueryView, SecretMessageNotificationView,
+    SecretMessageNotificationView, SecretMessagePromptView,
+    SecretMessageTextMissingInlineQueryView, answer_view, send_view,
 )
 
 __all__ = ('register_handlers',)
@@ -36,36 +31,33 @@ async def on_message_created(
         chosen_inline_result: ChosenInlineResult,
         state: FSMContext,
         secret_message_repository: SecretMessageRepository,
-        contact_repository: ContactRepository,
+        recipient_id: int,
         bot: Bot,
-        contact_id: int,
-        is_contact: bool,
 ):
     state_data = await state.get_data()
     secret_message_id = UUID(state_data['secret_message_id'])
-    is_inverted = chosen_inline_result.query.startswith('!')
-    text: str = chosen_inline_result.query.lstrip('!')
+    text: str = chosen_inline_result.query
 
     if not (0 < len(text) <= 200):
         return
 
-    await secret_message_repository.create(
+    secret_message = await secret_message_repository.create(
         secret_message_id=secret_message_id,
         text=text,
+        sender_id=chosen_inline_result.from_user.id,
+        recipient_id=recipient_id,
     )
 
-    if is_contact:
-        contact = await contact_repository.get_by_id(contact_id)
-        if contact.to_user.can_receive_notifications and not is_inverted:
-            view = SecretMessageNotificationView(
-                secret_message_id=secret_message_id,
-                contact=contact,
-            )
-            await send_view(
-                bot=bot,
-                view=view,
-                chat_id=contact.to_user.id,
-            )
+    if secret_message.recipient.can_receive_notifications:
+        view = SecretMessageNotificationView(
+            secret_message_id=secret_message.id,
+            sender_full_name=secret_message.sender.username_or_fullname,
+        )
+        await send_view(
+            bot=bot,
+            chat_id=recipient_id,
+            view=view,
+        )
 
 
 def register_handlers(router: Router) -> None:

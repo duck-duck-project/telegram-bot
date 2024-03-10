@@ -6,6 +6,7 @@ __all__ = (
     'SecretMessageDetailCallbackData',
     'InvertedSecretMessageDetailCallbackData',
     'SecretMessageForTeamCallbackData',
+    'SecretMessageDeleteCallbackData',
 )
 
 
@@ -17,8 +18,17 @@ class InvertedSecretMessageDetailCallbackData(
     secret_message_id: UUID
 
 
-class SecretMessageDetailCallbackData(CallbackData, prefix='show-whisp'):
-    contact_id: int
+class SecretMessageDetailCallbackData(
+    CallbackData,
+    prefix='secret-message-detail',
+):
+    secret_message_id: UUID
+
+
+class SecretMessageDeleteCallbackData(
+    CallbackData,
+    prefix='secret-message-delete',
+):
     secret_message_id: UUID
 
 

@@ -8,5 +8,6 @@ router = Router(name=__name__)
 
 create.register_handlers(router)
 errors.register_handlers(router)
-inverted.register_handlers(router)
+# Temporary disabled
+# inverted.register_handlers(router)
 direct.register_handlers(router)

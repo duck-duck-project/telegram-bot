@@ -6,13 +6,13 @@ from aiogram import Bot
 from aiogram.exceptions import TelegramAPIError
 
 from exceptions import InvalidSecretMediaDeeplinkError
-from models import Contact, HasUserId
+from models import HasUserId, SecretMessage
 
 __all__ = (
     'can_see_team_secret',
     'can_see_contact_secret',
     'extract_secret_media_id',
-    'notify_secret_message_read_attempt',
+    'notify_secret_message_seen',
 )
 
 
@@ -28,11 +28,11 @@ def can_see_team_secret(
 def can_see_contact_secret(
         *,
         user_id: int,
-        contact: Contact,
+        secret_message: SecretMessage,
 ) -> bool:
     return user_id in (
-        contact.of_user.id,
-        contact.to_user.id,
+        secret_message.sender.id,
+        secret_message.recipient.id,
     )
 
 
@@ -43,21 +43,12 @@ def extract_secret_media_id(deep_link: str) -> UUID:
         raise InvalidSecretMediaDeeplinkError
 
 
-async def notify_secret_message_read_attempt(
+async def notify_secret_message_seen(
+        secret_message: SecretMessage,
         bot: Bot,
-        contact: Contact,
-        user_full_name: str
-) -> None:
-    text = (
-        f'❗️ {user_full_name} попытался'
-        f' прочитать секретное сообщение'
-    )
-    for user in (contact.of_user, contact.to_user):
-        if not user.can_receive_notifications:
-            continue
-
-        with contextlib.suppress(TelegramAPIError):
-            await bot.send_message(
-                chat_id=user.id,
-                text=text,
-            )
+):
+    with contextlib.suppress(TelegramAPIError):
+        await bot.send_message(
+            chat_id=secret_message.sender.id,
+            text=f'✅ Сообщение прочитано\n\n<i>{secret_message.text}</i>',
+        )

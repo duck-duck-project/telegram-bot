@@ -121,7 +121,6 @@ class UserMenuView(View):
             [
                 KeyboardButton(text='🎨 Настройки'),
                 KeyboardButton(text='👥 Контакты'),
-                KeyboardButton(text='💬 Teams'),
             ],
         ],
     )

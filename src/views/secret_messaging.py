@@ -1,21 +1,20 @@
 from collections.abc import Iterable
 from uuid import UUID
 
-from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
+from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 
 from callback_data import (
-    SecretMessageDetailCallbackData,
     InvertedSecretMessageDetailCallbackData,
-    SecretMessageForTeamCallbackData,
+    SecretMessageDeleteCallbackData,
+    SecretMessageDetailCallbackData,
 )
 from models import (
     Contact,
-    SecretMediaType,
     SecretMedia,
+    SecretMediaType,
     SecretMessageTheme,
-    TeamIdAndName,
 )
-from views import View, InlineQueryView
+from views import InlineQueryView, View
 
 __all__ = (
     'SecretMessageDetailInlineQueryView',
@@ -33,12 +32,10 @@ __all__ = (
     'SecretMessagePromptView',
     'SecretMessageNotificationView',
     'NoVisibleContactsInlineQueryView',
-    'SecretMessageForTeamInlineQueryView',
 )
 
 
 class InvertedSecretMessageDetailInlineQueryView(InlineQueryView):
-
     thumbnail_width = 100
     thumbnail_height = 100
 
@@ -89,49 +86,6 @@ class InvertedSecretMessageDetailInlineQueryView(InlineQueryView):
                     )
                 ]
             ]
-        )
-
-
-class SecretMessageForTeamInlineQueryView(InlineQueryView):
-
-    def __init__(
-            self,
-            query_id: str,
-            team: TeamIdAndName,
-            secret_message_id: UUID,
-    ):
-        self.__query_id = query_id
-        self.__team = team
-        self.__secret_message_id = secret_message_id
-
-    def get_id(self) -> str:
-        return self.__query_id
-
-    def get_title(self) -> str:
-        return f'Группа: {self.__team.name}'
-
-    def get_description(self) -> str:
-        return 'Только для участников этой секретной группы'
-
-    def get_text(self) -> str:
-        return (
-            f'📩 Секретное сообщение для группы'
-            f' <b>{self.__team.name}</b>'
-        )
-
-    def get_reply_markup(self) -> InlineKeyboardMarkup:
-        return InlineKeyboardMarkup(
-            inline_keyboard=[
-                [
-                    InlineKeyboardButton(
-                        text='👀 Прочитать',
-                        callback_data=SecretMessageForTeamCallbackData(
-                            team_id=self.__team.id,
-                            secret_message_id=self.__secret_message_id.hex,
-                        ).pack(),
-                    ),
-                ],
-            ],
         )
 
 
@@ -188,11 +142,18 @@ class SecretMessageDetailInlineQueryView(InlineQueryView):
                     InlineKeyboardButton(
                         text=text,
                         callback_data=SecretMessageDetailCallbackData(
-                            contact_id=self.__contact.id,
                             secret_message_id=self.__secret_message_id,
                         ).pack()
+                    ),
+                ],
+                [
+                    InlineKeyboardButton(
+                        text='❌ Удалить',
+                        callback_data=SecretMessageDeleteCallbackData(
+                            secret_message_id=self.__secret_message_id,
+                        ).pack(),
                     )
-                ]
+                ],
             ]
         )
 
@@ -419,49 +380,24 @@ class SecretMessagePromptView(View):
 
 class SecretMessageNotificationView(View):
 
-    def __init__(
-            self,
-            *,
-            secret_message_id: UUID,
-            contact: Contact,
-    ):
+    def __init__(self, *, secret_message_id: UUID, sender_full_name: str):
         self.__secret_message_id = secret_message_id
-        self.__contact = contact
+        self.__sender_full_name = sender_full_name
 
     def get_text(self) -> str:
-        theme = self.__contact.to_user.secret_message_theme
-        of_user = self.__contact.of_user
-        from_username = of_user.username or of_user.fullname
-        if theme is None:
-            return (
-                f'📩 Секретное сообщение для'
-                f' <b>{self.__contact.public_name}</b>'
-                f' от <b>{from_username}</b>'
-            )
-        text = (
-            theme
-            .description_template_text
-            .format(name=self.__contact.public_name)
+        return (
+            f'📩 Секретное сообщение для вас'
+            f' от <b>{self.__sender_full_name}</b>'
         )
-        text += f'\nОт <b>{from_username}</b>'
-        return text
 
     def get_reply_markup(self) -> InlineKeyboardMarkup:
-        theme = self.__contact.to_user.secret_message_theme
-        text = '👀 Прочитать' if theme is None else theme.button_text
-        return InlineKeyboardMarkup(
-            inline_keyboard=[
-                [
-                    InlineKeyboardButton(
-                        text=text,
-                        callback_data=SecretMessageDetailCallbackData(
-                            secret_message_id=self.__secret_message_id,
-                            contact_id=self.__contact.id,
-                        ).pack()
-                    ),
-                ],
-            ],
+        button = InlineKeyboardButton(
+            text='👀 Прочитать',
+            callback_data=SecretMessageDetailCallbackData(
+                secret_message_id=self.__secret_message_id,
+            ).pack(),
         )
+        return InlineKeyboardMarkup(inline_keyboard=[[button]])
 
 
 class NoVisibleContactsInlineQueryView(InlineQueryView):
