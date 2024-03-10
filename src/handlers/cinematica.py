@@ -12,6 +12,7 @@ from views import (
     MoviesTodayListView,
     answer_photo_view,
     answer_view,
+    reply_view,
 )
 
 __all__ = ('router',)
@@ -66,7 +67,7 @@ async def on_show_movies_today_list(
 ) -> None:
     movies = await get_movies_today()
     view = MoviesTodayListView(movies)
-    await answer_view(message=message, view=view)
+    await reply_view(message=message, view=view)
 
 
 @router.message(
@@ -82,4 +83,4 @@ async def on_show_movies_soon_list(
 ) -> None:
     movies = await get_movies_soon()
     view = MoviesSoonListView(movies)
-    await answer_view(message=message, view=view)
+    await reply_view(message=message, view=view)
