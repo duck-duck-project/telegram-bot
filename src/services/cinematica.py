@@ -11,7 +11,7 @@ __all__ = (
 
 
 async def get_movies(url: str) -> list[Movie]:
-    async with httpx.AsyncClient() as client:
+    async with httpx.AsyncClient(timeout=120) as client:
         response = await client.get(url)
 
     response.raise_for_status()
@@ -33,7 +33,7 @@ async def get_movies_soon() -> list[Movie]:
 
 async def get_movie_by_id(movie_id: int) -> Movie:
     url = f'https://cinematica.kg/api/v1/movies/{movie_id}'
-    async with httpx.AsyncClient() as client:
+    async with httpx.AsyncClient(timeout=120) as client:
         response = await client.get(url)
 
     response.raise_for_status()

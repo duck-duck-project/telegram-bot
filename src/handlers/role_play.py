@@ -14,6 +14,7 @@ router = Router(name=__name__)
 @router.message(
     F.text,
     F.reply_to_message,
+    F.reply_to_message.from_user.id != F.from_user.id,
     invert_f(F.reply_to_message.from_user.is_bot),
     role_play_trigger_filter,
     StateFilter('*'),
