@@ -1,18 +1,18 @@
 from uuid import uuid4
 
-from aiogram import Router, F
-from aiogram.filters import invert_f, StateFilter
+from aiogram import F, Router
+from aiogram.filters import StateFilter
 from aiogram.fsm.context import FSMContext
 from aiogram.types import InlineQuery, InlineQueryResultArticle
 
 from models import User
-from repositories import ContactRepository, TeamRepository
+from repositories import ContactRepository
 from services import filter_not_hidden
 from views import (
+    NoUserContactsInlineQueryView,
+    NoVisibleContactsInlineQueryView,
     SecretMessageDetailInlineQueryView,
     TooLongSecretMessageTextInlineQueryView,
-    NoUserContactsInlineQueryView,
-    NoVisibleContactsInlineQueryView, SecretMessageForTeamInlineQueryView,
 )
 
 __all__ = ('register_handlers',)
@@ -21,14 +21,11 @@ __all__ = ('register_handlers',)
 async def on_secret_message_typing(
         inline_query: InlineQuery,
         contact_repository: ContactRepository,
-        team_repository: TeamRepository,
         state: FSMContext,
         user: User,
 ) -> None:
     text = inline_query.query
-
     contacts = await contact_repository.get_by_user_id(user.id)
-    teams = await team_repository.get_by_user_id(user.id)
 
     if not contacts:
         items = [
@@ -58,23 +55,12 @@ async def on_secret_message_typing(
     draft_secret_message_id = uuid4()
     await state.update_data(secret_message_id=draft_secret_message_id.hex)
 
-    teams_and_query_ids = [
-        (team, f'{uuid4().hex}@{team.id}')
-        for team in teams
-    ]
     contacts_and_query_ids = [
-        (contact, f'{uuid4().hex}@{contact.id}?')
+        (contact, f'{uuid4().hex}@{contact.to_user.id}')
         for contact in visible_contacts
     ]
-    teams_items: list[InlineQueryResultArticle] = [
-        SecretMessageForTeamInlineQueryView(
-            query_id=query_id,
-            team=team,
-            secret_message_id=draft_secret_message_id,
-        ).get_inline_query_result_article()
-        for team, query_id in teams_and_query_ids
-    ]
-    contacts_items: list[InlineQueryResultArticle] = [
+
+    items: list[InlineQueryResultArticle] = [
         SecretMessageDetailInlineQueryView(
             query_id=query_id,
             contact=contact,
@@ -83,7 +69,6 @@ async def on_secret_message_typing(
         ).get_inline_query_result_article()
         for contact, query_id in contacts_and_query_ids
     ]
-    items = teams_items + contacts_items
     await inline_query.answer(items, cache_time=1, is_personal=True)
 
 
@@ -91,6 +76,5 @@ def register_handlers(router: Router) -> None:
     router.inline_query.register(
         on_secret_message_typing,
         F.query,
-        invert_f(F.query.startswith('!')),
         StateFilter('*'),
     )

@@ -9,6 +9,7 @@ import sentry_sdk
 import structlog
 from aiogram import Bot, Dispatcher
 from aiogram.enums import ParseMode
+from aiogram.fsm.storage.memory import MemoryStorage
 from aiogram.fsm.storage.redis import RedisStorage
 from redis.asyncio import Redis
 from structlog.stdlib import BoundLogger
@@ -29,8 +30,6 @@ from repositories import (
     ContactRepository,
     SecretMediaRepository,
     SecretMessageRepository,
-    TeamMemberRepository,
-    TeamRepository,
     BalanceRepository,
     FoodMenuRepository,
     ManasIdRepository,
@@ -60,8 +59,6 @@ def include_routers(dispatcher: Dispatcher) -> None:
         handlers.users.router,
         handlers.manas_id.router,
         handlers.obis.router,
-        handlers.teams.router,
-        handlers.team_members.router,
         handlers.themes.router,
         handlers.transfers.router,
         handlers.role_play.router,
@@ -135,8 +132,6 @@ async def main() -> None:
             contact_repository=ContactRepository,
             secret_media_repository=SecretMediaRepository,
             secret_message_repository=SecretMessageRepository,
-            team_member_repository=TeamMemberRepository,
-            team_repository=TeamRepository,
             theme_repository=ThemeRepository,
             user_repository=UserRepository,
             balance_repository=BalanceRepository,

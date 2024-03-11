@@ -1,82 +1,44 @@
-from aiogram import Router, Bot
+from aiogram import Bot, Router
 from aiogram.filters import StateFilter
 from aiogram.types import CallbackQuery
 
-from callback_data import (
-    SecretMessageDetailCallbackData,
-    SecretMessageForTeamCallbackData,
+from callback_data import SecretMessageDetailCallbackData
+from repositories import SecretMessageRepository
+from services import can_see_contact_secret, notify_secret_message_seen
+
+__all__ = ('router',)
+
+router = Router(name=__name__)
+
+
+@router.callback_query(
+    SecretMessageDetailCallbackData.filter(),
+    StateFilter('*'),
 )
-from repositories import (
-    ContactRepository,
-    SecretMessageRepository,
-    TeamMemberRepository,
-)
-from services import (
-    can_see_contact_secret, can_see_team_secret,
-    notify_secret_message_read_attempt
-)
-
-__all__ = ('register_handlers',)
-
-
-async def on_show_team_message(
-        callback_query: CallbackQuery,
-        callback_data: SecretMessageForTeamCallbackData,
-        team_member_repository: TeamMemberRepository,
-        secret_message_repository: SecretMessageRepository,
-) -> None:
-    team_members = await team_member_repository.get_by_team_id(
-        team_id=callback_data.team_id,
-    )
-    secret_message = await secret_message_repository.get_by_id(
-        secret_message_id=callback_data.secret_message_id,
-    )
-
-    if not can_see_team_secret(
-            user_id=callback_query.from_user.id,
-            team_members=team_members,
-    ):
-        text = 'Это сообщение не предназначено для тебя 😉'
-    else:
-        text = secret_message.text
-    await callback_query.answer(text, show_alert=True)
-
-
 async def on_show_contact_message(
         callback_query: CallbackQuery,
         callback_data: SecretMessageDetailCallbackData,
-        contact_repository: ContactRepository,
         secret_message_repository: SecretMessageRepository,
         bot: Bot,
 ) -> None:
-    contact = await contact_repository.get_by_id(callback_data.contact_id)
     secret_message = await secret_message_repository.get_by_id(
         secret_message_id=callback_data.secret_message_id,
     )
 
     if not can_see_contact_secret(
             user_id=callback_query.from_user.id,
-            contact=contact,
+            secret_message=secret_message,
     ):
         text = 'Это сообщение не предназначено для тебя 😉'
-        await notify_secret_message_read_attempt(
-            bot=bot,
-            contact=contact,
-            user_full_name=callback_query.from_user.full_name,
-        )
     else:
         text = secret_message.text
     await callback_query.answer(text, show_alert=True)
 
+    is_recipient = secret_message.recipient.id == callback_query.from_user.id
 
-def register_handlers(router: Router) -> None:
-    router.callback_query.register(
-        on_show_team_message,
-        SecretMessageForTeamCallbackData.filter(),
-        StateFilter('*'),
-    )
-    router.callback_query.register(
-        on_show_contact_message,
-        SecretMessageDetailCallbackData.filter(),
-        StateFilter('*'),
-    )
+    if is_recipient and not secret_message.is_seen:
+        await secret_message_repository.update(
+            secret_message_id=secret_message.id,
+            is_seen=True,
+        )
+        await notify_secret_message_seen(bot=bot, secret_message=secret_message)

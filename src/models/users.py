@@ -26,3 +26,7 @@ class User(BaseModel):
     profile_photo_url: HttpUrl | None
     is_banned: bool
     can_receive_notifications: bool
+
+    @property
+    def username_or_fullname(self) -> str:
+        return self.username or self.fullname

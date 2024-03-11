@@ -1,6 +1,7 @@
 from typing import TypeAlias, assert_never
 from uuid import uuid4
 
+from aiogram import Bot
 from aiogram.types import (
     InlineKeyboardMarkup,
     ReplyKeyboardMarkup,
@@ -211,7 +212,7 @@ async def render_message_or_callback_query(
 
 async def send_view(
         *,
-        bot,
+        bot: Bot,
         chat_id: int,
         view: View,
 ) -> Message:
