@@ -1,13 +1,11 @@
 from aiogram import Router
 
-from . import direct, inverted, errors, create
+from . import create, direct, errors
 
 __all__ = ('router',)
 
 router = Router(name=__name__)
 
-create.register_handlers(router)
-errors.register_handlers(router)
-# Temporary disabled
-# inverted.register_handlers(router)
+router.include_router(create.router)
+router.include_router(errors.router)
 direct.register_handlers(router)

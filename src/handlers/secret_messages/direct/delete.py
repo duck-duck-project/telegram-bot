@@ -4,6 +4,7 @@ from aiogram.types import CallbackQuery
 
 from callback_data import SecretMessageDeleteCallbackData
 from repositories import SecretMessageRepository
+from views import SecretMessageDeletedConfirmationView, answer_callback_query
 
 __all__ = ('router',)
 
@@ -31,4 +32,5 @@ async def on_delete_secret_message(
     await secret_message_repository.delete_by_id(
         secret_message_id=callback_data.secret_message_id,
     )
-    await callback_query.answer('✅ Сообщение удалено', show_alert=True)
+    view = SecretMessageDeletedConfirmationView(secret_message.sender.theme)
+    await answer_callback_query(callback_query=callback_query, view=view)

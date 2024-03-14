@@ -1,32 +1,39 @@
 from uuid import UUID
 
 from aiogram import Bot, F, Router
-from aiogram.filters import StateFilter, invert_f, or_f
+from aiogram.filters import StateFilter, or_f
 from aiogram.fsm.context import FSMContext
-from aiogram.types import ChosenInlineResult, InlineQuery, Message
+from aiogram.types import ChosenInlineResult, Message
 
 from filters import secret_message_valid_format_chosen_inline_result_filter
 from repositories import (SecretMessageRepository)
 from views import (
-    SecretMessageNotificationView, SecretMessagePromptView,
-    SecretMessageTextMissingInlineQueryView, answer_view, send_view,
+    SecretMessageNotificationView,
+    SecretMessagePromptView,
+    answer_view,
+    send_view,
 )
 
-__all__ = ('register_handlers',)
+__all__ = ('router',)
+
+router = Router(name=__name__)
 
 
+@router.message(
+    or_f(
+        F.text.startswith('/secret_message'),
+        F.text == '📩 Секретное сообщение',
+    ),
+    StateFilter('*'),
+)
 async def on_show_inline_query_prompt(message: Message) -> None:
     await answer_view(message=message, view=SecretMessagePromptView())
 
 
-async def on_secret_message_text_missing(inline_query: InlineQuery) -> None:
-    items = [
-        SecretMessageTextMissingInlineQueryView()
-        .get_inline_query_result_article()
-    ]
-    await inline_query.answer(items, cache_time=1)
-
-
+@router.chosen_inline_result(
+    secret_message_valid_format_chosen_inline_result_filter,
+    StateFilter('*'),
+)
 async def on_message_created(
         chosen_inline_result: ChosenInlineResult,
         state: FSMContext,
@@ -58,24 +65,3 @@ async def on_message_created(
             chat_id=recipient_id,
             view=view,
         )
-
-
-def register_handlers(router: Router) -> None:
-    router.chosen_inline_result.register(
-        on_message_created,
-        secret_message_valid_format_chosen_inline_result_filter,
-        StateFilter('*'),
-    )
-    router.inline_query.register(
-        on_secret_message_text_missing,
-        invert_f(F.query),
-        StateFilter('*'),
-    )
-    router.message.register(
-        on_show_inline_query_prompt,
-        or_f(
-            F.text.startswith('/secret_message'),
-            F.text == '📩 Секретное сообщение',
-        ),
-        StateFilter('*'),
-    )

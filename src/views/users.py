@@ -32,7 +32,7 @@ class UserPersonalSettingsView(View):
             if self.__user.can_receive_notifications
             else '🔕 Уведомления отключены'
         )
-        if self.__user.secret_message_theme is None:
+        if self.__user.theme is None:
             theme_text = (
                 '🌈 Тема:\n'
                 '📩 Секретное сообщение для <b>{name}</b>\n'
@@ -41,8 +41,8 @@ class UserPersonalSettingsView(View):
         else:
             theme_text = (
                 '🌈 Тема:\n'
-                f'{self.__user.secret_message_theme.description_template_text}'
-                f'\n{self.__user.secret_message_theme.button_text}'
+                f'{self.__user.theme.secret_message_template_text}'
+                f'\n{self.__user.theme.secret_message_view_button_text}'
             )
         return (
             f'{can_be_added_to_contacts_text}\n'

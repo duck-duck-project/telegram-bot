@@ -1,28 +1,18 @@
 import contextlib
-from typing import Iterable
 from uuid import UUID
 
 from aiogram import Bot
 from aiogram.exceptions import TelegramAPIError
 
 from exceptions import InvalidSecretMediaDeeplinkError
-from models import HasUserId, SecretMessage
+from models import SecretMessage
+from views.secret_messaging import SecretMessageReadConfirmationView
 
 __all__ = (
-    'can_see_team_secret',
     'can_see_contact_secret',
     'extract_secret_media_id',
     'notify_secret_message_seen',
 )
-
-
-def can_see_team_secret(
-        *,
-        user_id: int,
-        team_members: Iterable[HasUserId],
-) -> bool:
-    user_ids = {member.user_id for member in team_members}
-    return user_id in user_ids
 
 
 def can_see_contact_secret(
@@ -47,8 +37,9 @@ async def notify_secret_message_seen(
         secret_message: SecretMessage,
         bot: Bot,
 ):
+    view = SecretMessageReadConfirmationView(secret_message)
     with contextlib.suppress(TelegramAPIError):
         await bot.send_message(
             chat_id=secret_message.sender.id,
-            text=f'✅ Сообщение прочитано\n\n<i>{secret_message.text}</i>',
+            text=view.get_text(),
         )

@@ -38,17 +38,10 @@ async def on_profile_photo_input(
     file_url = bot.session.api.file_url(bot.token, file.file_path)
     new_profile_photo_url = await upload_photo_to_cloud(file_url)
 
-    secret_message_theme_id = None
-    if user.secret_message_theme is not None:
-        secret_message_theme_id = user.secret_message_theme.id
-
     await user_repository.upsert(
         user_id=user.id,
         fullname=user.fullname,
         username=user.username,
-        can_be_added_to_contacts=user.can_be_added_to_contacts,
-        secret_messages_theme_id=secret_message_theme_id,
-        can_receive_notifications=user.can_receive_notifications,
         profile_photo_url=new_profile_photo_url,
     )
     await message.reply('✅ Фото обновлено')

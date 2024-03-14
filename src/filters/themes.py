@@ -1,17 +1,14 @@
-import re
+from uuid import UUID
 
 from aiogram.types import Message
 
 __all__ = ('theme_update_command_filter',)
 
-pattern = re.compile(r'^/theme_\d+$')
-
 
 def theme_update_command_filter(message: Message) -> bool | dict:
-    if message.text is None:
+    try:
+        _, theme_id = message.text.split('_')
+        theme_id = UUID(theme_id)
+    except ValueError:
         return False
-    match = pattern.search(message.text)
-    if match:
-        theme_id: int = int(match.string.split('_')[1])
-        return {'theme_id': theme_id}
-    return False
+    return {'theme_id': theme_id}

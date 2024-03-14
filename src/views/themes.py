@@ -1,6 +1,6 @@
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 
-from models import SecretMessageTheme
+from models import Theme
 from views.base import View
 
 __all__ = ('ThemeListView', 'ThemeSuccessfullyUpdatedView')
@@ -19,16 +19,16 @@ class ThemeListView(View):
         ],
     )
 
-    def __init__(self, themes: list[SecretMessageTheme]):
+    def __init__(self, themes: list[Theme]):
         self.__themes = themes
 
     def get_text(self) -> str:
         if not self.__themes:
             return '😔 Нет доступных тем'
         lines = [
-            f'{theme.description_template_text}\n'
-            f'{theme.button_text}\n'
-            f'/theme_{theme.id}'
+            f'{theme.secret_message_template_text}\n'
+            f'{theme.secret_message_view_button_text}\n'
+            f'/theme_{theme.id.hex}'
             for theme in self.__themes
         ]
         return '\n\n'.join(lines)
