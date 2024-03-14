@@ -16,10 +16,8 @@ async def on_show_themes_list(
         theme_repository: ThemeRepository,
 ) -> None:
     await state.clear()
-
-    themes_page = await theme_repository.get_all(limit=100, offset=0)
-
-    view = ThemeListView(themes_page.themes)
+    themes = await theme_repository.get_all()
+    view = ThemeListView(themes)
     await edit_message_by_view(message=callback_query.message, view=view)
 
 

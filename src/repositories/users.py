@@ -1,3 +1,5 @@
+from uuid import UUID
+
 from exceptions import ServerAPIError, UserDoesNotExistError
 from models import User
 from repositories import APIRepository
@@ -36,7 +38,7 @@ class UserRepository(APIRepository):
             fullname: str,
             username: str | None,
             can_be_added_to_contacts: bool | None = None,
-            secret_messages_theme_id: int | None = None,
+            theme_id: UUID | None = None,
             can_receive_notifications: bool | None = None,
             profile_photo_url: str | None = None,
     ) -> tuple[User, bool]:
@@ -47,8 +49,8 @@ class UserRepository(APIRepository):
         }
         if can_be_added_to_contacts is not None:
             request_data['can_be_added_to_contacts'] = can_be_added_to_contacts
-        if secret_messages_theme_id is not None:
-            request_data['secret_message_theme_id'] = secret_messages_theme_id
+        if theme_id is not None:
+            request_data['theme_id'] = str(theme_id)
         if can_receive_notifications is not None:
             request_data['can_receive_notifications'] = (
                 can_receive_notifications

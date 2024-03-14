@@ -26,8 +26,8 @@ class ThemeListView(View):
         if not self.__themes:
             return '😔 Нет доступных тем'
         lines = [
-            f'{theme.description_template_text}\n'
-            f'{theme.button_text}\n'
+            f'{theme.secret_message_template_text}\n'
+            f'{theme.secret_message_view_button_text}\n'
             f'/theme_{theme.id.hex}'
             for theme in self.__themes
         ]
