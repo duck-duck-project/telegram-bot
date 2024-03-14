@@ -4,7 +4,6 @@ from uuid import UUID
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 
 from callback_data import (
-    InvertedSecretMessageDetailCallbackData,
     SecretMessageDeleteCallbackData,
     SecretMessageDetailCallbackData,
 )
@@ -12,14 +11,14 @@ from models import (
     Contact,
     SecretMedia,
     SecretMediaType,
-    SecretMessageTheme,
+    SecretMessage,
+    Theme,
 )
-from views import InlineQueryView, View
+from views import CallbackQueryAnswerView, InlineQueryView, View
 
 __all__ = (
     'SecretMessageDetailInlineQueryView',
     'SecretMessageTextMissingInlineQueryView',
-    'InvertedSecretMessageDetailInlineQueryView',
     'NotPremiumUserInlineQueryView',
     'TooLongSecretMessageTextInlineQueryView',
     'NoUserContactsInlineQueryView',
@@ -32,61 +31,41 @@ __all__ = (
     'SecretMessagePromptView',
     'SecretMessageNotificationView',
     'NoVisibleContactsInlineQueryView',
+    'SecretMessageDeletedConfirmationView',
+    'SecretMessageReadConfirmationView',
 )
 
 
-class InvertedSecretMessageDetailInlineQueryView(InlineQueryView):
-    thumbnail_width = 100
-    thumbnail_height = 100
+class SecretMessageReadConfirmationView(View):
 
-    def __init__(
-            self,
-            query_id: str,
-            contact: Contact,
-            secret_message_id: UUID,
-            secret_message_theme: SecretMessageTheme | None,
-    ):
-        self.__query_id = query_id
-        self.__contact = contact
-        self.__secret_message_id = secret_message_id
-        self.__secret_message_theme = secret_message_theme
-
-    def get_id(self) -> str:
-        return self.__query_id
-
-    def get_description(self) -> str:
-        return self.__contact.public_name
-
-    def get_thumbnail_url(self) -> str | None:
-        if self.__contact.to_user.profile_photo_url is None:
-            return
-        return str(self.__contact.to_user.profile_photo_url)
-
-    def get_title(self) -> str:
-        return f'❗️ Все кроме: {self.__contact.private_name}'
+    def __init__(self, secret_message: SecretMessage):
+        self.__secret_message = secret_message
 
     def get_text(self) -> str:
-        return (
-            f'📩 Секретное сообщение для всех,'
-            f' кроме <b>{self.__contact.public_name}</b>'
+        theme = self.__secret_message.sender.theme
+        recipient_name = self.__secret_message.recipient.username_or_fullname
+
+        if self.__secret_message is None:
+            template = '✅ Сообщение для {name} прочитано\n\n<i>{text}</i>'
+        else:
+            template = theme.secret_message_read_confirmation_text
+
+        return template.format(
+            name=recipient_name,
+            text=self.__secret_message.text,
         )
 
-    def get_reply_markup(self) -> InlineKeyboardMarkup:
-        return InlineKeyboardMarkup(
-            inline_keyboard=[
-                [
-                    InlineKeyboardButton(
-                        text='👀 Прочитать',
-                        callback_data=(
-                            InvertedSecretMessageDetailCallbackData(
-                                contact_id=self.__contact.id,
-                                secret_message_id=self.__secret_message_id.hex,
-                            ).pack()
-                        ),
-                    )
-                ]
-            ]
-        )
+
+class SecretMessageDeletedConfirmationView(CallbackQueryAnswerView):
+    show_alert = True
+
+    def __init__(self, theme: Theme | None):
+        self.__theme = theme
+
+    def get_text(self) -> str:
+        if self.__theme is None:
+            return '✅ Сообщение удалено'
+        return self.__theme.secret_message_deleted_confirmation_text
 
 
 class SecretMessageDetailInlineQueryView(InlineQueryView):
@@ -98,12 +77,12 @@ class SecretMessageDetailInlineQueryView(InlineQueryView):
             query_id: str,
             contact: Contact,
             secret_message_id: UUID,
-            secret_message_theme: SecretMessageTheme | None,
+            theme: Theme | None,
     ):
         self.__query_id = query_id
         self.__contact = contact
         self.__secret_message_id = secret_message_id
-        self.__secret_message_theme = secret_message_theme
+        self.__theme = theme
 
     def get_id(self) -> str:
         return self.__query_id
@@ -120,41 +99,38 @@ class SecretMessageDetailInlineQueryView(InlineQueryView):
         return f'Контакт: {self.__contact.private_name}'
 
     def get_text(self) -> str:
-        if self.__secret_message_theme is None:
-            return (
+        if self.__theme is None:
+            template = (
                 f'📩 Секретное сообщение для'
-                f' <b>{self.__contact.public_name}</b>'
+                ' <b>{name}</b>'
             )
-        return (
-            self.__secret_message_theme
-            .description_template_text
-            .format(name=self.__contact.public_name)
-        )
+        else:
+            template = self.__theme.secret_message_template_text
+        return template.format(name=self.__contact.public_name)
 
     def get_reply_markup(self) -> InlineKeyboardMarkup:
-        if self.__secret_message_theme is None:
-            text = '👀 Прочитать'
+        if self.__theme is None:
+            view_button_text = '👀 Прочитать'
+            delete_button_text = '❌ Удалить'
         else:
-            text = self.__secret_message_theme.button_text
+            view_button_text = self.__theme.secret_message_view_button_text
+            delete_button_text = self.__theme.secret_message_delete_button_text
+
+        view_button = InlineKeyboardButton(
+            text=view_button_text,
+            callback_data=SecretMessageDetailCallbackData(
+                secret_message_id=self.__secret_message_id,
+            ).pack(),
+        )
+        delete_button = InlineKeyboardButton(
+            text=delete_button_text,
+            callback_data=SecretMessageDeleteCallbackData(
+                secret_message_id=self.__secret_message_id,
+            ).pack(),
+        )
+
         return InlineKeyboardMarkup(
-            inline_keyboard=[
-                [
-                    InlineKeyboardButton(
-                        text=text,
-                        callback_data=SecretMessageDetailCallbackData(
-                            secret_message_id=self.__secret_message_id,
-                        ).pack()
-                    ),
-                ],
-                [
-                    InlineKeyboardButton(
-                        text='❌ Удалить',
-                        callback_data=SecretMessageDeleteCallbackData(
-                            secret_message_id=self.__secret_message_id,
-                        ).pack(),
-                    )
-                ],
-            ]
+            inline_keyboard=[[view_button], [delete_button]]
         )
 
 
@@ -291,34 +267,31 @@ class SecretMediaForShareView(View):
             *,
             bot_username: str,
             secret_media: SecretMedia,
-            from_user_username: str,
+            theme: Theme | None,
     ):
         self.__bot_username = bot_username
         self.__secret_media = secret_media
-        self.__from_user_username = from_user_username
+        self.__theme = theme
 
     def get_text(self) -> str:
-        return (
-            '🖼️ Секретное медиа для'
-            f' {self.__secret_media.contact.public_name}'
-            f' от {self.__from_user_username}'
-        )
+        if self.__theme is None:
+            template = '🖼️ Секретное медиа для {name}'
+        else:
+            template = self.__theme.secret_media_template_text
+
+        return template.format(name=self.__secret_media.contact.public_name)
 
     def get_reply_markup(self) -> InlineKeyboardMarkup:
+        if self.__theme is None:
+            button_text = '👀 Посмотреть'
+        else:
+            button_text = self.__theme.secret_message_view_button_text
         url = (
             f'https://t.me/{self.__bot_username}'
             f'?start=secret_media-{self.__secret_media.id.hex}'
         )
-        return InlineKeyboardMarkup(
-            inline_keyboard=[
-                [
-                    InlineKeyboardButton(
-                        text='👀 Посмотреть',
-                        url=url,
-                    ),
-                ]
-            ]
-        )
+        button = InlineKeyboardButton(text=button_text, url=url)
+        return InlineKeyboardMarkup(inline_keyboard=[[button]])
 
 
 class SecretMediaCalledInGroupChatView(View):

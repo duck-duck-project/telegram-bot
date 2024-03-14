@@ -3,14 +3,9 @@ from uuid import uuid4
 
 from aiogram import Bot
 from aiogram.types import (
-    InlineKeyboardMarkup,
-    ReplyKeyboardMarkup,
-    ForceReply,
+    CallbackQuery, ForceReply, InlineKeyboardMarkup, InlineQueryResultArticle,
+    InputFile, InputTextMessageContent, Message, ReplyKeyboardMarkup,
     ReplyKeyboardRemove,
-    Message,
-    InlineQueryResultArticle,
-    InputTextMessageContent,
-    CallbackQuery, InputFile,
 )
 
 __all__ = (
@@ -26,6 +21,8 @@ __all__ = (
     'answer_photo_view',
     'MediaGroupView',
     'answer_media_group_view',
+    'CallbackQueryAnswerView',
+    'answer_callback_query',
 )
 
 from aiogram.utils.media_group import MediaType, MediaGroupBuilder
@@ -88,6 +85,17 @@ class MediaGroupView:
             caption=self.get_caption(),
         )
         return media_group_builder.build()
+
+
+class CallbackQueryAnswerView:
+    text: str
+    show_alert: bool = False
+
+    def get_text(self) -> str:
+        return self.text
+
+    def get_show_alert(self) -> bool:
+        return self.show_alert
 
 
 class InlineQueryView(View):
@@ -222,4 +230,15 @@ async def send_view(
         reply_markup=view.get_reply_markup(),
         disable_notification=view.get_disable_notification(),
         disable_web_page_preview=view.get_disable_web_page_preview(),
+    )
+
+
+async def answer_callback_query(
+        *,
+        callback_query: CallbackQuery,
+        view: CallbackQueryAnswerView,
+) -> bool:
+    return await callback_query.answer(
+        text=view.get_text(),
+        show_alert=view.get_show_alert(),
     )

@@ -102,7 +102,7 @@ async def main() -> None:
     storage = RedisStorage(redis)
 
     bot = Bot(token=config.telegram_bot_token, parse_mode=ParseMode.HTML)
-    dispatcher = Dispatcher(storage=storage)
+    dispatcher = Dispatcher(storage=MemoryStorage())
 
     bot_user = await bot.me()
 

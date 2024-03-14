@@ -1,5 +1,5 @@
 from exceptions import ServerAPIError, ThemeDoesNotExistError
-from models import ThemesPage, SecretMessageTheme
+from models import ThemesPage, Theme
 from repositories.base import APIRepository
 
 __all__ = ('ThemeRepository',)
@@ -28,7 +28,7 @@ class ThemeRepository(APIRepository):
         response_data = response.json()
         return ThemesPage.model_validate(response_data)
 
-    async def get_by_id(self, theme_id: int) -> SecretMessageTheme:
+    async def get_by_id(self, theme_id: int) -> Theme:
         url = f'/themes/{theme_id}/'
         response = await self._http_client.get(url)
         if response.status_code == 404:
@@ -36,4 +36,4 @@ class ThemeRepository(APIRepository):
         if response.status_code != 200:
             raise ServerAPIError
         response_data = response.json()
-        return SecretMessageTheme.model_validate(response_data)
+        return Theme.model_validate(response_data)

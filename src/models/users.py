@@ -2,7 +2,7 @@ from typing import Protocol
 
 from pydantic import BaseModel, HttpUrl
 
-from models.themes import SecretMessageTheme
+from models.themes import Theme
 
 __all__ = ('HasUserId', 'User', 'UserPartial')
 
@@ -22,7 +22,7 @@ class User(BaseModel):
     fullname: str
     username: str | None
     can_be_added_to_contacts: bool
-    secret_message_theme: SecretMessageTheme | None
+    theme: Theme | None
     profile_photo_url: HttpUrl | None
     is_banned: bool
     can_receive_notifications: bool
