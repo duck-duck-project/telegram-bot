@@ -20,11 +20,11 @@ async def on_secret_message_does_not_exist_error(
         user_repository = UserRepository(http_client)
         user = await user_repository.get_by_id(user_id)
     if user.theme is None:
-        text = (
+        text: str = (
             'Сообщение не найдено.'
             ' Возможно оно ещё не загружено на наши сервера.'
-            ' Попробуйте через пару секунд',
+            ' Попробуйте через пару секунд'
         )
     else:
-        text = user.theme.secret_message_missing_text
+        text: str = user.theme.secret_message_missing_text
     await event.update.callback_query.answer(text, show_alert=True)
