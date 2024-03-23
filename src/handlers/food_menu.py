@@ -38,13 +38,6 @@ async def on_show_food_menu_for_specific_day_callback(
             text='❌ Нет данных о меню на указанный день',
             show_alert=True,
         )
-    else:
-        withdrawal = await balance_repository.create_withdrawal(
-            user_id=callback_query.from_user.id,
-            amount=80,
-            description='Просмотр йемека на сегодня',
-        )
-        await balance_notifier.send_withdrawal_notification(withdrawal)
 
         view = FoodMenuMediaGroupView(food_menu)
         await answer_media_group_view(message=callback_query.message, view=view)
