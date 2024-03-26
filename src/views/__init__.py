@@ -6,6 +6,7 @@ from .casino import *
 from .cinematica import *
 from .contacts import *
 from .food_menu import *
+from .holidays import *
 from .manas_id import *
 from .obis import *
 from .probability import *
