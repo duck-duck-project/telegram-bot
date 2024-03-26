@@ -33,6 +33,7 @@ from repositories import (
     BalanceRepository,
     FoodMenuRepository,
     ManasIdRepository,
+    HolidayRepository,
 )
 from repositories.themes import ThemeRepository
 from services import BalanceNotifier, AnonymousMessageSender
@@ -51,6 +52,7 @@ def include_routers(dispatcher: Dispatcher) -> None:
         handlers.work.router,
         handlers.cats.router,
         handlers.casino.router,
+        handlers.holidays.router,
         handlers.choice.router,
         handlers.cinematica.router,
         handlers.dogs.router,
@@ -137,6 +139,7 @@ async def main() -> None:
             balance_repository=BalanceRepository,
             food_menu_repository=FoodMenuRepository,
             manas_id_repository=ManasIdRepository,
+            holiday_repository=HolidayRepository,
         )
     )
     dispatcher.update.outer_middleware(user_retrieve_middleware)
