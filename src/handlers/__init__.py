@@ -1,7 +1,6 @@
 from . import (
     anonymous_messages,
     anti_how_your_bot,
-    anti_media,
     balance,
     birthdays,
     casino,
@@ -10,6 +9,7 @@ from . import (
     cinematica,
     common,
     contacts,
+    help,
     dogs,
     holidays,
     food_menu,
@@ -29,7 +29,6 @@ from . import (
 __all__ = (
     'probability',
     'anti_how_your_bot',
-    'anti_media',
     'balance',
     'birthdays',
     'casino',
@@ -38,6 +37,7 @@ __all__ = (
     'contacts',
     'cinematica',
     'dogs',
+    'help',
     'food_menu',
     'secret_medias',
     'secret_messages',

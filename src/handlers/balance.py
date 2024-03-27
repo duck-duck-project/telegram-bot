@@ -44,7 +44,7 @@ async def on_insufficient_funds_for_withdrawal_error(event: ErrorEvent) -> None:
 @router.message(
     or_f(
         Command('balance'),
-        F.text.lower().in_({'баланс', 'остаток', 'счет', 'balance'}),
+        F.text.lower().in_({'баланс', 'balance', '💰 мой баланс'}),
     ),
     or_f(
         F.reply_to_message.from_user.as_('from_user'),
@@ -84,7 +84,10 @@ async def on_show_user_balance(
 
 
 @router.message(
-    Command('richest_top'),
+    or_f(
+        Command('richest'),
+        F.text.lower() == 'топ богатых',
+    ),
     StateFilter('*'),
 )
 async def on_show_richest_users_statistics(

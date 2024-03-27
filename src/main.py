@@ -9,34 +9,27 @@ import sentry_sdk
 import structlog
 from aiogram import Bot, Dispatcher
 from aiogram.enums import ParseMode
-from aiogram.fsm.storage.memory import MemoryStorage
 from aiogram.fsm.storage.redis import RedisStorage
 from redis.asyncio import Redis
 from structlog.stdlib import BoundLogger
 
 import handlers
 from config import (
-    load_config_from_file_path, load_commands_from_file,
+    load_commands_from_file, load_config_from_file_path,
     load_role_play_actions_from_file,
 )
 from logger import setup_logging
 from middlewares import (
-    HTTPClientFactoryMiddleware,
-    APIRepositoriesInitializerMiddleware,
+    APIRepositoriesInitializerMiddleware, HTTPClientFactoryMiddleware,
     user_retrieve_middleware,
 )
 from repositories import (
+    BalanceRepository, ContactRepository, FoodMenuRepository, HolidayRepository,
+    ManasIdRepository, SecretMediaRepository, SecretMessageRepository,
     UserRepository,
-    ContactRepository,
-    SecretMediaRepository,
-    SecretMessageRepository,
-    BalanceRepository,
-    FoodMenuRepository,
-    ManasIdRepository,
-    HolidayRepository,
 )
 from repositories.themes import ThemeRepository
-from services import BalanceNotifier, AnonymousMessageSender
+from services import AnonymousMessageSender, BalanceNotifier
 from services.role_play_actions import RolePlayActions
 
 logger: BoundLogger = structlog.get_logger('app')
@@ -46,7 +39,6 @@ def include_routers(dispatcher: Dispatcher) -> None:
     dispatcher.include_routers(
         handlers.probability.router,
         handlers.anti_how_your_bot.router,
-        handlers.anti_media.router,
         handlers.balance.router,
         handlers.birthdays.router,
         handlers.work.router,
@@ -55,6 +47,7 @@ def include_routers(dispatcher: Dispatcher) -> None:
         handlers.holidays.router,
         handlers.choice.router,
         handlers.cinematica.router,
+        handlers.help.router,
         handlers.dogs.router,
         handlers.food_menu.router,
         handlers.server.router,

@@ -25,8 +25,6 @@ router = Router(name=__name__)
 async def on_show_food_menu_for_specific_day_callback(
         callback_query: CallbackQuery,
         callback_data: FoodMenuDetailCallbackData,
-        balance_repository: BalanceRepository,
-        balance_notifier: BalanceNotifier,
         food_menu_repository: FoodMenuRepository,
 ) -> None:
     food_menus = await food_menu_repository.get_all()
