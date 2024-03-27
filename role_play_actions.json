@@ -422,5 +422,15 @@
     ],
     "emoji": "🤏🏿",
     "action_template": "{of_user_full_name} потискал(-а) {to_user_full_name} за щечки"
+  },
+  {
+    "triggers": [
+      "кринж",
+      "кринге",
+      "клубника",
+      "cringe",
+    ],
+    "emoji": "🥴",
+    "action_template": "{of_user_full_name} кринжанул(-а) с {to_user_full_name}"
   }
 ]
