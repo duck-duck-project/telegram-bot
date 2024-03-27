@@ -8,7 +8,7 @@ from aiogram.utils.keyboard import InlineKeyboardBuilder
 
 from callback_data import MovieDetailCallbackData
 from models import Movie
-from views import PhotoView, ReplyMarkup
+from views import PhotoView
 from views.base import View
 
 __all__ = ('MoviesTodayListView', 'MoviesSoonListView', 'MovieDetailView')

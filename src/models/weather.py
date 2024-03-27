@@ -1,6 +1,5 @@
 from datetime import datetime
 from decimal import Decimal
-from zoneinfo import ZoneInfo
 
 from pydantic import BaseModel
 
