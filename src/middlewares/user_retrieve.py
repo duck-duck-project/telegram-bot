@@ -35,12 +35,17 @@ async def user_retrieve_middleware(
     from_user = extract_user_from_update(event)
     chat_type = extract_chat_type_from_update_or_none(event)
 
+    is_from_private_chat = (
+        chat_type == ChatType.PRIVATE
+        if chat_type is not None else None
+    )
+
     user_repository: UserRepository = data['user_repository']
     user, _ = await user_repository.upsert(
         user_id=from_user.id,
         fullname=from_user.full_name,
         username=from_user.username,
-        is_from_private_chat=chat_type,
+        is_from_private_chat=is_from_private_chat,
     )
     data['user'] = user
     return await handler(event, data)
