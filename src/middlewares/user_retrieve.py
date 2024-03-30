@@ -7,6 +7,8 @@ from services import extract_user_from_update
 
 __all__ = ('user_retrieve_middleware',)
 
+from services.users import extract_chat_type_from_update_or_none
+
 
 async def user_retrieve_middleware(
         handler: Handler,
@@ -31,12 +33,14 @@ async def user_retrieve_middleware(
             return await handler(event, data)
 
     from_user = extract_user_from_update(event)
+    chat_type = extract_chat_type_from_update_or_none(event)
 
     user_repository: UserRepository = data['user_repository']
     user, _ = await user_repository.upsert(
         user_id=from_user.id,
         fullname=from_user.full_name,
         username=from_user.username,
+        is_from_private_chat=chat_type,
     )
     data['user'] = user
     return await handler(event, data)

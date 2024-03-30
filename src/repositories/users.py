@@ -41,6 +41,7 @@ class UserRepository(APIRepository):
             theme_id: UUID | None = None,
             can_receive_notifications: bool | None = None,
             profile_photo_url: str | None = None,
+            is_from_private_chat: bool | None = None,
     ) -> tuple[User, bool]:
         request_data = {
             'id': user_id,
@@ -57,6 +58,8 @@ class UserRepository(APIRepository):
             )
         if profile_photo_url is not None:
             request_data['profile_photo_url'] = profile_photo_url
+        if is_from_private_chat:
+            request_data['is_from_private_chat'] = is_from_private_chat
 
         url = '/users/'
         response = await self._http_client.post(url, json=request_data)
