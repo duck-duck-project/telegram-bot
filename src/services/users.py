@@ -1,7 +1,7 @@
 from aiogram.enums import ChatType
 from aiogram.types import Update, User
 
-__all__ = ('extract_user_from_update', 'extract_chat_from_update_or_none')
+__all__ = ('extract_user_from_update', 'extract_chat_type_from_update_or_none')
 
 
 def extract_user_from_update(update: Update) -> User:
