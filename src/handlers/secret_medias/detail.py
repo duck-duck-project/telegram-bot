@@ -1,17 +1,16 @@
-from aiogram import Router, F
+from aiogram import F, Router
 from aiogram.enums import ChatType
 from aiogram.exceptions import TelegramAPIError
-from aiogram.filters import StateFilter, CommandStart
+from aiogram.filters import CommandStart, StateFilter
 from aiogram.types import Message
 
 from models import SecretMediaType
-from repositories import HTTPClientFactory
-from repositories import SecretMediaRepository
+from repositories import HTTPClientFactory, SecretMediaRepository
 from services import (
-    can_see_contact_secret,
     extract_secret_media_id,
     get_message_method_by_media_type,
 )
+from services.secret_messages import can_see_secret_media
 from views import SecretMediaDetailView
 
 __all__ = ('register_handlers',)
@@ -28,9 +27,9 @@ async def on_show_secret_media(
             secret_media_id=secret_media_id,
         )
 
-    if not can_see_contact_secret(
+    if not can_see_secret_media(
             user_id=message.from_user.id,
-            contact=secret_media.contact,
+            secret_media=secret_media,
     ):
         await message.reply('Это секретное медиа не предназначено для вас')
         return

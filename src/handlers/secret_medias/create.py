@@ -81,7 +81,7 @@ async def on_secret_media_create_confirm(
     view = SecretMediaForShareView(
         bot_username=me.username,
         secret_media=secret_media,
-        from_user_username=contact.of_user.username or contact.of_user.fullname,
+        theme=contact.of_user.theme,
     )
     sent_message = await answer_view(message=callback_query.message, view=view)
     await sent_message.reply('Вы можете переслать это сообщение получателю')
