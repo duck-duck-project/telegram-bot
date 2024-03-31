@@ -32,6 +32,7 @@ def extract_chat_type_from_update_or_none(update: Update) -> ChatType | None:
     if update.message is not None:
         return ChatType(update.message.chat.type)
     if update.callback_query is not None:
-        return ChatType(update.callback_query.message.chat.type)
+        if update.callback_query.message is not None:
+            return ChatType(update.callback_query.message.chat.type)
     if update.inline_query is not None:
         return ChatType(update.inline_query.chat_type)
