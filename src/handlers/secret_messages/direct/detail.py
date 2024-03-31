@@ -4,7 +4,7 @@ from aiogram.types import CallbackQuery
 
 from callback_data import SecretMessageDetailCallbackData
 from repositories import SecretMessageRepository
-from services import can_see_contact_secret, notify_secret_message_seen
+from services import can_see_secret_message, notify_secret_message_seen
 
 __all__ = ('router',)
 
@@ -25,7 +25,7 @@ async def on_show_contact_message(
         secret_message_id=callback_data.secret_message_id,
     )
 
-    if not can_see_contact_secret(
+    if not can_see_secret_message(
             user_id=callback_query.from_user.id,
             secret_message=secret_message,
     ):
