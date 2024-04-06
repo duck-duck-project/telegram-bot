@@ -1,11 +1,9 @@
 from aiogram import F, Router
-from aiogram.exceptions import TelegramBadRequest
 from aiogram.filters import StateFilter, and_f, or_f
 from aiogram.types import Message, URLInputFile
 
-from models import User
 from repositories import UserRepository
-from views import ProfileView, answer_media_group_view, answer_photo_view
+from views import ProfileView, answer_photo_view
 
 router = Router(name=__name__)
 
@@ -22,15 +20,15 @@ router = Router(name=__name__)
 )
 async def on_show_profile(
         message: Message,
-        user: User,
         user_repository: UserRepository,
         reply_to_message: Message | None = None,
 ) -> None:
-    if reply_to_message is not None:
-        from_user = reply_to_message.from_user
-        user = await user_repository.get_by_id(reply_to_message.from_user.id)
-    else:
-        from_user = message.from_user
+    from_user = (
+        reply_to_message.from_user
+        if reply_to_message is not None
+        else message.from_user
+    )
+    user = await user_repository.get_by_id(from_user.id)
 
     profile_photos = await from_user.get_profile_photos()
     if not profile_photos.photos:
