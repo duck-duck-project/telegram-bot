@@ -104,6 +104,8 @@ async def on_create_contact_via_button_click(
 
     await contact_repository.create(
         of_user_id=of_user_id,
-        to_user_id=to_user.id
+        to_user_id=to_user.id,
+        private_name=to_user.username_or_fullname,
+        public_name=to_user.username_or_fullname,
     )
     await callback_query.answer('✅ Контакт успешно добавлен', show_alert=True)
