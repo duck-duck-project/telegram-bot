@@ -5,7 +5,6 @@ from .contacts import *
 from .departments import *
 from .food_menu import *
 from .holidays import *
-from .manas_id import *
 from .role_play import *
 from .secret_media_types import *
 from .secret_medias import *

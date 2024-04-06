@@ -2,7 +2,6 @@ from collections.abc import Iterable
 from datetime import datetime
 from zoneinfo import ZoneInfo
 
-from models import ManasId
 from services.dates import compute_days_until_birthday, compute_age
 from views.base import View
 
@@ -11,7 +10,7 @@ __all__ = ('ClosestBirthdaysView',)
 
 class ClosestBirthdaysView(View):
 
-    def __init__(self, manas_ids: Iterable[ManasId], timezone: ZoneInfo):
+    def __init__(self, manas_ids: Iterable, timezone: ZoneInfo):
         self.__manas_ids = tuple(manas_ids)
         self.__timezone = timezone
 

@@ -4,7 +4,12 @@ __all__ = (
     'ContactDetailCallbackData',
     'ContactUpdateCallbackData',
     'ContactDeleteCallbackData',
+    'ContactCreateCallbackData',
 )
+
+
+class ContactCreateCallbackData(CallbackData, prefix='contact-create'):
+    user_id: int
 
 
 class ContactDetailCallbackData(CallbackData, prefix='contact-detail'):

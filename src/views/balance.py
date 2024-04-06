@@ -1,15 +1,12 @@
 from typing import Protocol
 
 from aiogram.types import (
-    InlineKeyboardMarkup,
-    InlineKeyboardButton,
-    ReplyKeyboardMarkup,
-    KeyboardButton,
-    User,
+    InlineKeyboardButton, InlineKeyboardMarkup, KeyboardButton,
+    ReplyKeyboardMarkup, User,
 )
 
 from callback_data import TransferRollbackCallbackData
-from models import UserBalance, Transfer
+from models import Transfer, UserBalance
 from services.text import int_gaps
 from views.base import View
 
@@ -23,25 +20,13 @@ __all__ = (
     'InsufficientFundsForSendingMediaView',
     'InsufficientFundsForHowYourBotView',
     'TransferExecutedView',
+    'UserBalanceWithoutNameView',
 )
 
 
 class HasAmountAndDescription(Protocol):
     amount: int
     description: str | None
-
-
-class MyBalanceReplyKeyboardMixin:
-    reply_markup = InlineKeyboardMarkup(
-        inline_keyboard=[
-            [
-                InlineKeyboardButton(
-                    text='💰 Мой баланс',
-                    callback_data='show-user-balance',
-                ),
-            ],
-        ],
-    )
 
 
 class FinanceMenuView(View):
@@ -89,7 +74,7 @@ class UserBalanceView(View):
         )
 
 
-class WithdrawalNotificationView(View, MyBalanceReplyKeyboardMixin):
+class WithdrawalNotificationView(View):
     disable_notification = True
 
     def __init__(self, withdrawal: HasAmountAndDescription):
@@ -105,17 +90,7 @@ class WithdrawalNotificationView(View, MyBalanceReplyKeyboardMixin):
         return '\n'.join(lines)
 
 
-class DepositNotificationView(View, MyBalanceReplyKeyboardMixin):
-    reply_markup = InlineKeyboardMarkup(
-        inline_keyboard=[
-            [
-                InlineKeyboardButton(
-                    text='💰 Мой баланс',
-                    callback_data='show-user-balance',
-                ),
-            ],
-        ],
-    )
+class DepositNotificationView(View):
 
     def __init__(self, deposit: HasAmountAndDescription):
         self.__deposit = deposit
@@ -234,4 +209,16 @@ class TransferExecutedView(View):
                     ),
                 ],
             ],
+        )
+
+
+class UserBalanceWithoutNameView(View):
+
+    def __init__(self, balance: int):
+        self.__balance = balance
+
+    def get_text(self) -> str:
+        return (
+            f'Баланс этого пользователя:'
+            f' {int_gaps(self.__balance)} дак-дак коинов'
         )

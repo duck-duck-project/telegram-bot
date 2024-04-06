@@ -1,7 +1,9 @@
+from datetime import date
 from typing import Protocol
 
 from pydantic import BaseModel, HttpUrl
 
+from enums import Gender
 from models.themes import Theme
 
 __all__ = ('HasUserId', 'User', 'UserPartial')
@@ -26,6 +28,17 @@ class User(BaseModel):
     profile_photo_url: HttpUrl | None
     is_banned: bool
     can_receive_notifications: bool
+    is_blocked_bot: bool
+    personality_type: str | None
+    born_on: date | None
+    real_first_name: str | None
+    real_last_name: str | None
+    patronymic: str | None
+    gender: Gender | None
+    nationality: str | None
+    region: str | None
+    country: str | None
+    country_flag_emoji: str | None
 
     @property
     def username_or_fullname(self) -> str:

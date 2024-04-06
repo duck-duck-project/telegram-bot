@@ -25,7 +25,7 @@ from middlewares import (
 )
 from repositories import (
     BalanceRepository, ContactRepository, FoodMenuRepository, HolidayRepository,
-    ManasIdRepository, SecretMediaRepository, SecretMessageRepository,
+    SecretMediaRepository, SecretMessageRepository,
     UserRepository,
 )
 from repositories.themes import ThemeRepository
@@ -40,9 +40,9 @@ def include_routers(dispatcher: Dispatcher) -> None:
         handlers.probability.router,
         handlers.anti_how_your_bot.router,
         handlers.balance.router,
-        handlers.birthdays.router,
         handlers.work.router,
         handlers.cats.router,
+        handlers.profile.router,
         handlers.casino.router,
         handlers.holidays.router,
         handlers.choice.router,
@@ -52,8 +52,6 @@ def include_routers(dispatcher: Dispatcher) -> None:
         handlers.food_menu.router,
         handlers.server.router,
         handlers.users.router,
-        handlers.manas_id.router,
-        handlers.obis.router,
         handlers.themes.router,
         handlers.transfers.router,
         handlers.role_play.router,
@@ -131,7 +129,6 @@ async def main() -> None:
             user_repository=UserRepository,
             balance_repository=BalanceRepository,
             food_menu_repository=FoodMenuRepository,
-            manas_id_repository=ManasIdRepository,
             holiday_repository=HolidayRepository,
         )
     )

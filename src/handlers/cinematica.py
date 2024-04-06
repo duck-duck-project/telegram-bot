@@ -11,7 +11,6 @@ from views import (
     MoviesSoonListView,
     MoviesTodayListView,
     answer_photo_view,
-    answer_view,
     reply_view,
 )
 
