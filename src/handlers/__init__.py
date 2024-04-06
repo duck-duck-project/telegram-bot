@@ -22,6 +22,7 @@ from . import (
     transfers,
     users,
     work,
+    wishes,
 )
 
 __all__ = (
@@ -48,4 +49,5 @@ __all__ = (
     'common',
     'server',
     'work',
+    'wishes',
 )
