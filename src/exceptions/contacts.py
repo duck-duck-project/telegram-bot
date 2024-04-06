@@ -3,6 +3,8 @@ from dataclasses import dataclass
 __all__ = (
     'ContactDoesNotExistError',
     'ContactAlreadyExistsError',
+    'ContactCreateToSelfError',
+    'ContactCreateForbiddenError',
 )
 
 
@@ -15,4 +17,12 @@ class ContactDoesNotExistError(Exception):
 
 
 class ContactAlreadyExistsError(Exception):
+    pass
+
+
+class ContactCreateToSelfError(Exception):
+    pass
+
+
+class ContactCreateForbiddenError(Exception):
     pass

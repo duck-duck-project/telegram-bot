@@ -4,11 +4,11 @@ from aiogram.filters import (
 )
 from aiogram.types import CallbackQuery, ErrorEvent, Message, User
 
+from callback_data import UserBalanceDetailCallbackData
 from exceptions import InsufficientFundsForWithdrawalError
 from repositories import BalanceRepository
 from views import (
-    FinanceMenuView, UserBalanceView, answer_view,
-    render_message_or_callback_query,
+    FinanceMenuView, UserBalanceView, UserBalanceWithoutNameView, answer_view,
 )
 
 router = Router(name=__name__)
@@ -58,23 +58,19 @@ async def on_show_other_user_balance(
 
 
 @router.callback_query(
-    F.data == 'show-user-balance',
+    UserBalanceDetailCallbackData.filter(),
     StateFilter('*'),
 )
 async def on_show_user_balance(
         callback_query: CallbackQuery,
+        callback_data: UserBalanceDetailCallbackData,
         balance_repository: BalanceRepository,
 ) -> None:
-    from_user = callback_query.from_user
-    user_balance = await balance_repository.get_user_balance(from_user.id)
-    view = UserBalanceView(
-        user_balance=user_balance,
-        user_fullname=from_user.full_name,
+    user_balance = await balance_repository.get_user_balance(
+        callback_data.user_id
     )
-    await render_message_or_callback_query(
-        message_or_callback_query=callback_query,
-        view=view,
-    )
+    view = UserBalanceWithoutNameView(balance=user_balance.balance)
+    await callback_query.answer(view.get_text(), show_alert=True)
 
 
 @router.message(

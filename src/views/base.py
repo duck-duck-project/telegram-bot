@@ -72,6 +72,7 @@ class PhotoView:
 class MediaGroupView:
     medias: list[MediaType] | None = None
     caption: str | None = None
+    reply_markup: ReplyMarkup | None = None
 
     def get_caption(self) -> str | None:
         return self.caption
@@ -85,6 +86,9 @@ class MediaGroupView:
             caption=self.get_caption(),
         )
         return media_group_builder.build()
+
+    def get_reply_markup(self) -> ReplyMarkup | None:
+        return self.reply_markup
 
 
 class CallbackQueryAnswerView:

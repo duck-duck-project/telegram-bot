@@ -5,7 +5,7 @@ from aiogram.types import Message, URLInputFile
 
 from models import User
 from repositories import UserRepository
-from views import ProfileView, answer_media_group_view
+from views import ProfileView, answer_media_group_view, answer_photo_view
 
 router = Router(name=__name__)
 
@@ -38,14 +38,10 @@ async def on_show_profile(
             'https://api.thecatapi.com/v1/'
             'images/search?format=src&mime_types=jpg,png'
         )
-        photos = [URLInputFile(url)]
+        photo = URLInputFile(url)
     else:
-        photos = [photo[-1].file_id for photo in profile_photos.photos[:10]]
+        photo = profile_photos.photos[0][-1].file_id
 
-    view = ProfileView(user, photos)
+    view = ProfileView(user, photo)
 
-    try:
-        await answer_media_group_view(message=message, view=view)
-    except TelegramBadRequest:
-        view = ProfileView(user, photos[:1])
-        await answer_media_group_view(message=message, view=view)
+    await answer_photo_view(message=message, view=view)

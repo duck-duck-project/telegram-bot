@@ -1,8 +1,10 @@
 from aiogram import F, Router
 from aiogram.enums import ChatType
 from aiogram.filters import Command, StateFilter, invert_f
-from aiogram.types import Message
+from aiogram.types import CallbackQuery, Message
 
+from callback_data import ContactCreateCallbackData
+from exceptions import ContactCreateForbiddenError, ContactCreateToSelfError
 from models import User
 from repositories import ContactRepository, UserRepository
 
@@ -27,8 +29,8 @@ async def on_add_bot_to_contacts(message: Message) -> None:
     F.reply_to_message.from_user.id == F.from_user.id,
     StateFilter('*'),
 )
-async def on_add_self_to_contacts(message: Message) -> None:
-    await message.reply('Вы не можете добавить себя в контакты')
+async def on_add_self_to_contacts(_: Message) -> None:
+    raise ContactCreateToSelfError
 
 
 @router.message(
@@ -70,10 +72,7 @@ async def on_add_contact(
     )
 
     if not to_user.can_be_added_to_contacts:
-        await message.reply(
-            '😔 Этот пользователь запретил добавлять себя в контакты',
-        )
-        return
+        raise ContactCreateForbiddenError
 
     await contact_repository.create(
         of_user_id=user.id,
@@ -82,3 +81,29 @@ async def on_add_contact(
         public_name=name,
     )
     await message.reply('✅ Контакт успешно добавлен')
+
+
+@router.callback_query(
+    ContactCreateCallbackData.filter(),
+    StateFilter('*'),
+)
+async def on_create_contact_via_button_click(
+        callback_query: CallbackQuery,
+        callback_data: ContactCreateCallbackData,
+        user_repository: UserRepository,
+        contact_repository: ContactRepository,
+) -> None:
+    of_user_id = callback_query.from_user.id
+    if callback_data.user_id == of_user_id:
+        raise ContactCreateToSelfError
+
+    to_user = await user_repository.get_by_id(callback_data.user_id)
+
+    if not to_user.can_be_added_to_contacts:
+        raise ContactCreateForbiddenError
+
+    await contact_repository.create(
+        of_user_id=of_user_id,
+        to_user_id=to_user.id
+    )
+    await callback_query.answer('✅ Контакт успешно добавлен', show_alert=True)

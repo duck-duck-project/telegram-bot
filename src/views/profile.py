@@ -1,7 +1,15 @@
 from collections.abc import Iterable
 
-from aiogram.types import InputMediaPhoto
+from aiogram.types import (
+    InlineKeyboardButton, InlineKeyboardMarkup,
+    InputMediaPhoto,
+)
+from aiogram.utils.keyboard import InlineKeyboardBuilder
 
+from callback_data import (
+    ContactCreateCallbackData,
+    UserBalanceDetailCallbackData,
+)
 from enums import Gender
 from models import User
 from services.dates import humanize_age
@@ -10,16 +18,16 @@ from services.manas_id import (
     determine_zodiac_sign,
     humanize_personality_type,
 )
-from views import MediaGroupView
+from views import PhotoView
 
 __all__ = ('ProfileView',)
 
 
-class ProfileView(MediaGroupView):
+class ProfileView(PhotoView):
 
-    def __init__(self, user: User, photos: Iterable[str]):
+    def __init__(self, user: User, photo: str):
         self.__user = user
-        self.__photos = tuple(photos)
+        self.__photo = photo
 
     def get_caption(self) -> str:
         username = self.__user.username or 'не указан'
@@ -75,8 +83,27 @@ class ProfileView(MediaGroupView):
             f'Прожил на Земле: {lifetime_in_days} дней\n'
         )
 
-    def get_medias(self) -> list[InputMediaPhoto]:
-        return [
-            InputMediaPhoto(media=photo_file_id)
-            for photo_file_id in self.__photos
-        ]
+    def get_photo(self) -> str:
+        return self.__photo
+
+    def get_reply_markup(self) -> InlineKeyboardMarkup:
+        keyboard = InlineKeyboardBuilder()
+
+        balance_button = InlineKeyboardButton(
+            text='💰 Баланс',
+            callback_data=UserBalanceDetailCallbackData(
+                user_id=self.__user.id,
+            ).pack(),
+        )
+        keyboard.row(balance_button)
+
+        if self.__user.can_be_added_to_contacts:
+            contact_button = InlineKeyboardButton(
+                text='📞 Добавить в контакты',
+                callback_data=ContactCreateCallbackData(
+                    user_id=self.__user.id,
+                ).pack(),
+            )
+            keyboard.row(contact_button)
+
+        return keyboard.as_markup()
