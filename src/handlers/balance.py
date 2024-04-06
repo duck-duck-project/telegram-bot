@@ -1,20 +1,14 @@
-from aiogram import Router, F
+from aiogram import F, Router
 from aiogram.filters import (
-    StateFilter,
-    Command,
-    ExceptionTypeFilter,
-    or_f,
-    invert_f,
+    Command, ExceptionTypeFilter, StateFilter, invert_f, or_f,
 )
-from aiogram.types import CallbackQuery, Message, ErrorEvent, User
+from aiogram.types import CallbackQuery, ErrorEvent, Message, User
 
 from exceptions import InsufficientFundsForWithdrawalError
 from repositories import BalanceRepository
 from views import (
-    UserBalanceView,
+    FinanceMenuView, UserBalanceView, answer_view,
     render_message_or_callback_query,
-    FinanceMenuView,
-    answer_view,
 )
 
 router = Router(name=__name__)

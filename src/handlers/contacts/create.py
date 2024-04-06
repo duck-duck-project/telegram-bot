@@ -1,6 +1,6 @@
 from aiogram import F, Router
 from aiogram.enums import ChatType
-from aiogram.filters import Command, StateFilter, invert_f, or_f
+from aiogram.filters import Command, StateFilter, invert_f
 from aiogram.types import Message
 
 from models import User

@@ -6,3 +6,4 @@ __all__ = ('Gender',)
 class Gender(IntEnum):
     FEMALE = 1
     MALE = 2
+    OTHER = 3

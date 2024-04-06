@@ -56,7 +56,6 @@ async def on_secret_message_typing(
         inline_query: InlineQuery,
         contact_repository: ContactRepository,
         state: FSMContext,
-        text: str,
         user: User,
 ) -> None:
     contacts = await contact_repository.get_by_user_id(user.id)

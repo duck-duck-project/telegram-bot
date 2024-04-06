@@ -8,8 +8,7 @@ from .contacts import *
 from .food_menu import *
 from .help import *
 from .holidays import *
-from .manas_id import *
-from .obis import *
+from .profile import *
 from .probability import *
 from .problems import *
 from .role_play import *

@@ -1,36 +1,12 @@
-from datetime import datetime
-from decimal import Decimal
-
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 __all__ = (
-    'Location',
-    'CurrentWeather',
-    'CurrentWeatherResponse',
+    'GeoCoordinates',
 )
 
 
-class Location(BaseModel):
+class GeoCoordinates(BaseModel):
     name: str
-    region: str
+    latitude: float = Field(alias='lat')
+    longitude: float = Field(alias='lon')
     country: str
-    latitude: Decimal
-    longitude: Decimal
-    localtime: datetime
-    timezone: str
-
-
-class CurrentWeather(BaseModel):
-    last_updated: datetime
-    temperature_celsius: Decimal
-    feels_like_celsius: Decimal
-    wind_speed_kilometers_per_hour: Decimal
-    wind_direction: str
-    humidity_percent: int
-    cloud_cover_percent: int
-    uv_index: Decimal
-
-
-class CurrentWeatherResponse(BaseModel):
-    location: Location
-    current: CurrentWeather

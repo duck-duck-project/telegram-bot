@@ -3,13 +3,13 @@ from datetime import date
 __all__ = (
     'humanize_personality_type',
     'determine_zodiac_sign',
-    'compute_living_days',
+    'compute_lifetime',
 )
 
 
 def humanize_personality_type(personality_type: str | None) -> str:
     if personality_type is None:
-        return 'Неопределено'
+        return 'не указано'
 
     personality_type_main = personality_type.upper().split('-')[0]
 
@@ -73,6 +73,6 @@ def determine_zodiac_sign(*, month: int, day: int) -> str:
     return 'Неопеределено'
 
 
-def compute_living_days(born_at: date) -> int:
+def compute_lifetime(born_at: date) -> int:
     today = date.today()
     return (today - born_at).days
