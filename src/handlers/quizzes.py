@@ -34,7 +34,7 @@ async def on_show_prediction(
         message: Message,
         quiz_repository: QuizRepository,
 ) -> None:
-    wish = await quiz_repository.get_random_wish()
+    wish = await quiz_repository.get_random_prediction()
     if wish is None:
         await message.answer('Не могу дать вам предсказание 😔')
     else:
