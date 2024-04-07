@@ -6,5 +6,5 @@ __all__ = ('HelpView',)
 class HelpView(View):
     text = (
         '📚 Справочник по боту:'
-        ' <a href="https://graph.org/Duck-Duck-FAQ-03-27">*ссылка*</a>'
+        ' <a href="https://eldos.notion.site/Duck-Duck-ff57b98762664d40a77119ea3daa6c5b?pvs=4">*ссылка*</a>'
     )
