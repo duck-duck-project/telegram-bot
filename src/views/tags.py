@@ -22,7 +22,7 @@ class TagGivenView(View):
         self.__to_user = to_user
 
     def get_text(self) -> str:
-        return f'✅ Тэг пользователю {self.__to_user.mention_html()} выдан'
+        return f'✅ Награда выдана пользователю {self.__to_user.mention_html()}'
 
 
 class TagListView(View):
