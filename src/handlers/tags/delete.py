@@ -23,15 +23,15 @@ async def on_delete_tag(
         balance_notifier: BalanceNotifier,
 ) -> None:
     price = TAG_WEIGHT_TO_PRICE[callback_data.tag_weight]
-    deposit = await balance_repository.create_deposit(
-        user_id=callback_query.from_user.id,
-        amount=price // 2,
-        description='🏅 Продажа награды',
-    )
-    await balance_notifier.send_deposit_notification(deposit)
     await tag_repository.delete(
         user_id=callback_query.from_user.id,
         tag_id=callback_data.tag_id,
     )
     await callback_query.answer(text='❗️ Награда продана', show_alert=True)
     await callback_query.message.delete_reply_markup()
+    deposit = await balance_repository.create_deposit(
+        user_id=callback_query.from_user.id,
+        amount=price // 2,
+        description='🏅 Продажа награды',
+    )
+    await balance_notifier.send_deposit_notification(deposit)
