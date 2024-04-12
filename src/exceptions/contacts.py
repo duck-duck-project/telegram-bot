@@ -1,5 +1,3 @@
-from dataclasses import dataclass
-
 __all__ = (
     'ContactDoesNotExistError',
     'ContactAlreadyExistsError',
@@ -8,9 +6,10 @@ __all__ = (
 )
 
 
-@dataclass(frozen=True, slots=True)
 class ContactDoesNotExistError(Exception):
-    contact_id: int
+
+    def __init__(self, contact_id: int):
+        self.contact_id = contact_id
 
     def __str__(self) -> str:
         return f'Contact with ID {self.contact_id} does not exist'
