@@ -2,6 +2,11 @@ import json
 
 from pydantic import TypeAdapter
 
+from exceptions import (
+    ServerAPIError,
+    TagDoesNotBelongToUserError,
+    TagDoesNotExistError,
+)
 from models import Tag
 from repositories import APIRepository
 
@@ -36,11 +41,15 @@ class TagRepository(APIRepository):
         response_data = response.json()
         return Tag.model_validate(response_data['result'])
 
-    async def delete(self, tag_id: int) -> bool:
-        url = f'/users/tags/{tag_id}/'
+    async def delete(self, *, user_id: int, tag_id: int) -> bool:
+        url = f'/users/{user_id}/tags/{tag_id}/'
         response = await self._http_client.delete(url)
+        if response.status_code == 404:
+            raise TagDoesNotExistError
+        if response.status_code == 403:
+            raise TagDoesNotBelongToUserError
         try:
             response_data = response.json()
         except json.JSONDecodeError:
-            return False
+            raise ServerAPIError
         return response_data.get('ok', False)

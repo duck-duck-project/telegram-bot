@@ -23,6 +23,6 @@ async def on_show_tags_list(
     else:
         user = message.from_user
 
-    tags = await tag_repository.get_all_by_user_id(message.from_user.id)
+    tags = await tag_repository.get_all_by_user_id(user.id)
     view = TagListView(tags=tags, user=user)
     await answer_view(message=message, view=view)

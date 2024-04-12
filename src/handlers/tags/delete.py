@@ -29,6 +29,9 @@ async def on_delete_tag(
         description='🏅 Продажа награды',
     )
     await balance_notifier.send_deposit_notification(deposit)
-    await tag_repository.delete(callback_data.tag_id)
+    await tag_repository.delete(
+        user_id=callback_query.from_user.id,
+        tag_id=callback_data.tag_id,
+    )
     await callback_query.answer(text='❗️ Награда продана', show_alert=True)
     await callback_query.message.delete_reply_markup()
