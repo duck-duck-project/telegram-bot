@@ -31,12 +31,6 @@ async def on_create_tag(
 ) -> None:
     price = TAG_WEIGHT_TO_PRICE[weight]
 
-    await tag_repository.create(
-        of_user_id=of_user.id,
-        to_user_id=to_user.id,
-        text=text,
-        weight=weight,
-    )
     withdrawal = await balance_repository.create_withdrawal(
         user_id=of_user.id,
         amount=price,
@@ -44,3 +38,9 @@ async def on_create_tag(
     )
     await balance_notifier.send_withdrawal_notification(withdrawal)
     await answer_view(message=message, view=TagGivenView(to_user))
+    await tag_repository.create(
+        of_user_id=of_user.id,
+        to_user_id=to_user.id,
+        text=text,
+        weight=weight,
+    )
