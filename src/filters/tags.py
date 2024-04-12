@@ -12,9 +12,9 @@ def tag_filter(message: Message) -> dict | bool:
         return False
 
     command_to_weight = {
-        'дать тэг золото': TagWeight.GOLD,
-        'дать тэг серебро': TagWeight.SILVER,
-        'дать тэг бронза': TagWeight.BRONZE,
+        'дать тег золото': TagWeight.GOLD,
+        'дать тег серебро': TagWeight.SILVER,
+        'дать тег бронза': TagWeight.BRONZE,
     }
 
     try:
