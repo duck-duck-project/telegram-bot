@@ -1,5 +1,3 @@
-from dataclasses import dataclass
-
 __all__ = (
     'InsufficientFundsForWithdrawalError',
     'InsufficientFundsForTransferError',
@@ -11,9 +9,10 @@ __all__ = (
 )
 
 
-@dataclass(frozen=True, slots=True)
 class InsufficientFundsForWithdrawalError(Exception):
-    amount: int
+
+    def __init__(self, amount: int):
+        self.amount = amount
 
     def __str__(self):
         return f'Insufficient funds for withdrawal: {self.amount=}'

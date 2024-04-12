@@ -3,7 +3,8 @@ from .base import *
 from .contacts import *
 from .food_menu import *
 from .holidays import *
+from .quizzes import *
 from .secret_medias import *
 from .secret_messages import *
+from .tags import *
 from .users import *
-from .quizzes import *

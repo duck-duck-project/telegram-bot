@@ -1,2 +1,0 @@
-class ObisLoginError(Exception):
-    pass

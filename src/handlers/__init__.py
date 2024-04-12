@@ -10,6 +10,7 @@ from . import (
     contacts,
     dogs,
     food_menu,
+    tags,
     help,
     holidays,
     probability,
@@ -31,6 +32,7 @@ __all__ = (
     'balance',
     'casino',
     'cats',
+    'tags',
     'choice',
     'profile',
     'contacts',
@@ -49,5 +51,5 @@ __all__ = (
     'common',
     'server',
     'work',
-    'quizzes.py',
+    'quizzes',
 )

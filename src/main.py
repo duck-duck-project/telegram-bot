@@ -20,14 +20,20 @@ from config import (
 )
 from logger import setup_logging
 from middlewares import (
-    APIRepositoriesInitializerMiddleware, HTTPClientFactoryMiddleware,
+    APIRepositoriesInitializerMiddleware,
+    HTTPClientFactoryMiddleware,
     user_retrieve_middleware,
 )
 from repositories import (
-    BalanceRepository, ContactRepository, FoodMenuRepository, HolidayRepository,
-    SecretMediaRepository, SecretMessageRepository,
+    BalanceRepository,
+    ContactRepository,
+    FoodMenuRepository,
+    HolidayRepository,
+    SecretMediaRepository,
+    SecretMessageRepository,
     UserRepository,
     QuizRepository,
+    TagRepository,
 )
 from repositories.themes import ThemeRepository
 from services import AnonymousMessageSender, BalanceNotifier
@@ -52,6 +58,7 @@ def include_routers(dispatcher: Dispatcher) -> None:
         handlers.help.router,
         handlers.dogs.router,
         handlers.food_menu.router,
+        handlers.tags.router,
         handlers.server.router,
         handlers.users.router,
         handlers.themes.router,
@@ -133,6 +140,7 @@ async def main() -> None:
             food_menu_repository=FoodMenuRepository,
             holiday_repository=HolidayRepository,
             quiz_repository=QuizRepository,
+            tag_repository=TagRepository,
         )
     )
     dispatcher.update.outer_middleware(user_retrieve_middleware)

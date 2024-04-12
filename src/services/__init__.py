@@ -7,6 +7,7 @@ from .filters import *
 from .notifiers import *
 from .photos import *
 from .secret_messages import *
+from .tags import *
 from .text import *
 from .users import *
 from .views import *
