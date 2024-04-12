@@ -8,11 +8,12 @@ from .contacts import *
 from .food_menu import *
 from .help import *
 from .holidays import *
-from .profile import *
 from .probability import *
 from .problems import *
+from .profile import *
 from .role_play import *
 from .secret_messaging import *
 from .server import *
+from .tags import *
 from .themes import *
 from .users import *

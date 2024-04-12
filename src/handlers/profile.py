@@ -30,15 +30,18 @@ async def on_show_profile(
     )
     user = await user_repository.get_by_id(from_user.id)
 
-    profile_photos = await from_user.get_profile_photos()
-    if not profile_photos.photos:
-        url = (
-            'https://api.thecatapi.com/v1/'
-            'images/search?format=src&mime_types=jpg,png'
-        )
-        photo = URLInputFile(url)
+    if user.profile_photo_url is not None:
+        photo = user.profile_photo_url
     else:
-        photo = profile_photos.photos[0][-1].file_id
+        profile_photos = await from_user.get_profile_photos()
+        if profile_photos.photos:
+            photo = profile_photos.photos[0][-1].file_id
+        else:
+            url = (
+                'https://api.thecatapi.com/v1/'
+                'images/search?format=src&mime_types=jpg,png'
+            )
+            photo = URLInputFile(url)
 
     view = ProfileView(user, photo)
 
