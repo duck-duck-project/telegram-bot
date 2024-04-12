@@ -15,7 +15,7 @@ class TagRepository(APIRepository):
         response = await self._http_client.get(url)
         type_adapter = TypeAdapter(list[Tag])
         response_data = response.json()
-        return type_adapter.validate_python(response_data)
+        return type_adapter.validate_python(response_data['result'])
 
     async def create(
             self,
@@ -25,15 +25,16 @@ class TagRepository(APIRepository):
             text: str,
             weight,
     ) -> Tag:
-        url = f'/users/{of_user_id}/tags/'
+        url = f'/users/tags/'
         request_data = {
+            'of_user_id': of_user_id,
             'to_user_id': to_user_id,
             'text': text,
             'weight': weight,
         }
         response = await self._http_client.post(url, json=request_data)
         response_data = response.json()
-        return Tag.model_validate(response_data)
+        return Tag.model_validate(response_data['result'])
 
     async def delete(self, tag_id: int) -> bool:
         url = f'/users/tags/{tag_id}/'

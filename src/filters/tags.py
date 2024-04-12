@@ -2,34 +2,46 @@ from aiogram.types import Message
 
 from enums import TagWeight
 
-__all__ = ('tag_filter',)
+__all__ = ('tag_create_command_filter', 'tag_detail_command_filter')
 
 
-def tag_filter(message: Message) -> dict | bool:
+def tag_detail_command_filter(message: Message) -> dict | bool:
+    try:
+        command, tag_number = message.text.split(' ')
+    except ValueError:
+        return False
+
+    if command.lower() != 'награда':
+        return False
+
+    try:
+        return {'tag_number': int(tag_number)}
+    except ValueError:
+        return False
+
+
+def tag_create_command_filter(message: Message) -> dict | bool:
     try:
         command, text = message.text.splitlines()
     except ValueError:
         return False
 
     command_to_weight = {
-        'дать тег золото': TagWeight.GOLD,
-        'дать тег серебро': TagWeight.SILVER,
-        'дать тег бронза': TagWeight.BRONZE,
+        'наградить золотом': TagWeight.GOLD,
+        'наградить серебром': TagWeight.SILVER,
+        'наградить бронзой': TagWeight.BRONZE,
     }
 
     try:
-        weight = command_to_weight[command.lower()]
+        weight = command_to_weight[command.lower().strip()]
     except KeyError:
         return False
 
-    if command.lower() != 'дать тэг':
-        return False
-
-    of_user_id = message.from_user.id
-    to_user_id = message.reply_to_message.from_user.id
+    of_user = message.from_user
+    to_user = message.reply_to_message.from_user
     return {
-        'of_user_id': of_user_id,
-        'to_user_id': to_user_id,
+        'of_user': of_user,
+        'to_user': to_user,
         'text': text,
         'weight': weight,
     }

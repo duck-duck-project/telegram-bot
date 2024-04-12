@@ -12,3 +12,5 @@ class Tag(BaseModel):
     text: str
     weight: TagWeight
     created_at: datetime
+    of_user_fullname: str
+    of_user_username: str | None

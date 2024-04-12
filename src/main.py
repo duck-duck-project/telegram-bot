@@ -58,6 +58,7 @@ def include_routers(dispatcher: Dispatcher) -> None:
         handlers.help.router,
         handlers.dogs.router,
         handlers.food_menu.router,
+        handlers.tags.router,
         handlers.server.router,
         handlers.users.router,
         handlers.themes.router,

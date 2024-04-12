@@ -7,6 +7,7 @@ from aiogram.types import CallbackQuery, ErrorEvent, Message, User
 from callback_data import UserBalanceDetailCallbackData
 from exceptions import InsufficientFundsForWithdrawalError
 from repositories import BalanceRepository
+from services import int_gaps
 from views import (
     FinanceMenuView, UserBalanceView, UserBalanceWithoutNameView, answer_view,
 )
@@ -23,11 +24,14 @@ async def on_show_finance_menu(message: Message) -> None:
     await answer_view(message=message, view=view)
 
 
-@router.error(ExceptionTypeFilter(InsufficientFundsForWithdrawalError))
+@router.error(
+    ExceptionTypeFilter(InsufficientFundsForWithdrawalError),
+    StateFilter('*'),
+)
 async def on_insufficient_funds_for_withdrawal_error(event: ErrorEvent) -> None:
     text = (
         '❌ Недостаточно средств для списания\n'
-        f'💸 Необходимо {event.exception.amount} дак-дак коинов'
+        f'💸 Необходимо {int_gaps(event.exception.amount)} дак-дак коинов'
     )
     if event.update.message is not None:
         await event.update.message.reply(text)
