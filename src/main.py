@@ -15,7 +15,8 @@ from structlog.stdlib import BoundLogger
 
 import handlers
 from config import (
-    load_commands_from_file, load_config_from_file_path,
+    load_commands_from_file,
+    load_config_from_file_path,
     load_role_play_actions_from_file,
 )
 from logger import setup_logging
@@ -47,6 +48,7 @@ def include_routers(dispatcher: Dispatcher) -> None:
         handlers.probability.router,
         handlers.anti_how_your_bot.router,
         handlers.balance.router,
+        handlers.eraser.router,
         handlers.work.router,
         handlers.quizzes.router,
         handlers.cats.router,
