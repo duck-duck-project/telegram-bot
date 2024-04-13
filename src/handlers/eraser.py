@@ -12,7 +12,7 @@ router = Router(name=__name__)
 
 @router.message(
     F.reply_to_message.as_('reply_to'),
-    F.text.lower().in_('стереть', 'удалить'),
+    F.text.lower().in_({'стереть', 'удалить'}),
     StateFilter('*'),
 )
 async def on_erase_message(
