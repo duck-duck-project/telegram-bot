@@ -11,7 +11,7 @@ router = Router(name=__name__)
 
 
 @router.message(
-    F.reply_to_message.as_('reply_to'),
+    F.reply_to_message.as_('reply_to_message'),
     F.text.lower().in_({'стереть', 'удалить'}),
     StateFilter('*'),
 )
