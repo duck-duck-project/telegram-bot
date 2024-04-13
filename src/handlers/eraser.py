@@ -1,4 +1,5 @@
 from aiogram import F, Router
+from aiogram.filters import StateFilter
 from aiogram.types import Message
 
 from repositories import BalanceRepository
@@ -12,6 +13,7 @@ router = Router(name=__name__)
 @router.message(
     F.reply_to_message.as_('reply_to'),
     F.text.lower().in_('стереть', 'удалить'),
+    StateFilter('*'),
 )
 async def on_erase_message(
         message: Message,
