@@ -5,6 +5,7 @@ from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup, User
 from callback_data import TagDeleteCallbackData
 from enums import TagWeight
 from models import Tag
+from services import TAG_WEIGHT_TO_PRICE, int_gaps
 from views import View
 
 __all__ = ('TagGivenView', 'TagListView', 'TagDetailView')
@@ -42,6 +43,13 @@ class TagListView(View):
             lines.append(
                 f'{tag_number}. {emoji} {tag.text}'
             )
+
+        total_price = sum(
+            TAG_WEIGHT_TO_PRICE[tag.weight] for tag in self.__tags
+        )
+        lines.append(
+            f'<b>💰  Общая стоимость {int_gaps(total_price)} дак-дак коинов</b>'
+        )
 
         lines.append(
             '\n❓ Чтобы лучше рассмотреть награду, используйте команду:\n'
