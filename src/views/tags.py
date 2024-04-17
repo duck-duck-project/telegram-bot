@@ -5,7 +5,8 @@ from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup, User
 from callback_data import TagDeleteCallbackData
 from enums import TagWeight
 from models import Tag
-from services import TAG_WEIGHT_TO_PRICE, int_gaps
+from services.text import int_gaps
+from services.tags import TAG_WEIGHT_TO_PRICE
 from views import View
 
 __all__ = ('TagGivenView', 'TagListView', 'TagDetailView')
