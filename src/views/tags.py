@@ -49,7 +49,8 @@ class TagListView(View):
             TAG_WEIGHT_TO_PRICE[tag.weight] for tag in self.__tags
         )
         lines.append(
-            f'<b>💰  Общая стоимость {int_gaps(total_price)} дак-дак коинов</b>'
+            f'\n<b>💰  Общая стоимость {int_gaps(total_price)}'
+            ' дак-дак коинов</b>'
         )
 
         lines.append(
