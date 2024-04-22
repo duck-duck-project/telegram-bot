@@ -97,7 +97,10 @@ class ProfileView(PhotoView):
         )
         tags_button = InlineKeyboardButton(
             text='🏆 Награды',
-            callback_data=TagListCallbackData(user_id=self.__user.id).pack()
+            callback_data=TagListCallbackData(
+                user_id=self.__user.id,
+                user_full_name=self.__user.fullname,
+            ).pack()
         )
         keyboard.row(balance_button, tags_button)
 

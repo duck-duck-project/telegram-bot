@@ -12,3 +12,4 @@ class TagDeleteCallbackData(CallbackData, prefix='tag-delete'):
 
 class TagListCallbackData(CallbackData, prefix='tag-list'):
     user_id: int
+    user_full_name: str

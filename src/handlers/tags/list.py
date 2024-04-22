@@ -21,7 +21,7 @@ async def on_show_tag_list_callback(
         tag_repository: TagRepository,
 ) -> None:
     tags = await tag_repository.get_all_by_user_id(callback_data.user_id)
-    view = TagListView(tags=tags, user=callback_query.from_user)
+    view = TagListView(tags=tags, user_full_name=callback_data.user_full_name)
     await answer_view(message=callback_query.message, view=view)
     await callback_query.answer()
 
@@ -40,5 +40,5 @@ async def on_show_tags_list(
         user = message.from_user
 
     tags = await tag_repository.get_all_by_user_id(user.id)
-    view = TagListView(tags=tags, user=user)
+    view = TagListView(tags=tags, user_full_name=user.full_name)
     await answer_view(message=message, view=view)
