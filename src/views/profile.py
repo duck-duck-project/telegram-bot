@@ -8,7 +8,7 @@ from aiogram.utils.keyboard import InlineKeyboardBuilder
 
 from callback_data import (
     ContactCreateCallbackData,
-    UserBalanceDetailCallbackData,
+    TagListCallbackData, UserBalanceDetailCallbackData,
 )
 from enums import Gender
 from models import User
@@ -95,7 +95,11 @@ class ProfileView(PhotoView):
                 user_id=self.__user.id,
             ).pack(),
         )
-        keyboard.row(balance_button)
+        tags_button = InlineKeyboardButton(
+            text='🏆 Награды',
+            callback_data=TagListCallbackData(user_id=self.__user.id).pack()
+        )
+        keyboard.row(balance_button, tags_button)
 
         if self.__user.can_be_added_to_contacts:
             contact_button = InlineKeyboardButton(
