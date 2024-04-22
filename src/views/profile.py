@@ -32,7 +32,7 @@ class ProfileView(PhotoView):
     def get_caption(self) -> str:
         username = self.__user.username or 'не указан'
 
-        if born_on := self.__user.born_on is not None:
+        if (born_on := self.__user.born_on) is not None:
             age = humanize_age(born_on)
             humanized_birth_date = f'{born_on:%d.%m.%Y}'
             lifetime_in_days = compute_lifetime(born_on)
@@ -52,7 +52,7 @@ class ProfileView(PhotoView):
             Gender.OTHER: 'другой',
         }.get(self.__user.gender, 'не указан')
 
-        if country := self.__user.country is not None:
+        if (country := self.__user.country) is not None:
             country = f'{self.__user.country_flag_emoji} {country}'
         else:
             country = 'не указана'

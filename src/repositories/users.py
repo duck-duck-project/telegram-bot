@@ -1,3 +1,4 @@
+from datetime import date
 from uuid import UUID
 
 from exceptions import ServerAPIError, UserDoesNotExistError
@@ -42,6 +43,7 @@ class UserRepository(APIRepository):
             can_receive_notifications: bool | None = None,
             profile_photo_url: str | None = None,
             is_from_private_chat: bool | None = None,
+            born_on: date | None = None,
     ) -> tuple[User, bool]:
         request_data = {
             'id': user_id,
@@ -60,6 +62,8 @@ class UserRepository(APIRepository):
             request_data['profile_photo_url'] = profile_photo_url
         if is_from_private_chat:
             request_data['is_from_private_chat'] = is_from_private_chat
+        if born_on is not None:
+            request_data['born_on'] = born_on.isoformat()
 
         url = '/users/'
         response = await self._http_client.post(url, json=request_data)
