@@ -11,23 +11,33 @@ router = Router(name=__name__)
 @router.message(
     or_f(
         and_f(
-            F.text.lower().in_({'кто ты', 'ты кто'}),
-            F.reply_to_message.as_('reply_to_message'),
+            F.text.lower().in_({
+                'кто ты',
+                'ты кто',
+                'id',
+                'ид',
+            }),
+            F.reply_to_message,
         ),
-        F.text.lower().in_({'кто я', 'профиль', 'id', 'мой id', 'паспорт'}),
+        F.text.lower().in_({
+            'кто я',
+            'профиль',
+            'id',
+            'мой id',
+            'ид',
+        }),
     ),
     StateFilter('*'),
 )
 async def on_show_profile(
         message: Message,
         user_repository: UserRepository,
-        reply_to_message: Message | None = None,
 ) -> None:
-    from_user = (
-        reply_to_message.from_user
-        if reply_to_message is not None
-        else message.from_user
-    )
+    if message.reply_to_message is None:
+        from_user = message.from_user
+    else:
+        from_user = message.reply_to_message.from_user
+
     user = await user_repository.get_by_id(from_user.id)
 
     if user.profile_photo_url is not None:

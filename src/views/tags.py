@@ -29,15 +29,15 @@ class TagGivenView(View):
 
 class TagListView(View):
 
-    def __init__(self, user: User, tags: Iterable[Tag]):
+    def __init__(self, user_full_name: str, tags: Iterable[Tag]):
         self.__tags = tuple(tags)
-        self.__user = user
+        self.__user_full_name = user_full_name
 
     def get_text(self) -> str:
         if not self.__tags:
-            return f'🏆 У {self.__user.mention_html()} нет наград'
+            return f'🏆 У {self.__user_full_name} нет наград'
 
-        lines: list[str] = [f'<b>🏆 Награды {self.__user.mention_html()}:</b>']
+        lines: list[str] = [f'<b>🏆 Награды {self.__user_full_name}:</b>']
 
         for tag_number, tag in enumerate(self.__tags, start=1):
             emoji = TAG_WEIGHT_TO_EMOJI[tag.weight]
