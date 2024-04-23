@@ -2,35 +2,50 @@ from collections.abc import Iterable
 from datetime import datetime
 from zoneinfo import ZoneInfo
 
-from services.dates import compute_days_until_birthday, compute_age
+from models import ContactBirthday
+from services.dates import compute_age, compute_days_until_birthday
 from views.base import View
 
-__all__ = ('ClosestBirthdaysView',)
+__all__ = ('BirthdayListView',)
 
 
-class ClosestBirthdaysView(View):
+class BirthdayListView(View):
 
-    def __init__(self, manas_ids: Iterable, timezone: ZoneInfo):
-        self.__manas_ids = tuple(manas_ids)
+    def __init__(
+            self,
+            contacts: Iterable[ContactBirthday],
+            timezone: ZoneInfo,
+    ):
+        self.__contacts = tuple(contacts)
         self.__timezone = timezone
 
     def get_text(self) -> str:
-        if not self.__manas_ids:
-            return '😔 Нет информации о днях рождений'
+        if not self.__contacts:
+            return '😔 Нет информации о днях рождений ваших контактов'
 
         now = datetime.now(tz=self.__timezone).date()
 
-        lines = ['<b>🎉 Ближайшие дни рождения:</b>']
+        lines = ['<b>🎉 Ближайшие дни рождения ваших контактов:</b>']
 
-        for manas_id in sorted(self.__manas_ids, key=lambda manas_id: compute_days_until_birthday(
-            now=now,
-            born_at=manas_id.born_at,
-        )):
-            days_until_birthday = compute_days_until_birthday(
-                born_at=manas_id.born_at,
-                now=now,
+        contacts_and_days_until_birthday = [
+            (
+                contact,
+                compute_days_until_birthday(
+                    born_at=contact.born_on,
+                    now=now,
+                )
             )
-            age = compute_age(manas_id.born_at)
+            for contact in self.__contacts
+        ]
+
+        contacts_and_days_until_birthday = sorted(
+            contacts_and_days_until_birthday,
+            key=lambda item: item[1],
+        )
+
+        for contact, days_until_birthday in contacts_and_days_until_birthday:
+            age = compute_age(contact.born_on)
+            name = contact.username or contact.fullname
             if days_until_birthday == 0:
                 days_until_birthday = '🔥 Сегодня'
             elif days_until_birthday == 1:
@@ -40,7 +55,7 @@ class ClosestBirthdaysView(View):
                 days_until_birthday = f'{days_until_birthday} дн.'
                 age += 1
             lines.append(
-                f'🍭 {manas_id.first_name} - {days_until_birthday}'
+                f'🍭 {name} - {days_until_birthday}'
                 f' ({age})'
             )
 

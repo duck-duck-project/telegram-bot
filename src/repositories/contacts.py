@@ -8,6 +8,7 @@ from exceptions import (
     ContactDoesNotExistError,
     InsufficientFundsForWithdrawalError,
 )
+from models import ContactBirthday
 from repositories.base import APIRepository
 
 __all__ = ('ContactRepository',)
@@ -93,3 +94,12 @@ class ContactRepository(APIRepository):
             raise ContactDoesNotExistError(contact_id=contact_id)
         if response.status_code != 204:
             raise ServerAPIError
+
+    async def get_birthdays(self, user_id: int) -> list[ContactBirthday]:
+        url = f'/users/{user_id}/contact-birthdays/'
+        response = await self._http_client.get(url)
+        if response.is_error:
+            raise ServerAPIError
+        response_data = response.json()
+        type_adapter = TypeAdapter(list[ContactBirthday])
+        return type_adapter.validate_python(response_data['result'])
