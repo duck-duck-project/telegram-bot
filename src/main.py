@@ -48,6 +48,7 @@ def include_routers(dispatcher: Dispatcher) -> None:
         handlers.probability.router,
         handlers.anti_how_your_bot.router,
         handlers.balance.router,
+        handlers.birthdays.router,
         handlers.eraser.router,
         handlers.work.router,
         handlers.quizzes.router,

@@ -1,10 +1,10 @@
-from datetime import datetime
+from datetime import date, datetime
 
 from pydantic import BaseModel
 
 from models.users import User
 
-__all__ = ('Contact',)
+__all__ = ('Contact', 'ContactBirthday')
 
 
 class Contact(BaseModel):
@@ -15,3 +15,10 @@ class Contact(BaseModel):
     is_hidden: bool
     of_user: User
     to_user: User
+
+
+class ContactBirthday(BaseModel):
+    user_id: int
+    fullname: str
+    username: str | None
+    born_on: date
