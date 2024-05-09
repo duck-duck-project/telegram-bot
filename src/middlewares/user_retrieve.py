@@ -1,3 +1,4 @@
+from aiogram import Bot
 from aiogram.enums import ChatType
 from aiogram.types import Update
 
@@ -23,10 +24,10 @@ async def user_retrieve_middleware(
                 and not message.text.startswith('/')
         )
 
-        bot_id = data['bot_user'].id
+        bot: Bot = data['bot']
         is_reply_to_bot = (
                 event.message.reply_to_message is not None
-                and event.message.reply_to_message.from_user.id == bot_id
+                and event.message.reply_to_message.from_user.id == bot.id
         )
 
         if no_command and not is_chat_type_private and not is_reply_to_bot:
