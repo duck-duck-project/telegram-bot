@@ -109,14 +109,11 @@ async def main() -> None:
     bot = Bot(token=config.telegram_bot_token, parse_mode=ParseMode.HTML)
     dispatcher = Dispatcher(storage=storage)
 
-    bot_user = await bot.me()
-
     await bot.set_my_commands(commands)
 
     balance_notifier = BalanceNotifier(bot)
 
     dispatcher['anonymous_message_sender'] = AnonymousMessageSender(bot)
-    dispatcher['bot_user'] = bot_user
     dispatcher['closing_http_client_factory'] = partial(
         httpx.AsyncClient,
         base_url=config.server_api_base_url,
