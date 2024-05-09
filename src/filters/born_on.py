@@ -11,7 +11,7 @@ def birth_date_filter(message: Message) -> bool | dict:
     except ValueError:
         return False
 
-    if command != 'дата рождения':
+    if command.strip() != 'дата рождения':
         return False
 
     try:

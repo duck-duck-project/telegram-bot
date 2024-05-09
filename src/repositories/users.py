@@ -1,6 +1,7 @@
 from datetime import date
 from uuid import UUID
 
+from enums import PersonalityTypePrefix, PersonalityTypeSuffix
 from exceptions import ServerAPIError, UserDoesNotExistError
 from models import User
 from repositories import APIRepository
@@ -44,6 +45,8 @@ class UserRepository(APIRepository):
             profile_photo_url: str | None = None,
             is_from_private_chat: bool | None = None,
             born_on: date | None = None,
+            personality_type_prefix: PersonalityTypePrefix | None = None,
+            personality_type_suffix: PersonalityTypeSuffix | None = None,
     ) -> tuple[User, bool]:
         request_data = {
             'id': user_id,
@@ -64,6 +67,10 @@ class UserRepository(APIRepository):
             request_data['is_from_private_chat'] = is_from_private_chat
         if born_on is not None:
             request_data['born_on'] = born_on.isoformat()
+        if personality_type_prefix is not None:
+            request_data['personality_type_prefix'] = personality_type_prefix
+        if personality_type_suffix is not None:
+            request_data['personality_type_suffix'] = personality_type_suffix
 
         url = '/users/'
         response = await self._http_client.post(url, json=request_data)
