@@ -1,436 +1,662 @@
 [
-  {
-    "triggers": [
-      "уебать",
-      "ударить",
-      "шапал"
-    ],
-    "emoji": "👊🏿",
-    "action_template": "{of_user_full_name} уебал(-а) {to_user_full_name}"
-  },
-  {
-    "triggers": [
-      "дать пять"
-    ],
-    "emoji": "🤚🏿",
-    "action_template": "{of_user_full_name} дал(-а) пять {to_user_full_name}"
-  },
-  {
-    "triggers": [
-      "испугать",
-      "напугать"
-    ],
-    "emoji": "😱",
-    "action_template": "{of_user_full_name} довел(-а) до ужаса {to_user_full_name}"
-  },
-  {
-    "triggers": [
-      "извиниться",
-      "прощение"
-    ],
-    "emoji": "🙏🏿",
-    "action_template": "{of_user_full_name} попросил(-а) прощения у {to_user_full_name}"
-  },
-  {
-    "triggers": [
-      "укусить",
-      "кусь",
-      "покусать"
-    ],
-    "emoji": "🫦",
-    "action_template": "{of_user_full_name} покусал(-а) {to_user_full_name}"
-  },
-  {
-    "triggers": [
-      "лизнуть",
-      "лизь"
-    ],
-    "emoji": "👅",
-    "action_template": "{of_user_full_name} лизнул(-а) {to_user_full_name}"
-  },
-  {
-    "triggers": [
-      "обнять",
-      "обнимашки"
-    ],
-    "emoji": "🤗",
-    "action_template": "{of_user_full_name} обнял(-а) {to_user_full_name}"
-  },
-  {
-    "triggers": [
-      "отдаться",
-      "дать"
-    ],
-    "emoji": "😏",
-    "action_template": "{of_user_full_name} дал(-а) {to_user_full_name}"
-  },
-  {
-    "triggers": [
-      "поздравить",
-      "тебриклер"
-    ],
-    "emoji": "🥳",
-    "action_template": "{of_user_full_name} поздравил(-а) {to_user_full_name}"
-  },
-  {
-    "triggers": [
-      "поцеловать",
-      "цем",
-      "чмок"
-    ],
-    "emoji": "💋",
-    "action_template": "{of_user_full_name} поцеловал(-а) {to_user_full_name}"
-  },
-  {
-    "triggers": [
-      "засосать"
-    ],
-    "emoji": "🤪",
-    "action_template": "{of_user_full_name} от всей души засосал(-а {to_user_full_name}"
-  },
-  {
-    "triggers": [
-      "прижать",
-      "зажать"
-    ],
-    "emoji": "😳",
-    "action_template": "{of_user_full_name} прижал(-а) {to_user_full_name} к стенке"
-  },
-  {
-    "triggers": [
-      "потрогать",
-      "трог",
-      "тык"
-    ],
-    "emoji": "👉🏿",
-    "action_template": "{of_user_full_name} потрогал(-а) {to_user_full_name}"
-  },
-  {
-    "triggers": [
-      "нахуй",
-      "послать",
-      "иди нахуй"
-    ],
-    "emoji": "🖕🏿",
-    "action_template": "{of_user_full_name} послал(-а) {to_user_full_name} нахуй"
-  },
-  {
-    "triggers": [
-      "молодец",
-      "похвалить",
-      "аферин"
-    ],
-    "emoji": "👍🏿",
-    "action_template": "{of_user_full_name} похвалил(-а) {to_user_full_name}"
-  },
-  {
-    "triggers": [
-      "нюх",
-      "понюхать"
-    ],
-    "emoji": "😧",
-    "action_template": "{of_user_full_name} понюхал(-а) {to_user_full_name}"
-  },
-  {
-    "triggers": [
-      "пнуть",
-      "теп"
-    ],
-    "emoji": "🦵🏿",
-    "action_template": "{of_user_full_name} пнул(-а) {to_user_full_name}"
-  },
-  {
-    "triggers": [
-      "трахнуть",
-      "выебать",
-      "секс"
-    ],
-    "emoji": "🍆",
-    "action_template": "{of_user_full_name} поимел(-а) {to_user_full_name}"
-  },
-  {
-    "triggers": [
-      "пригласить на свидание",
-      "свидание"
-    ],
-    "emoji": "❤️‍🔥",
-    "action_template": "{of_user_full_name} приглашает {to_user_full_name} на свидание"
-  },
-  {
-    "triggers": [
-      "шлепнуть",
-      "шлеп"
-    ],
-    "emoji": "🍑",
-    "action_template": "{of_user_full_name} шлепнул(-а) {to_user_full_name} по попе"
-  },
-  {
-    "triggers": [
-      "убить",
-      "зарезать",
-      "расстрелять"
-    ],
-    "emoji": "🪦",
-    "action_template": "{of_user_full_name} отнял(-а) жизнь у {to_user_full_name}"
-  },
-  {
-    "triggers": [
-      "сжечь",
-      "огонь"
-    ],
-    "emoji": "🔥",
-    "action_template": "{of_user_full_name} сжигает {to_user_full_name}"
-  },
-  {
-    "triggers": [
-      "погладить",
-      "гладить",
-      "гладь"
-    ],
-    "emoji": "☺️",
-    "action_template": "{of_user_full_name} погладил(-а) {to_user_full_name}"
-  },
-  {
-    "triggers": [
-      "погавкать",
-      "гавгав",
-      "гавкать"
-    ],
-    "emoji": "🐶",
-    "action_template": "{of_user_full_name} погавкал(-а) для {to_user_full_name}"
-  },
-  {
-    "triggers": [
-      "мяукать",
-      "мяумяу",
-      "мяукать"
-    ],
-    "emoji": "🐱",
-    "action_template": "{of_user_full_name} помурчал(-а) для {to_user_full_name}"
-  },
-  {
-    "triggers": [
-      "спеть",
-      "петь",
-      "свести с ума"
-    ],
-    "emoji": "🙉",
-    "action_template": "{of_user_full_name} спел как медведь на ухо для {to_user_full_name}"
-  },
-  {
-    "triggers": [
-      "покормить",
-      "кормить",
-      "нямням"
-    ],
-    "emoji": "😽",
-    "action_template": "{of_user_full_name} покормил(-а) {to_user_full_name}"
-  },
-  {
-    "triggers": [
-      "признаться",
-      "люблю",
-      "лю"
-    ],
-    "emoji": "🤍",
-    "action_template": "{of_user_full_name} признался(-лась) {to_user_full_name} в любви"
-  },
-  {
-    "triggers": [
-      "орать",
-      "наорать"
-    ],
-    "emoji": "🤬",
-    "action_template": "{of_user_full_name} наорал(-а) на {to_user_full_name}"
-  },
-  {
-    "triggers": [
-      "помацать",
-      "сиськи"
-    ],
-    "emoji": "🍒",
-    "action_template": "{of_user_full_name} помацал(-а) сиськи {to_user_full_name}"
-  },
-  {
-    "triggers": [
-      "пожать руки"
-    ],
-    "emoji": "🤝🏿",
-    "action_template": "{of_user_full_name} пожал(-а) руку {to_user_full_name}"
-  },
-  {
-    "triggers": [
-      "кастрировать",
-      "чик-чик",
-      "чикчик"
-    ],
-    "emoji": "✂️",
-    "action_template": "{of_user_full_name} кастрировал(-а) {to_user_full_name}"
-  },
-  {
-    "triggers": [
-      "ор",
-      "ору",
-      "посмеяться"
-    ],
-    "emoji": "😂",
-    "action_template": "{of_user_full_name} поржал(-а) с {to_user_full_name}"
-  },
-  {
-    "triggers": [
-      "шептать",
-      "шепот",
-      "чычыпычы"
-    ],
-    "emoji": "🤭",
-    "action_template": "{of_user_full_name} шепчет {to_user_full_name}"
-  },
-  {
-    "triggers": [
-      "осуждаю",
-      "осудить"
-    ],
-    "emoji": "💀",
-    "action_template": "{of_user_full_name} осудил(-а) {to_user_full_name}"
-  },
-  {
-    "triggers": [
-      "обещать",
-      "обещаю",
-      "пообещать",
-      "обещание",
-      "отвечаю"
-    ],
-    "emoji": "✊🏿",
-    "action_template": "{of_user_full_name} дал(-а) слово {to_user_full_name}"
-  },
-  {
-    "triggers": [
-      "молчи",
-      "молчать",
-      "помолчи",
-      "тихо"
-    ],
-    "emoji": "🤫",
-    "action_template": "{of_user_full_name} просит помолчать {to_user_full_name}"
-  },
-  {
-    "triggers": [
-      "цветы",
-      "букет",
-      "подарить букет",
-      "розы"
-    ],
-    "emoji": "🌹",
-    "action_template": "{of_user_full_name} подарил(-а) букет {to_user_full_name}"
-  },
-  {
-    "triggers": [
-      "покатать",
-      "катать"
-    ],
-    "emoji": "🛞",
-    "action_template": "{of_user_full_name} прокатил(-а) {to_user_full_name} по ночному Бишкеку"
-  },
-  {
-    "triggers": [
-      "стонать",
-      "ах",
-      "простонать",
-      "стон"
-    ],
-    "emoji": "💦",
-    "action_template": "{of_user_full_name} простонал(-а) {to_user_full_name} в уши"
-  },
-  {
-    "triggers": [
-      "звезды",
-      "ночное небо"
-    ],
-    "emoji": "🌌",
-    "action_template": "{of_user_full_name} приглашает {to_user_full_name} посмотреть на звезды"
-  },
-  {
-    "triggers": [
-      "отсосать",
-      "сосать"
-    ],
-    "emoji": "🚨",
-    "action_template": "{of_user_full_name} отсосал(-а) {to_user_full_name}"
-  },
-  {
-    "triggers": [
-      "съесть",
-      "ням"
-    ],
-    "emoji": "😝",
-    "action_template": "{of_user_full_name} съел(-а) {to_user_full_name}"
-  },
-  {
-    "triggers": [
-      "поблагодарить",
-      "спасибо",
-      "пасиба",
-      "тешекур",
-      "тешекурчик"
-    ],
-    "emoji": "🥺",
-    "action_template": "{of_user_full_name} поблагодарил(-а) {to_user_full_name}"
-  },
-  {
-    "triggers": [
-      "усыпить",
-      "спи",
-      "спать"
-    ],
-    "emoji": "😴",
-    "action_template": "{of_user_full_name} усыпил(-а) {to_user_full_name}"
-  },
-  {
-    "triggers": [
-      "обосрать",
-      "фу",
-      "иу"
-    ],
-    "emoji": "🤢",
-    "action_template": "{of_user_full_name} обосрал(-а) {to_user_full_name}"
-  },
-  {
-    "triggers": [
-      "обиделась",
-      "обида",
-      "мм",
-      "ясно"
-    ],
-    "emoji": "😊",
-    "action_template": "{of_user_full_name} обижен(-а) на {to_user_full_name}"
-  },
-  {
-    "triggers": [
-      "пуньк"
-    ],
-    "emoji": "🐽🤏",
-    "action_template": "{of_user_full_name} попунькал(-а) в носик {to_user_full_name}"
-  },
-  {
-    "triggers": [
-      "тиск",
-      "тискать",
-      "щеки",
-      "щечки",
-      "потискать щечки"
-    ],
-    "emoji": "🤏🏿",
-    "action_template": "{of_user_full_name} потискал(-а) {to_user_full_name} за щечки"
-  },
-  {
-    "triggers": [
-      "кринж",
-      "кринге",
-      "клубника",
-      "cringe"
-    ],
-    "emoji": "🥴",
-    "action_template": "{of_user_full_name} кринжанул(-а) с {to_user_full_name}"
-  }
+    {
+        "action_template": "{of_user_full_name} уебал(-а) {to_user_full_name}",
+        "triggers": [
+            "ударить",
+            "шапал",
+            "уебать"
+        ],
+        "emoji": "👊🏿"
+    },
+    {
+        "action_template": "{of_user_full_name} дал(-а) пять {to_user_full_name}",
+        "triggers": [
+            "дать пять"
+        ],
+        "emoji": "🤚🏿"
+    },
+    {
+        "action_template": "{of_user_full_name} довел(-а) до ужаса {to_user_full_name}",
+        "triggers": [
+            "испугать",
+            "напугать"
+        ],
+        "emoji": "😱"
+    },
+    {
+        "action_template": "{of_user_full_name} попросил(-а) прощения у {to_user_full_name}",
+        "triggers": [
+            "извиниться",
+            "прощение"
+        ],
+        "emoji": "🙏🏿"
+    },
+    {
+        "action_template": "{of_user_full_name} покусал(-а) {to_user_full_name}",
+        "triggers": [
+            "укусить",
+            "кусь",
+            "покусать"
+        ],
+        "emoji": "🫦"
+    },
+    {
+        "action_template": "{of_user_full_name} лизнул(-а) {to_user_full_name}",
+        "triggers": [
+            "лизнуть",
+            "лизь"
+        ],
+        "emoji": "👅"
+    },
+    {
+        "action_template": "{of_user_full_name} обнял(-а) {to_user_full_name}",
+        "triggers": [
+            "обнять",
+            "обнимашки"
+        ],
+        "emoji": "🤗"
+    },
+    {
+        "action_template": "{of_user_full_name} дал(-а) {to_user_full_name}",
+        "triggers": [
+            "отдаться",
+            "дать"
+        ],
+        "emoji": "😏"
+    },
+    {
+        "action_template": "{of_user_full_name} поздравил(-а) {to_user_full_name}",
+        "triggers": [
+            "поздравить",
+            "тебриклер"
+        ],
+        "emoji": "🥳"
+    },
+    {
+        "action_template": "{of_user_full_name} поцеловал(-а) {to_user_full_name}",
+        "triggers": [
+            "чмок",
+            "цем",
+            "поцеловать"
+        ],
+        "emoji": "💋"
+    },
+    {
+        "action_template": "{of_user_full_name} от всей души засосал(-а {to_user_full_name}",
+        "triggers": [
+            "засосать"
+        ],
+        "emoji": "🤪"
+    },
+    {
+        "action_template": "{of_user_full_name} прижал(-а) {to_user_full_name} к стенке",
+        "triggers": [
+            "прижать",
+            "зажать"
+        ],
+        "emoji": "😳"
+    },
+    {
+        "action_template": "{of_user_full_name} потрогал(-а) {to_user_full_name}",
+        "triggers": [
+            "потрогать",
+            "тык",
+            "трог"
+        ],
+        "emoji": "👉🏿"
+    },
+    {
+        "action_template": "{of_user_full_name} послал(-а) {to_user_full_name} нахуй",
+        "triggers": [
+            "иди нахуй",
+            "нахуй",
+            "послать"
+        ],
+        "emoji": "🖕🏿"
+    },
+    {
+        "action_template": "{of_user_full_name} похвалил(-а) {to_user_full_name}",
+        "triggers": [
+            "молодец",
+            "аферин",
+            "похвалить"
+        ],
+        "emoji": "👍🏿"
+    },
+    {
+        "action_template": "{of_user_full_name} понюхал(-а) {to_user_full_name}",
+        "triggers": [
+            "понюхать",
+            "нюх"
+        ],
+        "emoji": "😧"
+    },
+    {
+        "action_template": "{of_user_full_name} пнул(-а) {to_user_full_name}",
+        "triggers": [
+            "теп",
+            "пнуть"
+        ],
+        "emoji": "🦵🏿"
+    },
+    {
+        "action_template": "{of_user_full_name} поимел(-а) {to_user_full_name}",
+        "triggers": [
+            "выебать",
+            "секс",
+            "трахнуть"
+        ],
+        "emoji": "🍆"
+    },
+    {
+        "action_template": "{of_user_full_name} приглашает {to_user_full_name} на свидание",
+        "triggers": [
+            "свидание",
+            "пригласить на свидание"
+        ],
+        "emoji": "❤️‍🔥"
+    },
+    {
+        "action_template": "{of_user_full_name} шлепнул(-а) {to_user_full_name} по попе",
+        "triggers": [
+            "шлепнуть",
+            "шлеп"
+        ],
+        "emoji": "🍑"
+    },
+    {
+        "action_template": "{of_user_full_name} отнял(-а) жизнь у {to_user_full_name}",
+        "triggers": [
+            "зарезать",
+            "расстрелять",
+            "убить"
+        ],
+        "emoji": "🪦"
+    },
+    {
+        "action_template": "{of_user_full_name} сжигает {to_user_full_name}",
+        "triggers": [
+            "огонь",
+            "сжечь"
+        ],
+        "emoji": "🔥"
+    },
+    {
+        "action_template": "{of_user_full_name} погладил(-а) {to_user_full_name}",
+        "triggers": [
+            "гладить",
+            "погладить",
+            "гладь"
+        ],
+        "emoji": "☺️"
+    },
+    {
+        "action_template": "{of_user_full_name} погавкал(-а) для {to_user_full_name}",
+        "triggers": [
+            "гавкать",
+            "гавгав",
+            "погавкать"
+        ],
+        "emoji": "🐶"
+    },
+    {
+        "action_template": "{of_user_full_name} помурчал(-а) для {to_user_full_name}",
+        "triggers": [
+            "мяукать",
+            "мяумяу"
+        ],
+        "emoji": "🐱"
+    },
+    {
+        "action_template": "{of_user_full_name} спел как медведь на ухо для {to_user_full_name}",
+        "triggers": [
+            "петь",
+            "спеть",
+            "свести с ума"
+        ],
+        "emoji": "🙉"
+    },
+    {
+        "action_template": "{of_user_full_name} покормил(-а) {to_user_full_name}",
+        "triggers": [
+            "нямням",
+            "кормить",
+            "покормить"
+        ],
+        "emoji": "😽"
+    },
+    {
+        "action_template": "{of_user_full_name} признался(-лась) {to_user_full_name} в любви",
+        "triggers": [
+            "признаться",
+            "люблю",
+            "лю"
+        ],
+        "emoji": "🤍"
+    },
+    {
+        "action_template": "{of_user_full_name} наорал(-а) на {to_user_full_name}",
+        "triggers": [
+            "наорать",
+            "орать"
+        ],
+        "emoji": "🤬"
+    },
+    {
+        "action_template": "{of_user_full_name} помацал(-а) сиськи {to_user_full_name}",
+        "triggers": [
+            "сиськи",
+            "помацать"
+        ],
+        "emoji": "🍒"
+    },
+    {
+        "action_template": "{of_user_full_name} пожал(-а) руку {to_user_full_name}",
+        "triggers": [
+            "пожать руки"
+        ],
+        "emoji": "🤝🏿"
+    },
+    {
+        "action_template": "{of_user_full_name} кастрировал(-а) {to_user_full_name}",
+        "triggers": [
+            "чик-чик",
+            "чикчик",
+            "кастрировать"
+        ],
+        "emoji": "✂️"
+    },
+    {
+        "action_template": "{of_user_full_name} поржал(-а) с {to_user_full_name}",
+        "triggers": [
+            "ору",
+            "посмеяться",
+            "ор"
+        ],
+        "emoji": "😂"
+    },
+    {
+        "action_template": "{of_user_full_name} шепчет {to_user_full_name}",
+        "triggers": [
+            "чычыпычы",
+            "шепот",
+            "шептать"
+        ],
+        "emoji": "🤭"
+    },
+    {
+        "action_template": "{of_user_full_name} осудил(-а) {to_user_full_name}",
+        "triggers": [
+            "осуждаю",
+            "осудить"
+        ],
+        "emoji": "💀"
+    },
+    {
+        "action_template": "{of_user_full_name} дал(-а) слово {to_user_full_name}",
+        "triggers": [
+            "обещать",
+            "обещаю",
+            "пообещать",
+            "обещание",
+            "отвечаю"
+        ],
+        "emoji": "✊🏿"
+    },
+    {
+        "action_template": "{of_user_full_name} просит помолчать {to_user_full_name}",
+        "triggers": [
+            "тихо",
+            "молчать",
+            "помолчи",
+            "молчи"
+        ],
+        "emoji": "🤫"
+    },
+    {
+        "action_template": "{of_user_full_name} подарил(-а) букет {to_user_full_name}",
+        "triggers": [
+            "подарить букет",
+            "цветы",
+            "букет",
+            "розы"
+        ],
+        "emoji": "🌹"
+    },
+    {
+        "action_template": "{of_user_full_name} прокатил(-а) {to_user_full_name} по ночному Бишкеку",
+        "triggers": [
+            "покатать",
+            "катать"
+        ],
+        "emoji": "🛞"
+    },
+    {
+        "action_template": "{of_user_full_name} простонал(-а) {to_user_full_name} в уши",
+        "triggers": [
+            "простонать",
+            "ах",
+            "стонать",
+            "стон"
+        ],
+        "emoji": "💦"
+    },
+    {
+        "action_template": "{of_user_full_name} приглашает {to_user_full_name} посмотреть на звезды",
+        "triggers": [
+            "звезды",
+            "ночное небо"
+        ],
+        "emoji": "🌌"
+    },
+    {
+        "action_template": "{of_user_full_name} отсосал(-а) {to_user_full_name}",
+        "triggers": [
+            "сосать",
+            "отсосать"
+        ],
+        "emoji": "🚨"
+    },
+    {
+        "action_template": "{of_user_full_name} съел(-а) {to_user_full_name}",
+        "triggers": [
+            "ням",
+            "съесть"
+        ],
+        "emoji": "😝"
+    },
+    {
+        "action_template": "{of_user_full_name} поблагодарил(-а) {to_user_full_name}",
+        "triggers": [
+            "пасиба",
+            "поблагодарить",
+            "тешекур",
+            "тешекурчик",
+            "спасибо"
+        ],
+        "emoji": "🥺"
+    },
+    {
+        "action_template": "{of_user_full_name} усыпил(-а) {to_user_full_name}",
+        "triggers": [
+            "спи",
+            "усыпить",
+            "спать"
+        ],
+        "emoji": "😴"
+    },
+    {
+        "action_template": "{of_user_full_name} обосрал(-а) {to_user_full_name}",
+        "triggers": [
+            "иу",
+            "фу",
+            "обосрать"
+        ],
+        "emoji": "🤢"
+    },
+    {
+        "action_template": "{of_user_full_name} обижен(-а) на {to_user_full_name}",
+        "triggers": [
+            "обида",
+            "обиделась",
+            "ясно",
+            "мм"
+        ],
+        "emoji": "😊"
+    },
+    {
+        "action_template": "{of_user_full_name} попунькал(-а) в носик {to_user_full_name}",
+        "triggers": [
+            "пуньк"
+        ],
+        "emoji": "🐽🤏"
+    },
+    {
+        "action_template": "{of_user_full_name} потискал(-а) {to_user_full_name} за щечки",
+        "triggers": [
+            "тиск",
+            "тискать",
+            "щечки",
+            "щеки",
+            "потискать щечки"
+        ],
+        "emoji": "🤏🏿"
+    },
+    {
+        "action_template": "{of_user_full_name} кринжанул(-а) с {to_user_full_name}",
+        "triggers": [
+            "клубника",
+            "cringe",
+            "кринж",
+            "кринге"
+        ],
+        "emoji": "🥴"
+    },
+    {
+        "action_template": "{of_user_full_name} сделал(-а) предложение {to_user_full_name}",
+        "triggers": [
+            "предложить руку и сердце",
+            "жениться",
+            "замуж"
+        ],
+        "emoji": "💍"
+    },
+    {
+        "action_template": "{of_user_full_name} приготовил(-а) романтический ужин для {to_user_full_name}",
+        "triggers": [
+            "ужин при свечах",
+            "приготовить ужин"
+        ],
+        "emoji": "🕯️"
+    },
+    {
+        "action_template": "{of_user_full_name} написал(-а) стихи для {to_user_full_name}",
+        "triggers": [
+            "написать стих",
+            "посвятить стихи"
+        ],
+        "emoji": "📝"
+    },
+    {
+        "action_template": "{of_user_full_name} спел(-а) серенаду {to_user_full_name}",
+        "triggers": [
+            "песня под окном",
+            "спеть серенаду"
+        ],
+        "emoji": "🎤"
+    },
+    {
+        "action_template": "{of_user_full_name} подарил(-а) кольцо {to_user_full_name}",
+        "triggers": [
+            "подарить кольцо",
+            "кольцо с бриллиантом"
+        ],
+        "emoji": "💎"
+    },
+    {
+        "action_template": "{of_user_full_name} зовёт {to_user_full_name} в кино",
+        "triggers": [
+            "киношка",
+            "фильм",
+            "позвать в кино"
+        ],
+        "emoji": "🍿"
+    },
+    {
+        "action_template": "{of_user_full_name} помог(-ла) {to_user_full_name}",
+        "triggers": [
+            "выручить",
+            "поддержать",
+            "помочь"
+        ],
+        "emoji": "🤝"
+    },
+    {
+        "action_template": "{of_user_full_name} поделился(-лась) секретом с {to_user_full_name}",
+        "triggers": [
+            "поделиться секретом",
+            "шепнуть на ушко"
+        ],
+        "emoji": "👂"
+    },
+    {
+        "action_template": "{of_user_full_name} играет с {to_user_full_name}",
+        "triggers": [
+            "играть в игры",
+            "геймить"
+        ],
+        "emoji": "🎮"
+    },
+    {
+        "action_template": "{of_user_full_name} болтает с {to_user_full_name}",
+        "triggers": [
+            "чат",
+            "поболтать"
+        ],
+        "emoji": "💬"
+    },
+    {
+        "action_template": "{of_user_full_name} подбодрил(-а) {to_user_full_name}",
+        "triggers": [
+            "подбодрить",
+            "не грусти"
+        ],
+        "emoji": "😊"
+    },
+    {
+        "action_template": "{of_user_full_name} угостил(-а) {to_user_full_name}",
+        "triggers": [
+            "угостить",
+            "поделиться едой"
+        ],
+        "emoji": "🍕"
+    },
+    {
+        "action_template": "{of_user_full_name} гуляет с {to_user_full_name}",
+        "triggers": [
+            "погулять",
+            "прогулка"
+        ],
+        "emoji": "🚶‍♂️🚶‍♀️"
+    },
+    {
+        "action_template": "{of_user_full_name} поёт дуэтом с {to_user_full_name}",
+        "triggers": [
+            "спеть дуэтом",
+            "караоке"
+        ],
+        "emoji": "🎤🎤"
+    },
+    {
+        "action_template": "{of_user_full_name} сделал(-а) сюрприз {to_user_full_name}",
+        "triggers": [
+            "подарить подарок",
+            "сюрприз"
+        ],
+        "emoji": "🎁"
+    },
+    {
+        "action_template": "{of_user_full_name} танцует с {to_user_full_name}",
+        "triggers": [
+            "диско",
+            "потанцевать"
+        ],
+        "emoji": "💃🕺"
+    },
+    {
+        "action_template": "{of_user_full_name} рассмешил(-а) {to_user_full_name}",
+        "triggers": [
+            "пошутить",
+            "рассмешить"
+        ],
+        "emoji": "🤣"
+    },
+    {
+        "action_template": "{of_user_full_name} мечтает с {to_user_full_name}",
+        "triggers": [
+            "помечтать",
+            "мечты"
+        ],
+        "emoji": "💭"
+    },
+    {
+        "action_template": "{of_user_full_name} делится новостями с {to_user_full_name}",
+        "triggers": [
+            "поделиться новостями",
+            "сплетни"
+        ],
+        "emoji": "📰"
+    },
+    {
+        "action_template": "{of_user_full_name} строит планы с {to_user_full_name}",
+        "triggers": [
+            "планировать",
+            "построить планы"
+        ],
+        "emoji": "🗓️"
+    },
+    {
+        "action_template": "{of_user_full_name} отправил(-а) открытку {to_user_full_name}",
+        "triggers": [
+            "отправить открытку",
+            "почта"
+        ],
+        "emoji": "✉️"
+    },
+    {
+        "action_template": "{of_user_full_name} играет в снежки с {to_user_full_name}",
+        "triggers": [
+            "зима",
+            "поиграть в снежки"
+        ],
+        "emoji": "❄️"
+    },
+    {
+        "action_template": "{of_user_full_name} идёт на концерт с {to_user_full_name}",
+        "triggers": [
+            "музыка",
+            "сходить на концерт"
+        ],
+        "emoji": "🎶"
+    },
+    {
+        "action_template": "{of_user_full_name} зовёт {to_user_full_name} на шашлыки",
+        "triggers": [
+            "пожарить шашлыки",
+            "пикник"
+        ],
+        "emoji": "🍖"
+    },
+    {
+        "action_template": "{of_user_full_name} укрывает {to_user_full_name} от дождя",
+        "triggers": [
+            "дождь",
+            "поделиться зонтом"
+        ],
+        "emoji": "☔"
+    },
+    {
+        "action_template": "{of_user_full_name} строит замок из песка с {to_user_full_name}",
+        "triggers": [
+            "построить замок из песка",
+            "пляж"
+        ],
+        "emoji": "🏖️"
+    },
+    {
+        "action_template": "{of_user_full_name} угостил(-а) {to_user_full_name} конфеткой",
+        "triggers": [
+            "поделиться конфетой",
+            "сладости"
+        ],
+        "emoji": "🍬"
+    },
+    {
+        "action_template": "{of_user_full_name} помог(-ла) {to_user_full_name} с домашкой",
+        "triggers": [
+            "учиться",
+            "помочь с домашкой"
+        ],
+        "emoji": "📚"
+    }
 ]
