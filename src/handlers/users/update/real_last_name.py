@@ -40,7 +40,7 @@ async def on_real_last_name_input(
     F.text.startswith('поменять фамилию'),
     StateFilter('*'),
 )
-async def on_real_first_name_input_help(message: Message) -> None:
+async def on_real_last_name_input_help(message: Message) -> None:
     await message.reply(
         '❓ Введите фамилию в формате:\n'
         '<pre>'
