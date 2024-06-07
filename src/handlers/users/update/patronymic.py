@@ -9,17 +9,17 @@ __all__ = ('router',)
 
 router = Router(name=__name__)
 
-real_first_name_filter = create_name_filter(
+patronymic_filter = create_name_filter(
     command_name='поменять отчество',
     param_name='patronymic',
 )
 
 
 @router.message(
-    real_first_name_filter,
+    patronymic_filter,
     StateFilter('*'),
 )
-async def on_real_first_name_input(
+async def on_patronymic_input(
         message: Message,
         patronymic: str,
         user_repository: UserRepository,
@@ -37,14 +37,14 @@ async def on_real_first_name_input(
 
 
 @router.message(
-    F.text.startswith('поменять отчество'),
+    F.text.lower().startswith('поменять отчество'),
     StateFilter('*'),
 )
-async def on_real_first_name_input_help(message: Message) -> None:
+async def on_patronymic_input_help(message: Message) -> None:
     await message.reply(
         '❓ Введите отчество в формате:\n'
         '<pre>'
         'поменять отчество\n'
-        'Токтобердиевич'
+        'Талайбекович'
         '</pre>'
     )
