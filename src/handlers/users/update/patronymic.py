@@ -37,7 +37,7 @@ async def on_patronymic_input(
 
 
 @router.message(
-    F.text.startswith('поменять отчество'),
+    F.text.lower().startswith('поменять отчество'),
     StateFilter('*'),
 )
 async def on_patronymic_input_help(message: Message) -> None:
@@ -45,6 +45,6 @@ async def on_patronymic_input_help(message: Message) -> None:
         '❓ Введите отчество в формате:\n'
         '<pre>'
         'поменять отчество\n'
-        'Токтобердиевич'
+        'Талайбекович'
         '</pre>'
     )

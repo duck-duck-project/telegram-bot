@@ -37,7 +37,7 @@ async def on_real_last_name_input(
 
 
 @router.message(
-    F.text.startswith('поменять фамилию'),
+    F.text.lower().startswith('поменять фамилию'),
     StateFilter('*'),
 )
 async def on_real_last_name_input_help(message: Message) -> None:

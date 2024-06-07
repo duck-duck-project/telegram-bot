@@ -1,7 +1,7 @@
 from datetime import date
 from uuid import UUID
 
-from enums import PersonalityTypePrefix, PersonalityTypeSuffix
+from enums import Gender, PersonalityTypePrefix, PersonalityTypeSuffix
 from exceptions import ServerAPIError, UserDoesNotExistError
 from models import User
 from repositories import APIRepository
@@ -50,6 +50,7 @@ class UserRepository(APIRepository):
             real_first_name: str | None = None,
             real_last_name: str | None = None,
             patronymic: str | None = None,
+            gender: Gender | None = None,
     ) -> tuple[User, bool]:
         request_data = {
             'id': user_id,
@@ -80,6 +81,8 @@ class UserRepository(APIRepository):
             request_data['real_last_name'] = real_last_name
         if patronymic is not None:
             request_data['patronymic'] = patronymic
+        if gender is not None:
+            request_data['gender'] = gender
 
         url = '/users/'
         response = await self._http_client.post(url, json=request_data)
