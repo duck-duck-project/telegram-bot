@@ -23,7 +23,7 @@ def gender_filter(message: Message) -> bool | dict:
     if command.strip().lower() != 'поменять пол':
         return False
 
-    if gender not in TEXT_TO_GENDER:
+    if gender.lower() not in TEXT_TO_GENDER:
         return False
 
-    return {'gender': TEXT_TO_GENDER[gender]}
+    return {'gender': TEXT_TO_GENDER[gender.lower()]}
