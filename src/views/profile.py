@@ -1,8 +1,5 @@
-from collections.abc import Iterable
-
 from aiogram.types import (
     InlineKeyboardButton, InlineKeyboardMarkup,
-    InputMediaPhoto,
 )
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 
@@ -64,6 +61,10 @@ class ProfileView(PhotoView):
             personality_type=self.__user.personality_type,
         )
 
+        real_first_name = self.__user.real_first_name or 'не указано'
+        real_last_name = self.__user.real_last_name or 'не указана'
+        real_patronymic = self.__user.patronymic or 'не указано'
+
         return (
             f'<b>🪪 Пользователь:</b>\n'
             f'ID: {self.__user.id}\n'
@@ -71,6 +72,9 @@ class ProfileView(PhotoView):
             f'Username: @{username}\n'
             '\n'
             '<b>📲 Личная информация:</b>\n'
+            f'Имя: {real_first_name}\n'
+            f'Фамилия: {real_last_name}\n'
+            f'Отчество: {real_patronymic}\n'
             f'Дата рождения: {humanized_birth_date} ({age})\n'
             f'Пол: {gender_name}\n'
             f'Страна: {country}\n'

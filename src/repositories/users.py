@@ -47,6 +47,9 @@ class UserRepository(APIRepository):
             born_on: date | None = None,
             personality_type_prefix: PersonalityTypePrefix | None = None,
             personality_type_suffix: PersonalityTypeSuffix | None = None,
+            real_first_name: str | None = None,
+            real_last_name: str | None = None,
+            patronymic: str | None = None,
     ) -> tuple[User, bool]:
         request_data = {
             'id': user_id,
@@ -71,6 +74,12 @@ class UserRepository(APIRepository):
             request_data['personality_type_prefix'] = personality_type_prefix
         if personality_type_suffix is not None:
             request_data['personality_type_suffix'] = personality_type_suffix
+        if real_first_name is not None:
+            request_data['real_first_name'] = real_first_name
+        if real_last_name is not None:
+            request_data['real_last_name'] = real_last_name
+        if patronymic is not None:
+            request_data['patronymic'] = patronymic
 
         url = '/users/'
         response = await self._http_client.post(url, json=request_data)
