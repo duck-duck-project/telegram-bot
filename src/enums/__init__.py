@@ -1,3 +1,4 @@
+from .contacts_sorting_strategies import *
 from .courses import *
 from .genders import *
 from .personality_types import *
