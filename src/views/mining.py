@@ -28,5 +28,5 @@ class MinedResourceView(View):
     def get_text(self) -> str:
         return (
             f'⛏️ Вы добыли ресурс "{self.__mined_resource.resource_name}"'
-            f' на сумму {self.__mined_resource.wealth} монет!'
+            f' на сумму {self.__mined_resource.wealth} дак-дак коинов!'
         )
