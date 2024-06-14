@@ -8,6 +8,7 @@ from .contacts import *
 from .food_menu import *
 from .help import *
 from .holidays import *
+from .mining import *
 from .probability import *
 from .problems import *
 from .profile import *

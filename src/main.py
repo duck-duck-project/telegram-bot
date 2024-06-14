@@ -30,6 +30,7 @@ from repositories import (
     ContactRepository,
     FoodMenuRepository,
     HolidayRepository,
+    MiningRepository,
     SecretMediaRepository,
     SecretMessageRepository,
     UserRepository,
@@ -61,6 +62,7 @@ def include_routers(dispatcher: Dispatcher) -> None:
         handlers.help.router,
         handlers.dogs.router,
         handlers.food_menu.router,
+        handlers.mining.router,
         handlers.tags.router,
         handlers.server.router,
         handlers.users.router,
@@ -141,6 +143,7 @@ async def main() -> None:
             holiday_repository=HolidayRepository,
             quiz_repository=QuizRepository,
             tag_repository=TagRepository,
+            mining_repository=MiningRepository,
         )
     )
     dispatcher.update.outer_middleware(user_retrieve_middleware)
