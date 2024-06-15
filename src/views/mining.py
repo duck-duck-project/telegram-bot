@@ -54,6 +54,20 @@ class MiningStatisticsView(View):
         for index, resource in enumerate(self.__mining_statistics.resources):
             emoji = emojis[index % 2]
             lines.append(
-                f'{emoji} {resource.name} - {resource.total_count} раз - {resource.total_wealth} дак-дак коинов'
+                f'{emoji} {resource.name} - {resource.total_count} раз'
+                f' - {resource.total_wealth} коинов'
+            )
+
+        if len(self.__mining_statistics.resources) > 1:
+            total_wealth = sum(
+                resource.total_wealth
+                for resource in self.__mining_statistics.resources
+            )
+            total_count = sum(
+                resource.total_count
+                for resource in self.__mining_statistics.resources
+            )
+            lines.append(
+                f'<b>Всего: {total_count} раз - {total_wealth} коинов</b>'
             )
         return '\n'.join(lines)
