@@ -3,9 +3,19 @@ from typing import NewType
 
 from pydantic import BaseModel, HttpUrl
 
-__all__ = ('FoodMenuItem', 'DailyFoodMenu', 'HTML')
+from enums import FoodType
+
+__all__ = ('FoodItem', 'FoodMenuItem', 'DailyFoodMenu', 'HTML')
 
 HTML = NewType('HTML', str)
+
+
+class FoodItem(BaseModel):
+    name: str
+    energy: int
+    emoji: str
+    price: int
+    type: FoodType
 
 
 class FoodMenuItem(BaseModel):

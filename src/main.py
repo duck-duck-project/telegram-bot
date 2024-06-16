@@ -26,19 +26,13 @@ from middlewares import (
     user_retrieve_middleware,
 )
 from repositories import (
-    BalanceRepository,
-    ContactRepository,
-    FoodMenuRepository,
-    HolidayRepository,
-    MiningRepository,
-    SecretMediaRepository,
-    SecretMessageRepository,
-    UserRepository,
-    QuizRepository,
-    TagRepository,
+    BalanceRepository, ContactRepository, FoodMenuRepository, HolidayRepository,
+    MiningRepository, QuizRepository, SecretMediaRepository,
+    SecretMessageRepository, TagRepository, UserRepository,
 )
 from repositories.themes import ThemeRepository
 from services import AnonymousMessageSender, BalanceNotifier
+from services.food import FoodItems, load_food_items
 from services.role_play_actions import RolePlayActions
 
 logger: BoundLogger = structlog.get_logger('app')
@@ -57,6 +51,7 @@ def include_routers(dispatcher: Dispatcher) -> None:
         handlers.profile.router,
         handlers.casino.router,
         handlers.holidays.router,
+        handlers.energy.router,
         handlers.choice.router,
         handlers.cinematica.router,
         handlers.help.router,
@@ -93,6 +88,11 @@ async def main() -> None:
         file_path=role_play_actions_file_path,
     )
 
+    food_items_file_path = (
+            pathlib.Path(__file__).parent.parent / 'food.json'
+    )
+    food_items = load_food_items(file_path=food_items_file_path)
+
     setup_logging(config.logging.level)
 
     cloudinary.config(
@@ -125,6 +125,7 @@ async def main() -> None:
     dispatcher['timezone'] = config.timezone
     dispatcher['balance_notifier'] = balance_notifier
     dispatcher['role_play_actions'] = RolePlayActions(role_play_actions)
+    dispatcher['food_items'] = FoodItems(food_items)
 
     include_routers(dispatcher)
 
