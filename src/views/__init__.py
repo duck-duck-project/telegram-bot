@@ -5,6 +5,7 @@ from .birthdays import *
 from .casino import *
 from .cinematica import *
 from .contacts import *
+from .energy import *
 from .food_menu import *
 from .help import *
 from .holidays import *

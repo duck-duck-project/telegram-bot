@@ -3,7 +3,7 @@ from uuid import UUID
 
 from enums import Gender, PersonalityTypePrefix, PersonalityTypeSuffix
 from exceptions import ServerAPIError, UserDoesNotExistError
-from models import User
+from models import User, UserEnergyRefill
 from repositories import APIRepository
 
 __all__ = ('UserRepository',)
@@ -96,3 +96,22 @@ class UserRepository(APIRepository):
             return User.model_validate(response_data), False
 
         raise ServerAPIError
+
+    async def refill_energy(
+            self,
+            *,
+            user_id: int,
+            energy: int,
+    ) -> UserEnergyRefill:
+        url = '/users/energy-refill/'
+        request_data = {
+            'user_id': user_id,
+            'energy': energy,
+        }
+        response = await self._http_client.post(url, json=request_data)
+
+        if response.status_code != 200:
+            raise ServerAPIError
+
+        response_data = response.json()
+        return UserEnergyRefill.model_validate(response_data['result'])
