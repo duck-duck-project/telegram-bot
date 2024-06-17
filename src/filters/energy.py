@@ -6,8 +6,8 @@ from services.food import FoodItems
 __all__ = ('commands_to_food_type', 'energy_refill_filter')
 
 commands_to_food_type = {
-    ('покушать', 'поесть'): FoodType.FOOD,
-    ('попить',): FoodType.DRINK,
+    ('покушать', 'поесть', 'съесть'): FoodType.FOOD,
+    ('попить', 'выпить'): FoodType.DRINK,
 }
 
 
