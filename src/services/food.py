@@ -6,7 +6,7 @@ from pydantic import TypeAdapter
 from enums import FoodType
 from models import FoodItem
 
-__all__ = ('FoodItems', 'load_food_items', 'render_energy')
+__all__ = ('FoodItems', 'load_food_items', 'render_energy', 'render_my_energy')
 
 
 def load_food_items(file_path: pathlib.Path) -> tuple[FoodItem, ...]:
@@ -31,3 +31,8 @@ class FoodItems:
 
 def render_energy(energy: int) -> str:
     return f'{energy / 100} ед.'
+
+
+def render_my_energy(energy: int) -> str:
+    emoji = '🪫' if energy < 5000 else '🔋'
+    return f'{emoji} Моя энергия: {render_energy(energy)} из 100'

@@ -1,4 +1,4 @@
-__all__ = ('int_gaps', 'parse_abbreviated_number')
+__all__ = ('int_gaps', 'parse_abbreviated_number', 'render_grams')
 
 
 def int_gaps(number: str | int) -> str:
@@ -21,3 +21,11 @@ def parse_abbreviated_number(number: str) -> int:
             number = number.replace(abbreviation, value)
 
     return int(number)
+
+
+def render_grams(grams: int) -> str:
+    if grams < 1000:
+        return f'{grams} г.'
+
+    kilograms = grams / 1000
+    return f'{kilograms} кг.'

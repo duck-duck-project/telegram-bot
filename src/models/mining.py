@@ -1,20 +1,25 @@
-from datetime import datetime
-
 from pydantic import BaseModel
 
-__all__ = ('MinedResource', 'MinedResourceStatistics', 'MiningUserStatistics')
+__all__ = (
+    'MinedResourceResult',
+    'MinedResourceStatistics',
+    'MiningUserStatistics',
+)
 
 
-class MinedResource(BaseModel):
+class MinedResourceResult(BaseModel):
     user_id: int
-    wealth: int
     resource_name: str
-    next_mining_at: datetime
+    value: int
+    value_per_gram: int | float
+    weight_in_grams: int
+    spent_energy: int
+    remaining_energy: int
 
 
 class MinedResourceStatistics(BaseModel):
     name: str
-    total_wealth: int
+    total_value: int
     total_count: int
 
 
