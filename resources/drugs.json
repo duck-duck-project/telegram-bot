@@ -1,0 +1,57 @@
+[
+  {
+    "name": "Аспирин",
+    "price": 5000,
+    "health_benefit_value": 5
+  },
+  {
+    "name": "Парацетамол",
+    "price": 8000,
+    "health_benefit_value": 8
+  },
+  {
+    "name": "Амоксициллин",
+    "price": 16000,
+    "health_benefit_value": 16
+  },
+  {
+    "name": "Ибупрофен",
+    "price": 20000,
+    "health_benefit_value": 20
+  },
+  {
+    "name": "Цефтриаксон",
+    "price": 24000,
+    "health_benefit_value": 24
+  },
+  {
+    "name": "Метформин",
+    "price": 30000,
+    "health_benefit_value": 30
+  },
+  {
+    "name": "Аторвастатин",
+    "price": 38000,
+    "health_benefit_value": 38
+  },
+  {
+    "name": "Омепразол",
+    "price": 40000,
+    "health_benefit_value": 40
+  },
+  {
+    "name": "Лизиноприл",
+    "price": 45000,
+    "health_benefit_value": 45
+  },
+  {
+    "name": "Рамиприл",
+    "price": 50000,
+    "health_benefit_value": 50
+  },
+  {
+    "name": "Инсулин",
+    "price": 60000,
+    "health_benefit_value": 60
+  }
+]

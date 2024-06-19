@@ -4,6 +4,7 @@ from .cinematica import *
 from .contacts import *
 from .departments import *
 from .food_menu import *
+from .health import *
 from .holidays import *
 from .mining import *
 from .role_play import *

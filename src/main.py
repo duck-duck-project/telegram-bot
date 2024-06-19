@@ -26,12 +26,22 @@ from middlewares import (
     user_retrieve_middleware,
 )
 from repositories import (
-    BalanceRepository, ContactRepository, FoodMenuRepository, HolidayRepository,
-    MiningRepository, QuizRepository, SecretMediaRepository,
-    SecretMessageRepository, TagRepository, UserRepository,
+    BalanceRepository,
+    ContactRepository,
+    FoodMenuRepository,
+    HolidayRepository,
+    MiningRepository,
+    QuizRepository,
+    SecretMediaRepository,
+    SecretMessageRepository,
+    TagRepository,
+    UserRepository,
 )
 from repositories.themes import ThemeRepository
-from services import AnonymousMessageSender, BalanceNotifier
+from services import (
+    AnonymousMessageSender, BalanceNotifier,
+    SportActivities, load_sport_activities,
+)
 from services.food import FoodItems, load_food_items
 from services.role_play_actions import RolePlayActions
 
@@ -62,6 +72,7 @@ def include_routers(dispatcher: Dispatcher) -> None:
         handlers.server.router,
         handlers.users.router,
         handlers.themes.router,
+        handlers.health.router,
         handlers.transfers.router,
         handlers.role_play.router,
         handlers.secret_messages.router,
@@ -87,6 +98,13 @@ async def main() -> None:
     role_play_actions = load_role_play_actions_from_file(
         file_path=role_play_actions_file_path,
     )
+
+    sport_activities_file_path = (
+            pathlib.Path(__file__).parent.parent
+            / 'resources'
+            / 'sport_activities.json'
+    )
+    sport_activities = load_sport_activities(sport_activities_file_path)
 
     food_items_file_path = (
             pathlib.Path(__file__).parent.parent / 'food.json'
@@ -126,6 +144,7 @@ async def main() -> None:
     dispatcher['balance_notifier'] = balance_notifier
     dispatcher['role_play_actions'] = RolePlayActions(role_play_actions)
     dispatcher['food_items'] = FoodItems(food_items)
+    dispatcher['sport_activities'] = SportActivities(sport_activities)
 
     include_routers(dispatcher)
 

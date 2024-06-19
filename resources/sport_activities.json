@@ -1,0 +1,52 @@
+[
+  {
+    "name": "Зарядка",
+    "energy_cost_value": 500,
+    "health_benefit_value": 100
+  },
+  {
+    "name": "Пробежка",
+    "energy_cost_value": 1500,
+    "health_benefit_value": 300
+  },
+  {
+    "name": "Тягать железо",
+    "energy_cost_value": 5500,
+    "health_benefit_value": 1100
+  },
+  {
+    "name": "Плавание",
+    "energy_cost_value": 4500,
+    "health_benefit_value": 900
+  },
+  {
+    "name": "Йога",
+    "energy_cost_value": 1000,
+    "health_benefit_value": 200
+  },
+  {
+    "name": "Велосипед",
+    "energy_cost_value": 2500,
+    "health_benefit_value": 500
+  },
+  {
+    "name": "Аэробика",
+    "energy_cost_value": 3500,
+    "health_benefit_value": 700
+  },
+  {
+    "name": "Танцы",
+    "energy_cost_value": 2000,
+    "health_benefit_value": 400
+  },
+  {
+    "name": "Ходьба",
+    "energy_cost_value": 1000,
+    "health_benefit_value": 200
+  },
+  {
+    "name": "Бокс",
+    "energy_cost_value": 6000,
+    "health_benefit_value": 1200
+  }
+]

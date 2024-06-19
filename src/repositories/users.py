@@ -2,8 +2,12 @@ from datetime import date
 from uuid import UUID
 
 from enums import Gender, PersonalityTypePrefix, PersonalityTypeSuffix
-from exceptions import ServerAPIError, UserDoesNotExistError
-from models import User, UserEnergyRefill
+from exceptions import (
+    NotEnoughEnergyError,
+    ServerAPIError,
+    SportActivitiesThrottledError, UserDoesNotExistError,
+)
+from models import User, UserEnergyRefill, UserSportsActivityResult
 from repositories import APIRepository
 
 __all__ = ('UserRepository',)
@@ -115,3 +119,33 @@ class UserRepository(APIRepository):
 
         response_data = response.json()
         return UserEnergyRefill.model_validate(response_data['result'])
+
+    async def do_sports(
+            self,
+            *,
+            user_id: int,
+            health_benefit_value: int,
+            energy_cost_value: int,
+    ):
+        url = '/users/sports/'
+        request_data = {
+            'user_id': user_id,
+            'health_benefit_value': health_benefit_value,
+            'energy_cost_value': energy_cost_value,
+        }
+        response = await self._http_client.post(url, json=request_data)
+
+        response_data = response.json()
+
+        if response.status_code == 200:
+            result = response_data['result']
+            return UserSportsActivityResult.model_validate(result)
+
+        if 'required_energy' in response_data:
+            required_energy = int(response_data['required_energy'])
+            raise NotEnoughEnergyError(required_energy)
+        if 'next_sports_in_seconds' in response_data:
+            next_sports_in_seconds = response_data['next_sports_in_seconds']
+            raise SportActivitiesThrottledError(int(next_sports_in_seconds))
+
+        raise ServerAPIError

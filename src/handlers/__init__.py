@@ -13,6 +13,7 @@ from . import (
     food_menu,
     eraser,
     tags,
+    health,
     help,
     holidays,
     probability,

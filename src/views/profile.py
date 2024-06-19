@@ -87,6 +87,7 @@ class ProfileView(PhotoView):
             f'Тип личности: {personality_type}\n'
             f'Прожил на Земле: {lifetime_in_days} дней\n'
             f'🔋 Энергия: {render_energy(self.__user.energy)}\n'
+            f'❤️‍🩹 Здоровье: {render_energy(self.__user.health)}\n'
         )
 
     def get_photo(self) -> str:

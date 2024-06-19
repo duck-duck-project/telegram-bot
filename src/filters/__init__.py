@@ -4,6 +4,7 @@ from .casino import *
 from .choice import *
 from .food_menu import *
 from .gender import *
+from .health import *
 from .name import *
 from .personality_type import *
 from .photo import *

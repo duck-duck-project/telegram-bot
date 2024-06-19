@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import date, datetime
 from typing import Protocol
 
 from pydantic import BaseModel, HttpUrl
@@ -6,7 +6,13 @@ from pydantic import BaseModel, HttpUrl
 from enums import ContactsSortingStrategy, Gender
 from models.themes import Theme
 
-__all__ = ('HasUserId', 'User', 'UserPartial', 'UserEnergyRefill')
+__all__ = (
+    'HasUserId',
+    'User',
+    'UserPartial',
+    'UserEnergyRefill',
+    'UserSportsActivityResult',
+)
 
 
 class HasUserId(Protocol):
@@ -42,6 +48,8 @@ class User(BaseModel):
     contacts_sorting_strategy: ContactsSortingStrategy
     is_contacts_sorting_reversed: bool
     energy: int
+    health: int
+    did_sports_at: datetime | None
 
     @property
     def username_or_fullname(self) -> str:
@@ -51,3 +59,8 @@ class User(BaseModel):
 class UserEnergyRefill(BaseModel):
     user_id: int
     energy: int
+
+
+class UserSportsActivityResult(BaseModel):
+    user_id: int
+    health: int
