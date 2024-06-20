@@ -16,6 +16,7 @@ class FoodItem(BaseModel):
     emoji: str
     price: int
     type: FoodType
+    health_impact_value: int
 
 
 class FoodMenuItem(BaseModel):

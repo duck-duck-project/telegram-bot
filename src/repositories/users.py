@@ -4,8 +4,10 @@ from uuid import UUID
 from enums import Gender, PersonalityTypePrefix, PersonalityTypeSuffix
 from exceptions import (
     NotEnoughEnergyError,
+    NotEnoughHealthError,
     ServerAPIError,
-    SportActivitiesThrottledError, UserDoesNotExistError,
+    SportActivitiesThrottledError,
+    UserDoesNotExistError,
 )
 from models import User, UserEnergyRefill, UserSportsActivityResult
 from repositories import APIRepository
@@ -101,24 +103,29 @@ class UserRepository(APIRepository):
 
         raise ServerAPIError
 
-    async def refill_energy(
+    async def consume_food(
             self,
             *,
             user_id: int,
             energy: int,
+            health_impact_value: int
     ) -> UserEnergyRefill:
-        url = '/users/energy-refill/'
+        url = '/users/consume-food/'
         request_data = {
             'user_id': user_id,
             'energy': energy,
+            'health_impact_value': health_impact_value,
         }
         response = await self._http_client.post(url, json=request_data)
-
-        if response.status_code != 200:
-            raise ServerAPIError
-
         response_data = response.json()
-        return UserEnergyRefill.model_validate(response_data['result'])
+
+        if 'required_health' in response_data:
+            required_health = int(response_data['required_health'])
+            raise NotEnoughHealthError(required_health)
+
+        if response.status_code == 200:
+            return UserEnergyRefill.model_validate(response_data['result'])
+        raise ServerAPIError
 
     async def do_sports(
             self,

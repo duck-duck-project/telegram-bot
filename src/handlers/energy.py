@@ -47,7 +47,7 @@ async def on_energy_refill(
         description=f'{food_item.emoji} Покупка "{food_item.name}"',
     )
     await balance_notifier.send_withdrawal_notification(withdrawal)
-    user_energy_refill = await user_repository.refill_energy(
+    user_energy_refill = await user_repository.consume_food(
         user_id=message.from_user.id,
         energy=food_item.energy,
     )

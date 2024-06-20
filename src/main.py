@@ -36,6 +36,9 @@ from repositories import (
     SecretMessageRepository,
     TagRepository,
     UserRepository,
+    MedicineRepository,
+    FoodItemRepository,
+    SportActivityRepository,
 )
 from repositories.themes import ThemeRepository
 from services import (
@@ -164,6 +167,9 @@ async def main() -> None:
             quiz_repository=QuizRepository,
             tag_repository=TagRepository,
             mining_repository=MiningRepository,
+            medicine_repository=MedicineRepository,
+            food_item_repository=FoodItemRepository,
+            sport_activity_repository=SportActivityRepository,
         )
     )
     dispatcher.update.outer_middleware(user_retrieve_middleware)
