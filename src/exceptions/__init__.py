@@ -2,6 +2,7 @@ from .anonymous_messaging import *
 from .balance import *
 from .contacts import *
 from .energy import *
+from .food_items import *
 from .health import *
 from .medicines import *
 from .secret_messaging import *
