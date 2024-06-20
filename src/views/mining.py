@@ -3,8 +3,7 @@ from datetime import timedelta
 import humanize
 
 from models import MinedResourceResult, MiningUserStatistics
-from services.text import render_grams
-from services.food import render_energy, render_my_energy
+from services.text import render_grams, render_units
 from views import View
 
 __all__ = (
@@ -35,10 +34,10 @@ class MinedResourceView(View):
         weight = render_grams(self.__mined_resource_result.weight_in_grams)
         resource_name = self.__mined_resource_result.resource_name
         value = self.__mined_resource_result.value
-        spent_energy = render_energy(self.__mined_resource_result.spent_energy)
-        my_energy = render_my_energy(
-            energy=self.__mined_resource_result.remaining_energy,
-        )
+        energy = self.__mined_resource_result.remaining_energy
+        emoji = '🪫' if energy < 5000 else '🔋'
+        my_energy = f'{emoji} Ваша энергия: {render_units(energy)} из 100'
+        spent_energy = render_units(self.__mined_resource_result.spent_energy)
         return (
             f'⛏️ Вы добыли {weight} ресурса "{resource_name}"'
             f' на сумму {value} дак-дак коинов!\n'

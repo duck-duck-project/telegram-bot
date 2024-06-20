@@ -7,8 +7,10 @@ from .cinematica import *
 from .contacts import *
 from .energy import *
 from .food_menu import *
+from .health import *
 from .help import *
 from .holidays import *
+from .medicines import *
 from .mining import *
 from .probability import *
 from .problems import *

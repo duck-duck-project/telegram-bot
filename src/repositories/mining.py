@@ -1,4 +1,7 @@
-from exceptions import NotEnoughEnergyError, ServerAPIError
+from exceptions import (
+    NotEnoughEnergyError, NotEnoughHealthError,
+    ServerAPIError,
+)
 from exceptions.mining import MiningActionThrottlingError
 from models import MinedResourceResult, MiningUserStatistics
 from repositories import APIRepository
@@ -21,6 +24,9 @@ class MiningRepository(APIRepository):
         if 'required_energy' in response_data:
             required_energy = int(response_data['required_energy'])
             raise NotEnoughEnergyError(required_energy)
+        if 'required_health' in response_data:
+            required_health = int(response_data['required_health'])
+            raise NotEnoughHealthError(required_health)
         raise ServerAPIError
 
     async def get_user_statistics(self, user_id: int) -> MiningUserStatistics:
