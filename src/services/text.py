@@ -1,4 +1,17 @@
-__all__ = ('int_gaps', 'parse_abbreviated_number', 'render_grams')
+from typing import Protocol
+
+__all__ = (
+    'int_gaps',
+    'parse_abbreviated_number',
+    'render_grams',
+    'render_units',
+    'format_name_with_emoji',
+)
+
+
+class HasNameAndOptionalEmoji(Protocol):
+    name: str
+    emoji: str | None
 
 
 def int_gaps(number: str | int) -> str:
@@ -29,3 +42,18 @@ def render_grams(grams: int) -> str:
 
     kilograms = grams / 1000
     return f'{kilograms} кг.'
+
+
+def render_units(units: int, decimal_points_shift: int = 2) -> str:
+    result = str(units / 10 ** decimal_points_shift)
+    integer, fraction = result.split('.')
+    if fraction == '0':
+        return f'{integer} ед.'
+    fraction = fraction[:decimal_points_shift]
+    return f'{integer},{fraction} ед.'
+
+
+def format_name_with_emoji(item: HasNameAndOptionalEmoji) -> str:
+    if item.emoji is not None:
+        return f'{item.emoji} {item.name}'
+    return item.name

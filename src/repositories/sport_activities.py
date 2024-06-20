@@ -1,7 +1,11 @@
 from pydantic import TypeAdapter
 
-from exceptions import ServerAPIError
-from models import SportActivity
+from exceptions import (
+    NotEnoughEnergyError, NotEnoughHealthError,
+    ServerAPIError, SportActivityDoesNotExistError,
+    SportActivityOnCooldownError,
+)
+from models import SportActivity, SportActivityActionResult
 from repositories import APIRepository
 
 __all__ = ('SportActivityRepository',)
@@ -22,7 +26,11 @@ class SportActivityRepository(APIRepository):
 
         raise ServerAPIError
 
-    async def do_sports(self, user_id: int, sport_activity_name: str):
+    async def do_sports(
+            self,
+            user_id: int,
+            sport_activity_name: str,
+    ) -> SportActivityActionResult:
         url = '/sport-activity-actions/'
         request_data = {
             'user_id': user_id,
@@ -33,7 +41,26 @@ class SportActivityRepository(APIRepository):
 
         response_data = response.json()
 
+        if response_data.get('detail') == 'Sport activity does not exist':
+            raise SportActivityDoesNotExistError(
+                sport_activity_name=response_data['sport_activity_name'],
+            )
+
+        if response_data.get('detail') == 'Sport activity is on cooldown':
+            raise SportActivityOnCooldownError(
+                next_activity_in_seconds=int(
+                    response_data['next_activity_in_seconds']
+                ),
+            )
+
+        if response_data.get('detail') == 'Not enough energy':
+            raise NotEnoughEnergyError(
+                required_energy=int(response_data['required_energy_value']),
+            )
+
         if response_data.get('ok'):
-            return
+            return SportActivityActionResult.model_validate(
+                response_data['result'],
+            )
 
         raise ServerAPIError

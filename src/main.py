@@ -42,10 +42,9 @@ from repositories import (
 )
 from repositories.themes import ThemeRepository
 from services import (
-    AnonymousMessageSender, BalanceNotifier,
-    SportActivities, load_sport_activities,
+    AnonymousMessageSender,
+    BalanceNotifier,
 )
-from services.food import FoodItems, load_food_items
 from services.role_play_actions import RolePlayActions
 
 logger: BoundLogger = structlog.get_logger('app')
@@ -63,8 +62,9 @@ def include_routers(dispatcher: Dispatcher) -> None:
         handlers.cats.router,
         handlers.profile.router,
         handlers.casino.router,
+        handlers.medicines.router,
         handlers.holidays.router,
-        handlers.energy.router,
+        handlers.food_items.router,
         handlers.choice.router,
         handlers.cinematica.router,
         handlers.help.router,
@@ -75,7 +75,7 @@ def include_routers(dispatcher: Dispatcher) -> None:
         handlers.server.router,
         handlers.users.router,
         handlers.themes.router,
-        handlers.health.router,
+        handlers.sport_activities.router,
         handlers.transfers.router,
         handlers.role_play.router,
         handlers.secret_messages.router,
@@ -101,18 +101,6 @@ async def main() -> None:
     role_play_actions = load_role_play_actions_from_file(
         file_path=role_play_actions_file_path,
     )
-
-    sport_activities_file_path = (
-            pathlib.Path(__file__).parent.parent
-            / 'resources'
-            / 'sport_activities.json'
-    )
-    sport_activities = load_sport_activities(sport_activities_file_path)
-
-    food_items_file_path = (
-            pathlib.Path(__file__).parent.parent / 'food.json'
-    )
-    food_items = load_food_items(file_path=food_items_file_path)
 
     setup_logging(config.logging.level)
 
@@ -146,8 +134,6 @@ async def main() -> None:
     dispatcher['timezone'] = config.timezone
     dispatcher['balance_notifier'] = balance_notifier
     dispatcher['role_play_actions'] = RolePlayActions(role_play_actions)
-    dispatcher['food_items'] = FoodItems(food_items)
-    dispatcher['sport_activities'] = SportActivities(sport_activities)
 
     include_routers(dispatcher)
 

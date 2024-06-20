@@ -10,7 +10,7 @@ from callback_data import (
 from enums import Gender
 from models import User
 from services.dates import humanize_age
-from services.food import render_energy
+from services.text import render_units
 from services.manas_id import (
     compute_lifetime,
     determine_zodiac_sign,
@@ -86,8 +86,8 @@ class ProfileView(PhotoView):
             f'Знак зодиака: {zodiac_sign}\n'
             f'Тип личности: {personality_type}\n'
             f'Прожил на Земле: {lifetime_in_days} дней\n'
-            f'🔋 Энергия: {render_energy(self.__user.energy)}\n'
-            f'❤️‍🩹 Здоровье: {render_energy(self.__user.health)}\n'
+            f'🔋 Энергия: {render_units(self.__user.energy)}\n'
+            f'❤️‍🩹 Здоровье: {render_units(self.__user.health)}\n'
         )
 
     def get_photo(self) -> str:

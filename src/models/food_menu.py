@@ -3,7 +3,7 @@ from typing import NewType
 
 from pydantic import BaseModel, HttpUrl
 
-from enums import FoodType
+from enums import FoodItemType, FoodType
 
 __all__ = ('FoodItem', 'FoodMenuItem', 'DailyFoodMenu', 'HTML')
 
@@ -12,10 +12,10 @@ HTML = NewType('HTML', str)
 
 class FoodItem(BaseModel):
     name: str
-    energy: int
-    emoji: str
+    energy_benefit_value: int
+    emoji: str | None
     price: int
-    type: FoodType
+    type: FoodItemType
     health_impact_value: int
 
 

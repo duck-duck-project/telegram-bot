@@ -2,13 +2,12 @@ from aiogram import F, Router
 from aiogram.filters import ExceptionTypeFilter, StateFilter
 from aiogram.types import ErrorEvent, Message
 
+from enums import FoodItemType
 from exceptions import NotEnoughEnergyError
-from filters.energy import energy_refill_filter
-from models import FoodItem
-from repositories import BalanceRepository, UserRepository
-from services import BalanceNotifier
-from services.food import FoodItems, render_energy
-from views import EnergyRefillView, FoodItemsListView, reply_view
+from filters.energy import food_item_filter
+from repositories import FoodItemRepository
+from services import render_units
+from views import FoodItemConsumedView, FoodItemsListView, reply_view
 
 __all__ = ('router',)
 
@@ -19,9 +18,10 @@ router = Router(name=__name__)
 async def on_not_enough_energy_error(
         event: ErrorEvent,
 ) -> None:
+    # noinspection PyTypeChecker
     exception: NotEnoughEnergyError = event.exception
     await event.update.message.reply(
-        f'🪫 Необходимо {render_energy(exception.required_energy)}'
+        f'🪫 Необходимо {render_units(exception.required_energy)}'
         ' энергии для этого действия.\n'
         '📲 Используйте <code>ID</code> чтобы посмотреть свою энергию\n'
         '\n'
@@ -31,29 +31,22 @@ async def on_not_enough_energy_error(
 
 
 @router.message(
-    energy_refill_filter,
+    food_item_filter,
     StateFilter('*'),
 )
 async def on_energy_refill(
         message: Message,
-        user_repository: UserRepository,
-        balance_repository: BalanceRepository,
-        balance_notifier: BalanceNotifier,
-        food_item: FoodItem,
+        food_item_type: FoodItemType,
+        food_item_name: str,
+        food_item_repository: FoodItemRepository,
 ) -> None:
-    withdrawal = await balance_repository.create_withdrawal(
+    food_item_consumption_result = await food_item_repository.consume(
         user_id=message.from_user.id,
-        amount=food_item.price,
-        description=f'{food_item.emoji} Покупка "{food_item.name}"',
+        food_item_name=food_item_name,
     )
-    await balance_notifier.send_withdrawal_notification(withdrawal)
-    user_energy_refill = await user_repository.consume_food(
-        user_id=message.from_user.id,
-        energy=food_item.energy,
-    )
-    view = EnergyRefillView(
-        user_energy_refill=user_energy_refill,
-        food_item=food_item,
+    view = FoodItemConsumedView(
+        food_item_consumption_result=food_item_consumption_result,
+        food_item_type=food_item_type,
     )
     await reply_view(message=message, view=view)
 
@@ -62,6 +55,10 @@ async def on_energy_refill(
     F.text.lower() == 'еда список',
     StateFilter('*'),
 )
-async def on_food_items_list(message: Message, food_items: FoodItems) -> None:
+async def on_food_items_list(
+        message: Message,
+        food_item_repository: FoodItemRepository,
+) -> None:
+    food_items = await food_item_repository.get_all()
     view = FoodItemsListView(food_items)
     await reply_view(message=message, view=view)

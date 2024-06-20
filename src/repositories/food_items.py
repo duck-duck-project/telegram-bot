@@ -1,7 +1,7 @@
 from pydantic import TypeAdapter
 
 from exceptions import ServerAPIError
-from models import FoodItem
+from models import FoodItem, FoodItemConsumptionResult
 from repositories import APIRepository
 
 __all__ = ('FoodItemRepository',)
@@ -22,15 +22,21 @@ class FoodItemRepository(APIRepository):
 
         raise ServerAPIError
 
-    async def consume(self, user_id: int, medicine_name: str):
+    async def consume(
+            self,
+            user_id: int,
+            food_item_name: str,
+    ) -> FoodItemConsumptionResult:
         url = '/food-items/consume/'
-        request_data = {'user_id': user_id, 'food_item_name': medicine_name}
+        request_data = {'user_id': user_id, 'food_item_name': food_item_name}
 
         response = await self._http_client.post(url, json=request_data)
 
         response_data = response.json()
 
         if response_data.get('ok'):
-            return
+            return FoodItemConsumptionResult.model_validate(
+                response_data['result'],
+            )
 
         raise ServerAPIError
