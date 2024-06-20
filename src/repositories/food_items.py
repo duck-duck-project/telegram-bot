@@ -1,6 +1,10 @@
 from pydantic import TypeAdapter
 
-from exceptions import ServerAPIError
+from exceptions import (
+    FoodItemDoesNotExistError, InsufficientFundsForWithdrawalError,
+    NotEnoughHealthError,
+    ServerAPIError,
+)
 from models import FoodItem, FoodItemConsumptionResult
 from repositories import APIRepository
 
@@ -33,6 +37,23 @@ class FoodItemRepository(APIRepository):
         response = await self._http_client.post(url, json=request_data)
 
         response_data = response.json()
+
+        if response_data.get('detail') == 'Food item does not exist':
+            raise FoodItemDoesNotExistError(
+                food_item_name=response_data['food_item_name'],
+            )
+
+        if response_data.get('detail') == 'Not enough balance to buy food item':
+            raise InsufficientFundsForWithdrawalError(
+                amount=int(response_data['price']),
+            )
+
+        if response_data.get('detail') == (
+                'Not enough health to consume food item'
+        ):
+            raise NotEnoughHealthError(
+                required_health=int(response_data['required_health_value']),
+            )
 
         if response_data.get('ok'):
             return FoodItemConsumptionResult.model_validate(

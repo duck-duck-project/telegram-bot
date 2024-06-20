@@ -3,7 +3,7 @@ from aiogram.filters import ExceptionTypeFilter, StateFilter
 from aiogram.types import ErrorEvent, Message
 
 from enums import FoodItemType
-from exceptions import NotEnoughEnergyError
+from exceptions import FoodItemDoesNotExistError, NotEnoughEnergyError
 from filters.energy import food_item_filter
 from repositories import FoodItemRepository
 from services import render_units
@@ -12,6 +12,18 @@ from views import FoodItemConsumedView, FoodItemsListView, reply_view
 __all__ = ('router',)
 
 router = Router(name=__name__)
+
+
+@router.error(ExceptionTypeFilter(FoodItemDoesNotExistError))
+async def on_food_item_does_not_exist_error(event: ErrorEvent) -> None:
+    # noinspection PyTypeChecker
+    exception: FoodItemDoesNotExistError = event.exception
+    await event.update.message.reply(
+        '🚫 Блюда или напитка с названием'
+        f' <code>{exception.food_item_name}</code> не существует\n'
+        '📲 Используйте <code>еда список</code>'
+        ' чтобы посмотреть список доступной еды\n'
+    )
 
 
 @router.error(ExceptionTypeFilter(NotEnoughEnergyError))
