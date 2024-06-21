@@ -45,9 +45,10 @@ class FoodItemConsumedView(View):
         )
 
         emoji = '💚' if self.__result.health_impact_value >= 0 else '❤️'
+        sign = '+' if self.__result.health_impact_value >= 0 else ''
         lines.append(
             f'{emoji} Ваше здоровье: {render_units(self.__result.user_health)}'
-            f' (+{render_units(self.__result.health_impact_value)})'
+            f' ({sign}{render_units(self.__result.health_impact_value)})'
         )
 
         return '\n'.join(lines)
