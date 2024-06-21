@@ -22,3 +22,4 @@ class HelpView(View):
         '🔋 Система здоровья, энергии и спорта:'
         ' <a href="https://duck-duck.super.site/d40ac76c9f544335a2388cc7d1587abc">*ссылка*</a>'
     )
+    disable_web_page_preview = True
