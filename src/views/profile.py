@@ -50,14 +50,6 @@ class ProfileView(PhotoView):
             Gender.OTHER: 'другой',
         }.get(self.__user.gender, 'не указан')
 
-        if (country := self.__user.country) is not None:
-            country = f'{self.__user.country_flag_emoji} {country}'
-        else:
-            country = 'не указана'
-
-        region = self.__user.region or 'не указан'
-        nationality = self.__user.nationality or 'не указана'
-
         personality_type = humanize_personality_type(
             personality_type=self.__user.personality_type,
         )
@@ -78,9 +70,6 @@ class ProfileView(PhotoView):
             f'Отчество: {real_patronymic}\n'
             f'Дата рождения: {humanized_birth_date} ({age})\n'
             f'Пол: {gender_name}\n'
-            f'Страна: {country}\n'
-            f'Регион: {region}\n'
-            f'Национальность: {nationality}\n'
             '\n'
             '<b>✏️ Прочее:</b>\n'
             f'Знак зодиака: {zodiac_sign}\n'
