@@ -7,6 +7,7 @@ from exceptions import FoodItemDoesNotExistError, NotEnoughEnergyError
 from filters.energy import food_item_filter
 from repositories import FoodItemRepository
 from services import render_units
+from services.clean_up import CleanUpService
 from views import FoodItemConsumedView, FoodItemsListView, reply_view
 
 __all__ = ('router',)
@@ -51,6 +52,7 @@ async def on_energy_refill(
         food_item_type: FoodItemType,
         food_item_name: str,
         food_item_repository: FoodItemRepository,
+        clean_up_service: CleanUpService,
 ) -> None:
     food_item_consumption_result = await food_item_repository.consume(
         user_id=message.from_user.id,
@@ -60,7 +62,8 @@ async def on_energy_refill(
         food_item_consumption_result=food_item_consumption_result,
         food_item_type=food_item_type,
     )
-    await reply_view(message=message, view=view)
+    sent_message = await reply_view(message=message, view=view)
+    await clean_up_service.create_clean_up_task(message, sent_message)
 
 
 @router.message(
@@ -70,7 +73,10 @@ async def on_energy_refill(
 async def on_food_items_list(
         message: Message,
         food_item_repository: FoodItemRepository,
+        clean_up_service: CleanUpService,
 ) -> None:
     food_items = await food_item_repository.get_all()
     view = FoodItemsListView(food_items)
-    await reply_view(message=message, view=view)
+    sent_message = await reply_view(message=message, view=view)
+    await clean_up_service.create_clean_up_task(message, sent_message)
+

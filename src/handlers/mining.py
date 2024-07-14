@@ -4,6 +4,7 @@ from aiogram.types import ErrorEvent, Message
 
 from exceptions.mining import MiningActionThrottlingError
 from repositories import MiningRepository
+from services.clean_up import CleanUpService
 from views import (
     MinedResourceView,
     MiningActionThrottledView,
@@ -29,11 +30,13 @@ async def on_mining_action_throttled_error(event: ErrorEvent) -> None:
 async def on_mining(
         message: Message,
         mining_repository: MiningRepository,
+        clean_up_service: CleanUpService,
 ) -> None:
     user_id = message.from_user.id
     mined_resource = await mining_repository.mine(user_id)
     view = MinedResourceView(mined_resource)
-    await reply_view(message=message, view=view)
+    sent_message = await reply_view(message=message, view=view)
+    await clean_up_service.create_clean_up_task(message, sent_message)
 
 
 @router.message(

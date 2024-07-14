@@ -45,6 +45,7 @@ from services import (
     AnonymousMessageSender,
     BalanceNotifier,
 )
+from services.clean_up import CleanUpService
 from services.role_play_actions import RolePlayActions
 
 logger: BoundLogger = structlog.get_logger('app')
@@ -133,6 +134,7 @@ async def main() -> None:
     dispatcher['timezone'] = config.timezone
     dispatcher['balance_notifier'] = balance_notifier
     dispatcher['role_play_actions'] = RolePlayActions(role_play_actions)
+    dispatcher['clean_up_service'] = CleanUpService(redis)
 
     include_routers(dispatcher)
 
