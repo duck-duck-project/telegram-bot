@@ -1,5 +1,5 @@
 from aiogram.types import (
-    InlineKeyboardButton, InlineKeyboardMarkup,
+    InlineKeyboardButton, InlineKeyboardMarkup, WebAppInfo,
 )
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 
@@ -108,5 +108,14 @@ class ProfileView(PhotoView):
                 ).pack(),
             )
             keyboard.row(contact_button)
+
+        keyboard.row(
+            InlineKeyboardButton(
+                text='📲 Web-меню',
+                web_app=WebAppInfo(
+                    url='https://duck-duck-web-app.vercel.app/'
+                )
+            )
+        )
 
         return keyboard.as_markup()
