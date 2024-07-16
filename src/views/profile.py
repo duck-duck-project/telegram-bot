@@ -77,6 +77,10 @@ class ProfileView(PhotoView):
             f'Прожил на Земле: {lifetime_in_days} дней\n'
             f'🔋 Энергия: {render_units(self.__user.energy)}\n'
             f'❤️‍🩹 Здоровье: {render_units(self.__user.health)}\n'
+            '\n\n'
+            '📲 Настройки:'
+            ' <a href="https://t.me/duck_duck_robot/menu">'
+            'нажмите чтобы запустить</a>'
         )
 
     def get_photo(self) -> str:
@@ -108,14 +112,5 @@ class ProfileView(PhotoView):
                 ).pack(),
             )
             keyboard.row(contact_button)
-
-        keyboard.row(
-            InlineKeyboardButton(
-                text='📲 Web-меню',
-                web_app=WebAppInfo(
-                    url='https://duck-duck-web-app.vercel.app/'
-                )
-            )
-        )
 
         return keyboard.as_markup()
