@@ -24,8 +24,7 @@ async def on_show_tag_list_callback(
     view = TagListView(tags=tags, user_full_name=callback_data.user_full_name)
     sent_message = await answer_view(message=callback_query.message, view=view)
     await callback_query.answer()
-
-    if callback_query.from_user.id == 784163357:
+    if callback_data.user_id == 784163357:
         await sent_message.reply_animation('https://i.imgur.com/Zo2yiaG.mp4')
 
 
