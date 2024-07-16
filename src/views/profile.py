@@ -77,7 +77,7 @@ class ProfileView(PhotoView):
             f'Прожил на Земле: {lifetime_in_days} дней\n'
             f'🔋 Энергия: {render_units(self.__user.energy)}\n'
             f'❤️‍🩹 Здоровье: {render_units(self.__user.health)}\n'
-            '\n\n'
+            '\n'
             '📲 Настройки:'
             ' <a href="https://t.me/duck_duck_robot/menu">'
             'нажмите чтобы запустить</a>'
