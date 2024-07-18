@@ -2,11 +2,11 @@ from pydantic import TypeAdapter
 
 import models
 from exceptions import (
-    UserDoesNotExistError,
     ContactAlreadyExistsError,
-    ServerAPIError,
     ContactDoesNotExistError,
     InsufficientFundsForWithdrawalError,
+    ServerAPIError,
+    UserDoesNotExistError,
 )
 from models import ContactBirthday
 from repositories.base import APIRepository
@@ -66,34 +66,6 @@ class ContactRepository(APIRepository):
             raise ContactDoesNotExistError(contact_id=contact_id)
         response_data = response.json()
         return models.Contact.model_validate(response_data)
-
-    async def update(
-            self,
-            *,
-            contact_id: int,
-            private_name: str,
-            public_name: str,
-            is_hidden: bool,
-    ) -> None:
-        url = f'/contacts/{contact_id}/'
-        request_data = {
-            'private_name': private_name,
-            'public_name': public_name,
-            'is_hidden': is_hidden,
-        }
-        response = await self._http_client.put(url, json=request_data)
-        if response.status_code == 404:
-            raise ContactDoesNotExistError(contact_id=contact_id)
-        if response.status_code != 204:
-            raise ServerAPIError
-
-    async def delete_by_id(self, contact_id: int) -> None:
-        url = f'/contacts/{contact_id}/'
-        response = await self._http_client.delete(url)
-        if response.status_code == 404:
-            raise ContactDoesNotExistError(contact_id=contact_id)
-        if response.status_code != 204:
-            raise ServerAPIError
 
     async def get_birthdays(self, user_id: int) -> list[ContactBirthday]:
         url = f'/users/{user_id}/contact-birthdays/'
