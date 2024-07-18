@@ -1,7 +1,6 @@
-from datetime import date
 from uuid import UUID
 
-from enums import Gender, PersonalityTypePrefix, PersonalityTypeSuffix
+from enums import PersonalityTypePrefix, PersonalityTypeSuffix
 from exceptions import (
     NotEnoughEnergyError,
     NotEnoughHealthError,
@@ -45,50 +44,27 @@ class UserRepository(APIRepository):
             user_id: int,
             fullname: str,
             username: str | None,
-            can_be_added_to_contacts: bool | None = None,
             theme_id: UUID | None = None,
-            can_receive_notifications: bool | None = None,
             profile_photo_url: str | None = None,
             is_from_private_chat: bool | None = None,
-            born_on: date | None = None,
             personality_type_prefix: PersonalityTypePrefix | None = None,
             personality_type_suffix: PersonalityTypeSuffix | None = None,
-            real_first_name: str | None = None,
-            real_last_name: str | None = None,
-            patronymic: str | None = None,
-            gender: Gender | None = None,
     ) -> tuple[User, bool]:
         request_data = {
             'id': user_id,
             'fullname': fullname,
             'username': username,
         }
-        if can_be_added_to_contacts is not None:
-            request_data['can_be_added_to_contacts'] = can_be_added_to_contacts
         if theme_id is not None:
             request_data['theme_id'] = str(theme_id)
-        if can_receive_notifications is not None:
-            request_data['can_receive_notifications'] = (
-                can_receive_notifications
-            )
         if profile_photo_url is not None:
             request_data['profile_photo_url'] = profile_photo_url
         if is_from_private_chat:
             request_data['is_from_private_chat'] = is_from_private_chat
-        if born_on is not None:
-            request_data['born_on'] = born_on.isoformat()
         if personality_type_prefix is not None:
             request_data['personality_type_prefix'] = personality_type_prefix
         if personality_type_suffix is not None:
             request_data['personality_type_suffix'] = personality_type_suffix
-        if real_first_name is not None:
-            request_data['real_first_name'] = real_first_name
-        if real_last_name is not None:
-            request_data['real_last_name'] = real_last_name
-        if patronymic is not None:
-            request_data['patronymic'] = patronymic
-        if gender is not None:
-            request_data['gender'] = gender
 
         url = '/users/'
         response = await self._http_client.post(url, json=request_data)

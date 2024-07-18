@@ -1,5 +1,5 @@
 from aiogram import Bot
-from aiogram.types import Message, User
+from aiogram.types import Message
 
 __all__ = ('reply_message_from_bot_filter',)
 
