@@ -1,21 +1,17 @@
-from aiogram import Router, F
+from aiogram import F, Router
 from aiogram.enums import ChatType
 from aiogram.filters import Command, StateFilter, invert_f, or_f
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message
 
-from filters import reply_message_from_bot_filter, integer_filter
+from filters import integer_filter, reply_message_from_bot_filter
 from repositories import BalanceRepository
 from services import (
-    ArithmeticProblem,
-    get_arithmetic_problem,
-    BalanceNotifier,
+    ArithmeticProblem, BalanceNotifier, get_arithmetic_problem,
 )
+from services.clean_up import CleanUpService
 from views import (
-    ArithmeticProblemView,
-    ArithmeticProblemSolvedView,
-    answer_view,
-    reply_view,
+    ArithmeticProblemSolvedView, ArithmeticProblemView, answer_view, reply_view,
 )
 
 router = Router(name=__name__)
@@ -54,13 +50,15 @@ async def on_arithmetic_expression_answer(
         number: int,
         balance_repository: BalanceRepository,
         balance_notifier: BalanceNotifier,
+        clean_up_service: CleanUpService,
 ) -> None:
     text = f'{message.reply_to_message.text}\n\n<i>[решено]</i>'
 
     arithmetic_problem = ArithmeticProblem.from_text(text)
 
     if arithmetic_problem.compute_correct_answer() != number:
-        await message.reply('Неправильно')
+        sent_message = await message.reply('Неправильно')
+        await clean_up_service.create_clean_up_task(message, sent_message)
         return
 
     amount_to_deposit = arithmetic_problem.compute_reward_value()
@@ -71,7 +69,10 @@ async def on_arithmetic_expression_answer(
         description='Solved arithmetic problem',
     )
     view = ArithmeticProblemSolvedView(amount_to_deposit)
-    await reply_view(message=message, view=view)
+    sent_message = await reply_view(message=message, view=view)
+
+    await clean_up_service.create_clean_up_task(message, sent_message)
+
     if message.chat.type != ChatType.PRIVATE:
         await balance_notifier.send_deposit_notification(deposit)
 
@@ -86,6 +87,7 @@ async def on_arithmetic_expression_answer(
 async def on_create_arithmetic_expression_to_solve(
         message: Message,
         state: FSMContext,
+        clean_up_service: CleanUpService,
 ) -> None:
     await state.clear()
 
@@ -94,4 +96,5 @@ async def on_create_arithmetic_expression_to_solve(
         expression=arithmetic_problem.get_humanized_expression(),
         reward=arithmetic_problem.compute_reward_value(),
     )
-    await answer_view(message=message, view=view)
+    sent_message = await answer_view(message=message, view=view)
+    await clean_up_service.create_clean_up_task(message, sent_message)

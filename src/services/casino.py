@@ -61,15 +61,16 @@ async def process_roulette_won(
         message: Message,
         balance_repository: BalanceRepository,
         balance_notifier: BalanceNotifier,
-) -> None:
+) -> Message:
     view = BetWonView(number=roulette.number, bet_amount=bet_amount)
-    await reply_view(view=view, message=message)
+    sent_message = await reply_view(view=view, message=message)
     deposit = await balance_repository.create_deposit(
         user_id=message.from_user.id,
         amount=bet_amount,
         description='Выигрыш в казино',
     )
     await balance_notifier.send_deposit_notification(deposit)
+    return sent_message
 
 
 async def process_roulette_failed(
@@ -79,15 +80,16 @@ async def process_roulette_failed(
         message: Message,
         balance_repository: BalanceRepository,
         balance_notifier: BalanceNotifier,
-) -> None:
+) -> Message:
     view = BetFailedView(number=roulette.number, bet_amount=bet_amount)
-    await reply_view(view=view, message=message)
+    sent_message = await reply_view(view=view, message=message)
     withdrawal = await balance_repository.create_withdrawal(
         user_id=message.from_user.id,
         amount=bet_amount,
         description='Проигрыш в казино',
     )
     await balance_notifier.send_withdrawal_notification(withdrawal)
+    return sent_message
 
 
 async def validate_user_balance(
