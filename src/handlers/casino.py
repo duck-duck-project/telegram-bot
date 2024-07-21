@@ -1,24 +1,20 @@
-from aiogram import Router, F
-from aiogram.filters import StateFilter, Command, ExceptionTypeFilter, or_f
-from aiogram.types import Message, ErrorEvent
+from aiogram import F, Router
+from aiogram.filters import Command, ExceptionTypeFilter, StateFilter, or_f
+from aiogram.types import ErrorEvent, Message
 from fast_depends import Depends, inject
 
 from exceptions import InsufficientFundsForBetError
 from filters import (
-    bet_on_even_or_odd_number_filter,
-    bet_on_specific_number_filter,
-    bet_on_specific_color_filter,
-    bet_amount_filter,
+    bet_amount_filter, bet_on_even_or_odd_number_filter,
+    bet_on_specific_color_filter, bet_on_specific_number_filter,
 )
-from models import BetColor, User, BetEvenOrOdd
+from models import BetColor, BetEvenOrOdd, User
 from repositories import BalanceRepository
 from services import (
-    BalanceNotifier,
-    get_roulette_with_random_number,
-    process_roulette_won,
-    process_roulette_failed,
-    validate_user_balance, CasinoRoulette,
+    BalanceNotifier, CasinoRoulette, get_roulette_with_random_number,
+    process_roulette_failed, process_roulette_won, validate_user_balance,
 )
+from services.clean_up import CleanUpService
 from views import CasinoFAQView, answer_photo_view
 
 router = Router(name=__name__)
@@ -45,6 +41,7 @@ async def on_make_bet_on_specific_color(
         balance_repository: BalanceRepository,
         user: User,
         balance_notifier: BalanceNotifier,
+        clean_up_service: CleanUpService,
         roulette: CasinoRoulette = Depends(get_roulette_with_random_number),
 ) -> None:
     await validate_user_balance(
@@ -57,7 +54,7 @@ async def on_make_bet_on_specific_color(
         await message.reply('Вам выпало число 0, ваша ставка возвращается вам')
 
     if target_color == roulette.determine_color():
-        await process_roulette_won(
+        sent_message = await process_roulette_won(
             roulette=roulette,
             bet_amount=int(bet_amount * 0.9),
             message=message,
@@ -65,13 +62,14 @@ async def on_make_bet_on_specific_color(
             balance_notifier=balance_notifier,
         )
     else:
-        await process_roulette_failed(
+        sent_message = await process_roulette_failed(
             roulette=roulette,
             bet_amount=bet_amount,
             message=message,
             balance_repository=balance_repository,
             balance_notifier=balance_notifier,
         )
+    await clean_up_service.create_clean_up_task(message, sent_message)
 
 
 @router.message(
@@ -88,6 +86,7 @@ async def on_make_bet_on_specific_number(
         balance_repository: BalanceRepository,
         user: User,
         balance_notifier: BalanceNotifier,
+        clean_up_service: CleanUpService,
         roulette: CasinoRoulette = Depends(get_roulette_with_random_number),
 ) -> None:
     await validate_user_balance(
@@ -101,7 +100,7 @@ async def on_make_bet_on_specific_number(
         return
 
     if target_number == roulette.number:
-        await process_roulette_won(
+        sent_message = await process_roulette_won(
             roulette=roulette,
             bet_amount=bet_amount * 36,
             message=message,
@@ -109,13 +108,14 @@ async def on_make_bet_on_specific_number(
             balance_notifier=balance_notifier,
         )
     else:
-        await process_roulette_failed(
+        sent_message = await process_roulette_failed(
             roulette=roulette,
             bet_amount=bet_amount,
             message=message,
             balance_repository=balance_repository,
             balance_notifier=balance_notifier,
         )
+    await clean_up_service.create_clean_up_task(message, sent_message)
 
 
 @router.message(
@@ -132,6 +132,7 @@ async def on_make_bet_on_even_or_odd_number(
         balance_repository: BalanceRepository,
         user: User,
         balance_notifier: BalanceNotifier,
+        clean_up_service: CleanUpService,
         roulette: CasinoRoulette = Depends(get_roulette_with_random_number),
 ) -> None:
     await validate_user_balance(
@@ -146,7 +147,7 @@ async def on_make_bet_on_even_or_odd_number(
         return
 
     if target_even_or_odd == roulette.determine_even_or_odd():
-        await process_roulette_won(
+        sent_message = await process_roulette_won(
             roulette=roulette,
             bet_amount=int(bet_amount * 0.9),
             message=message,
@@ -154,13 +155,14 @@ async def on_make_bet_on_even_or_odd_number(
             balance_notifier=balance_notifier,
         )
     else:
-        await process_roulette_failed(
+        sent_message = await process_roulette_failed(
             roulette=roulette,
             bet_amount=bet_amount,
             message=message,
             balance_repository=balance_repository,
             balance_notifier=balance_notifier,
         )
+    await clean_up_service.create_clean_up_task(message, sent_message)
 
 
 @router.message(
