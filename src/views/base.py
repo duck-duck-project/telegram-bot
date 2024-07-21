@@ -180,8 +180,15 @@ async def answer_photo_view(
 async def reply_view(
         *,
         message: Message,
-        view: View,
+        view: View | PhotoView,
 ) -> Message:
+    if isinstance(view, PhotoView):
+        return await message.reply_photo(
+            photo=view.get_photo(),
+            caption=view.get_caption(),
+            reply_markup=view.get_reply_markup(),
+        )
+
     return await message.reply(
         text=view.get_text(),
         reply_markup=view.get_reply_markup(),

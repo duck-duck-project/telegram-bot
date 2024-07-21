@@ -1,10 +1,11 @@
 from aiogram import F, Router
-from aiogram.filters import ExceptionTypeFilter, StateFilter
-from aiogram.types import ErrorEvent, Message
+from aiogram.filters import StateFilter
+from aiogram.types import Message
 
 from exceptions.mining import MiningActionThrottlingError
 from repositories import MiningRepository
 from services.clean_up import CleanUpService
+from services.mining import get_mined_resource_view
 from views import (
     MinedResourceView,
     MiningActionThrottledView,
@@ -17,12 +18,6 @@ __all__ = ('router',)
 router = Router(name=__name__)
 
 
-@router.error(ExceptionTypeFilter(MiningActionThrottlingError))
-async def on_mining_action_throttled_error(event: ErrorEvent) -> None:
-    view = MiningActionThrottledView(event.exception.next_mining_in_seconds)
-    await reply_view(message=event.update.message, view=view)
-
-
 @router.message(
     F.text.lower().in_({'шахта', 'копать'}),
     StateFilter('*'),
@@ -33,8 +28,12 @@ async def on_mining(
         clean_up_service: CleanUpService,
 ) -> None:
     user_id = message.from_user.id
-    mined_resource = await mining_repository.mine(user_id)
-    view = MinedResourceView(mined_resource)
+    try:
+        mined_resource = await mining_repository.mine(user_id)
+    except MiningActionThrottlingError as error:
+        view = MiningActionThrottledView(error.next_mining_in_seconds)
+    else:
+        view = get_mined_resource_view(mined_resource)
     sent_message = await reply_view(message=message, view=view)
     await clean_up_service.create_clean_up_task(message, sent_message)
 
