@@ -4,10 +4,11 @@ import humanize
 
 from models import MinedResourceResult, MiningUserStatistics
 from services.text import render_grams, render_units
-from views import View
+from views import PhotoView, View
 
 __all__ = (
     'MinedResourceView',
+    'MinedResourcePhotoView',
     'MiningActionThrottledView',
     'MiningStatisticsView',
 )
@@ -44,6 +45,23 @@ class MinedResourceView(View):
             f'⚡️ Потрачено {spent_energy} энергии\n'
             f'{my_energy}'
         )
+
+
+class MinedResourcePhotoView(PhotoView, MinedResourceView):
+
+    def __init__(
+            self,
+            mined_resource_result: MinedResourceResult,
+            photo_url: str,
+    ):
+        super().__init__(mined_resource_result)
+        self.__photo_url = photo_url
+
+    def get_caption(self) -> str:
+        return self.get_text()
+
+    def get_photo(self) -> str:
+        return self.__photo_url
 
 
 class MiningStatisticsView(View):
