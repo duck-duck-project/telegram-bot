@@ -668,7 +668,7 @@
         "emoji": "🙄"
     },
         {
-        "action_template": "{of_user_full_name} задушил {to_user_full_name}",
+        "action_template": "{of_user_full_name} задушил(-а) {to_user_full_name}",
         "triggers": [
             "задушить",
             "душить",
