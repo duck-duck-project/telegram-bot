@@ -9,17 +9,10 @@ __all__ = (
 )
 
 RESOURCE_NAME_TO_PHOTO_URL: Final[dict[str, str]] = {
-    'Уголь': 'https://i.imgur.com/FEAK3Bk.jpeg',
-    'Медь': 'https://i.imgur.com/XYTcGD4.jpeg',
     'Алмаз': 'https://i.imgur.com/05vupoQ.jpeg',
     'Золото': 'https://i.imgur.com/j9Ts1wX.jpeg',
-    'Железо': 'https://i.imgur.com/yc3TccG.jpeg',
     'Платина': 'https://i.imgur.com/UljsXJW.jpeg',
-    'Редкоземельные металлы': 'https://i.imgur.com/NOsKJBO.jpeg',
-    'Серебро': 'https://i.imgur.com/DcViaqj.jpeg',
-    'Олово': 'https://i.imgur.com/CD58Qnk.jpeg',
     'Уран': 'https://i.imgur.com/IKp2D5C.jpeg',
-    'Никель': 'https://i.imgur.com/VI4oIk5.jpeg',
 }
 
 
