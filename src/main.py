@@ -77,7 +77,6 @@ def include_routers(dispatcher: Dispatcher) -> None:
         handlers.secret_messages.router,
         handlers.secret_medias.router,
         handlers.contacts.router,
-        handlers.anonymous_messages.router,
         handlers.common.router,
     )
 
