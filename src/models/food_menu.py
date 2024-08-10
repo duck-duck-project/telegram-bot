@@ -3,7 +3,7 @@ from typing import NewType
 
 from pydantic import BaseModel, HttpUrl
 
-from enums import FoodItemType, FoodType
+from enums import FoodItemType
 
 __all__ = ('FoodItem', 'FoodMenuItem', 'DailyFoodMenu', 'HTML')
 

@@ -1,15 +1,13 @@
 from zoneinfo import ZoneInfo
 
 from aiogram import F, Router
-
-__all__ = ('router',)
-
 from aiogram.filters import StateFilter
 from aiogram.types import Message
 
-from config import Config
 from repositories import ContactRepository
 from views import BirthdayListView, answer_view
+
+__all__ = ('router',)
 
 router = Router(name=__name__)
 

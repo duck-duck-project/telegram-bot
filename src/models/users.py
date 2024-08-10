@@ -3,7 +3,7 @@ from typing import Protocol
 
 from pydantic import BaseModel, HttpUrl
 
-from enums import ContactsSortingStrategy, Gender
+from enums import Gender
 from models.themes import Theme
 
 __all__ = (
@@ -45,7 +45,6 @@ class User(BaseModel):
     region: str | None
     country: str | None
     country_flag_emoji: str | None
-    contacts_sorting_strategy: ContactsSortingStrategy
     is_contacts_sorting_reversed: bool
     energy: int
     health: int

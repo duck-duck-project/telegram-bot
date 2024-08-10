@@ -1,6 +1,4 @@
-from aiogram.types import (
-    InlineKeyboardButton, InlineKeyboardMarkup, WebAppInfo,
-)
+from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 
 from callback_data import (
@@ -10,12 +8,12 @@ from callback_data import (
 from enums import Gender
 from models import User
 from services.dates import humanize_age
-from services.text import render_units
 from services.manas_id import (
     compute_lifetime,
     determine_zodiac_sign,
     humanize_personality_type,
 )
+from services.text import render_units
 from views import PhotoView
 
 __all__ = ('ProfileView',)

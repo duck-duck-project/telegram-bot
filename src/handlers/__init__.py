@@ -1,12 +1,9 @@
 from . import (
-    anonymous_messages,
-    anti_how_your_bot,
     balance,
     birthdays,
     casino,
     cats,
     choice,
-    cinematica,
     common,
     contacts,
     dogs,
@@ -34,7 +31,6 @@ from . import (
 
 __all__ = (
     'probability',
-    'anti_how_your_bot',
     'balance',
     'eraser',
     'casino',
@@ -45,7 +41,6 @@ __all__ = (
     'profile',
     'birthdays',
     'contacts',
-    'cinematica',
     'dogs',
     'help',
     'food_menu',
@@ -58,7 +53,6 @@ __all__ = (
     'transfers',
     'role_play',
     'users',
-    'anonymous_messages',
     'common',
     'server',
     'work',

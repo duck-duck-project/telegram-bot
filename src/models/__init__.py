@@ -1,6 +1,5 @@
 from .balance import *
 from .casino import *
-from .cinematica import *
 from .contacts import *
 from .departments import *
 from .food_items import *
