@@ -41,7 +41,7 @@ async def on_show_profile(
     user = await user_repository.get_by_id(from_user.id)
 
     if user.id == 6209548376:
-        photo = URLInputFile('https://i.imgur.com/VPg0Op4.jpeg')
+        photo = 'https://i.imgur.com/VPg0Op4.jpeg'
     elif user.profile_photo_url is not None:
         photo = URLInputFile(str(user.profile_photo_url))
     else:
