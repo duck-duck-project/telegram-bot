@@ -11,7 +11,12 @@ from filters import (
 )
 from repositories import BalanceRepository, FoodMenuRepository
 from services import BalanceNotifier
-from views import FoodMenuMediaGroupView, answer_view, FoodMenuFAQView, answer_media_group_view
+from views import (
+    FoodMenuMediaGroupView,
+    answer_view,
+    FoodMenuFAQView,
+    answer_media_group_view,
+)
 
 __all__ = ('router',)
 

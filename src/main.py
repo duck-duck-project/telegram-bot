@@ -41,10 +41,7 @@ from repositories import (
     SportActivityRepository,
 )
 from repositories.themes import ThemeRepository
-from services import (
-    AnonymousMessageSender,
-    BalanceNotifier,
-)
+from services import BalanceNotifier
 from services.clean_up import CleanUpService
 from services.role_play_actions import RolePlayActions
 
@@ -66,7 +63,6 @@ def include_routers(dispatcher: Dispatcher) -> None:
         handlers.holidays.router,
         handlers.food_items.router,
         handlers.choice.router,
-        handlers.cinematica.router,
         handlers.help.router,
         handlers.dogs.router,
         handlers.food_menu.router,
@@ -124,7 +120,6 @@ async def main() -> None:
 
     balance_notifier = BalanceNotifier(bot)
 
-    dispatcher['anonymous_message_sender'] = AnonymousMessageSender(bot)
     dispatcher['closing_http_client_factory'] = partial(
         httpx.AsyncClient,
         base_url=config.server_api_base_url,

@@ -1,6 +1,5 @@
 from uuid import UUID
 
-from enums import PersonalityTypePrefix, PersonalityTypeSuffix
 from exceptions import (
     NotEnoughEnergyError,
     NotEnoughHealthError,

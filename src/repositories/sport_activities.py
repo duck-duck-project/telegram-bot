@@ -1,8 +1,9 @@
 from pydantic import TypeAdapter
 
 from exceptions import (
-    NotEnoughEnergyError, NotEnoughHealthError,
-    ServerAPIError, SportActivityDoesNotExistError,
+    NotEnoughEnergyError,
+    ServerAPIError,
+    SportActivityDoesNotExistError,
     SportActivityOnCooldownError,
 )
 from models import SportActivity, SportActivityActionResult

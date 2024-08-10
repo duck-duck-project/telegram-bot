@@ -44,5 +44,5 @@ async def on_show_tags_list(
     tags = await tag_repository.get_all_by_user_id(user.id)
     view = TagListView(tags=tags, user_full_name=user.full_name)
     sent_message = await answer_view(message=message, view=view)
-    if message.from_user.id == 784163357:
+    if user.id == 784163357:
         await sent_message.reply_animation('https://i.imgur.com/Zo2yiaG.mp4')

@@ -1,12 +1,10 @@
 from aiogram.types import (
+    InlineKeyboardButton, InlineKeyboardMarkup, KeyboardButton,
     ReplyKeyboardMarkup,
-    KeyboardButton,
-    InlineKeyboardMarkup,
-    InlineKeyboardButton,
 )
 
 from models import User
-from views import View, InlineQueryView
+from views import InlineQueryView, View
 
 __all__ = (
     'UserMenuView',
@@ -87,17 +85,12 @@ class UserMenuView(View):
         self.__balance = balance
 
     def get_text(self) -> str:
-        is_anonymous_messaging_enabled_emoji = (
-            '✅' if self.__is_anonymous_messaging_enabled else '❌'
-        )
-        name = self.__user.fullname
+        name = self.__user.username_or_fullname
         if self.__user.profile_photo_url is not None:
             name = f'<a href="{self.__user.profile_photo_url}">{name}</a>'
         return (
             f'🙎🏿‍♂️ Имя: {name}\n'
             f'💰 Баланс: 🐥${self.__balance}\n'
-            '🔒 Режим анонимных сообщений:'
-            f' {is_anonymous_messaging_enabled_emoji}\n'
         )
 
 
