@@ -26,6 +26,8 @@ async def on_show_tag_list_callback(
     await callback_query.answer()
     if callback_data.user_id == 784163357:
         await sent_message.reply_animation('https://i.imgur.com/Zo2yiaG.mp4')
+    elif callback_data.user_id == 5777421574:
+        await sent_message.reply_photo('https://i.imgur.com/sre1G1c.jpeg')
 
 
 @router.message(
@@ -46,3 +48,5 @@ async def on_show_tags_list(
     sent_message = await answer_view(message=message, view=view)
     if user.id == 784163357:
         await sent_message.reply_animation('https://i.imgur.com/Zo2yiaG.mp4')
+    elif user.id == 5777421574:
+        await sent_message.reply_photo('https://i.imgur.com/sre1G1c.jpeg')
