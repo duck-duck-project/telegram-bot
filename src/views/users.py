@@ -38,12 +38,6 @@ class UserPersonalSettingsView(View):
             inline_keyboard=[
                 [
                     InlineKeyboardButton(
-                        text='🎨 Тема',
-                        callback_data='show-themes-list',
-                    ),
-                ],
-                [
-                    InlineKeyboardButton(
                         text='🏞️ Фото профиля',
                         callback_data='update-profile-photo',
                     )

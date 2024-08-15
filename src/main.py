@@ -40,7 +40,6 @@ from repositories import (
     FoodItemRepository,
     SportActivityRepository,
 )
-from repositories.themes import ThemeRepository
 from services import BalanceNotifier
 from services.clean_up import CleanUpService
 from services.role_play_actions import RolePlayActions
@@ -70,7 +69,6 @@ def include_routers(dispatcher: Dispatcher) -> None:
         handlers.tags.router,
         handlers.server.router,
         handlers.users.router,
-        handlers.themes.router,
         handlers.sport_activities.router,
         handlers.transfers.router,
         handlers.role_play.router,
@@ -140,7 +138,6 @@ async def main() -> None:
             contact_repository=ContactRepository,
             secret_media_repository=SecretMediaRepository,
             secret_message_repository=SecretMessageRepository,
-            theme_repository=ThemeRepository,
             user_repository=UserRepository,
             balance_repository=BalanceRepository,
             food_menu_repository=FoodMenuRepository,
