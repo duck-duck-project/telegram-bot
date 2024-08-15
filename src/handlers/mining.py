@@ -7,7 +7,6 @@ from repositories import MiningRepository
 from services.clean_up import CleanUpService
 from services.mining import get_mined_resource_view
 from views import (
-    MinedResourceView,
     MiningActionThrottledView,
     MiningStatisticsView,
     reply_view,

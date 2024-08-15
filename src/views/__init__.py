@@ -18,5 +18,4 @@ from .role_play import *
 from .secret_messaging import *
 from .server import *
 from .tags import *
-from .themes import *
 from .users import *

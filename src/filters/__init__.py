@@ -9,5 +9,4 @@ from .role_play import *
 from .secret_messages import *
 from .sport_activities import *
 from .text import *
-from .themes import *
 from .transfers import *
