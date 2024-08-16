@@ -49,6 +49,7 @@ class User(BaseModel):
     energy: int
     health: int
     did_sports_at: datetime | None
+    is_premium: bool
 
     @property
     def username_or_fullname(self) -> str:
