@@ -5,7 +5,7 @@ from aiogram.types import Message, User as TelegramUser
 from enums import TagWeight
 from filters.tags import tag_create_command_filter
 from models import User
-from repositories import BalanceRepository, TagRepository
+from repositories import BalanceRepository, TagRepository, UserRepository
 from services import BalanceNotifier
 from services.tags import compute_tag_issue_price
 from views import TagGivenView, answer_view
@@ -30,8 +30,13 @@ async def on_create_tag(
         weight: TagWeight,
         balance_repository: BalanceRepository,
         balance_notifier: BalanceNotifier,
-        user: User,
+        user_repository: UserRepository,
 ) -> None:
+    user, _ = await user_repository.upsert(
+        user_id=message.from_user.id,
+        username=message.from_user.username,
+        fullname=message.from_user.full_name,
+    )
     price = compute_tag_issue_price(
         tag_weight=weight,
         is_premium=user.is_premium,
