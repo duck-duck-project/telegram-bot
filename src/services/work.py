@@ -28,15 +28,16 @@ class ArithmeticProblem:
         """Computes the correct answer for the problem."""
         return eval(self.expression)
 
-    def compute_reward_value(self) -> int:
+    def compute_reward_value(self, is_premium: bool = False) -> int:
         """Computes the reward value for solving the problem."""
         humanized_expression = self.get_humanized_expression()
-        return (
+        value = (
                 humanized_expression.count('+') * 115
                 + humanized_expression.count('-') * 130
                 + humanized_expression.count('*') * 150
                 + humanized_expression.count('²') * 175
         )
+        return value * 1.5 if is_premium else value
 
     @classmethod
     def from_text(cls, text: str) -> Self:
