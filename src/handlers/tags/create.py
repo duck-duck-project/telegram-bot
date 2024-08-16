@@ -1,11 +1,13 @@
 from aiogram import F, Router
 from aiogram.filters import StateFilter
-from aiogram.types import Message, User
+from aiogram.types import Message, User as TelegramUser
 
 from enums import TagWeight
 from filters.tags import tag_create_command_filter
+from models import User
 from repositories import BalanceRepository, TagRepository
-from services import BalanceNotifier, TAG_WEIGHT_TO_PRICE
+from services import BalanceNotifier
+from services.tags import compute_tag_issue_price
 from views import TagGivenView, answer_view
 
 __all__ = ('router',)
@@ -22,15 +24,18 @@ router = Router(name=__name__)
 async def on_create_tag(
         message: Message,
         tag_repository: TagRepository,
-        of_user: User,
-        to_user: User,
+        of_user: TelegramUser,
+        to_user: TelegramUser,
         text: str,
         weight: TagWeight,
         balance_repository: BalanceRepository,
         balance_notifier: BalanceNotifier,
+        user: User,
 ) -> None:
-    price = TAG_WEIGHT_TO_PRICE[weight]
-
+    price = compute_tag_issue_price(
+        tag_weight=weight,
+        is_premium=user.is_premium,
+    )
     withdrawal = await balance_repository.create_withdrawal(
         user_id=of_user.id,
         amount=price,
