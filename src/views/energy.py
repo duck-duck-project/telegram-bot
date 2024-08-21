@@ -25,8 +25,8 @@ def render_action_name_for_self(food_item_type: FoodItemType) -> str:
 
 def render_action_name_for_other_user(food_item_type: FoodItemType) -> str:
     food_item_type_to_action_name = {
-        FoodItemType.DRINK: 'накормил',
-        FoodItemType.FOOD: 'напоил',
+        FoodItemType.FOOD: 'накормил',
+        FoodItemType.DRINK: 'напоил',
     }
     return food_item_type_to_action_name.get(food_item_type, 'дал употребить')
 

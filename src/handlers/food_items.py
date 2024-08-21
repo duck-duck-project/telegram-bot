@@ -24,7 +24,7 @@ async def on_food_item_does_not_exist_error(event: ErrorEvent) -> None:
     await event.update.message.reply(
         '🚫 Блюда или напитка с названием'
         f' <code>{exception.food_item_name}</code> не существует\n'
-        '📲 Используйте <code>еда список</code>'
+        '📲 Используйте <code>список еды</code>'
         ' чтобы посмотреть список доступной еды\n'
     )
 
