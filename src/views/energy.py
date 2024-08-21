@@ -1,56 +1,131 @@
 from collections.abc import Iterable
 
+from aiogram.types import User as TelegramUser
+
 from enums import FoodItemType
-from models import FoodItem, FoodItemConsumptionResult
-from services.text import format_name_with_emoji, render_units
+from models import FoodItem, FoodItemFeedResult
 from services.food_items import (
     filter_by_food_item_type,
     filter_healthy_food_items,
     filter_junk_food_items,
 )
+from services.text import format_name_with_emoji, render_units
 from views import View
 
-__all__ = ('FoodItemConsumedView', 'FoodItemsListView')
+__all__ = ('FeedSelfView', 'FoodItemsListView', 'FeedOtherUserView')
 
 
-class FoodItemConsumedView(View):
+def render_action_name_for_self(food_item_type: FoodItemType) -> str:
+    food_item_type_to_action_name = {
+        FoodItemType.DRINK: 'выпили',
+        FoodItemType.FOOD: 'съели',
+    }
+    return food_item_type_to_action_name.get(food_item_type, 'употребили')
+
+
+def render_action_name_for_other_user(food_item_type: FoodItemType) -> str:
+    food_item_type_to_action_name = {
+        FoodItemType.DRINK: 'накормил',
+        FoodItemType.FOOD: 'напоил',
+    }
+    return food_item_type_to_action_name.get(food_item_type, 'дал употребить')
+
+
+def render_feed_self(
+        food_item_feed_result: FoodItemFeedResult,
+        food_item_type: FoodItemType,
+) -> str:
+    action_name = render_action_name_for_self(food_item_type)
+    action = f'Вы {action_name} <b>{food_item_feed_result.food_item_name}</b>'
+    if food_item_feed_result.food_item_emoji is not None:
+        action = f'{food_item_feed_result.food_item_emoji} {action}'
+    return action
+
+
+def render_feed_other_user(
+        food_item_feed_result: FoodItemFeedResult,
+        food_item_type: FoodItemType,
+        from_user: TelegramUser,
+        to_user: TelegramUser,
+) -> str:
+    action_name = render_action_name_for_other_user(food_item_type)
+    action = (
+        f'{from_user.mention_html(from_user.username)}'
+        f' {action_name}'
+        f' {to_user.mention_html(to_user.username)}'
+        f' блюдом: <b>{food_item_feed_result.food_item_name}</b>'
+    )
+    if food_item_feed_result.food_item_emoji is not None:
+        action = f'{food_item_feed_result.food_item_emoji} {action}'
+    return action
+
+
+def render_energy(food_item_feed_result: FoodItemFeedResult) -> str:
+    return (
+        f'⚡️ Энергия: {render_units(food_item_feed_result.user_energy)}'
+        f' (+{render_units(food_item_feed_result.energy_benefit_value)})'
+    )
+
+
+def render_health(
+        food_item_feed_result: FoodItemFeedResult,
+) -> str:
+    emoji = '💚' if food_item_feed_result.health_impact_value >= 0 else '❤️'
+    sign = '+' if food_item_feed_result.health_impact_value >= 0 else ''
+    return (
+        f'{emoji}'
+        f' Здоровье: {render_units(food_item_feed_result.user_health)}'
+        f' ({sign}{render_units(food_item_feed_result.health_impact_value)})'
+    )
+
+
+class FeedSelfView(View):
 
     def __init__(
             self,
-            food_item_consumption_result: FoodItemConsumptionResult,
+            food_item_consumption_result: FoodItemFeedResult,
             food_item_type: FoodItemType,
     ):
         self.__result = food_item_consumption_result
         self.__food_item_type = food_item_type
 
     def get_text(self) -> str:
-        food_item_type_to_action_name = {
-            FoodItemType.DRINK: 'выпили',
-            FoodItemType.FOOD: 'съели',
-        }
-        action_name = food_item_type_to_action_name.get(
-            self.__food_item_type,
-            'употребили',
-        )
         lines: list[str] = [
-            f'Вы {action_name} <b>{self.__result.food_item_name}</b>',
+            render_feed_self(
+                food_item_feed_result=self.__result,
+                food_item_type=self.__food_item_type,
+            ),
+            render_energy(food_item_feed_result=self.__result),
+            render_health(food_item_feed_result=self.__result),
         ]
+        return '\n'.join(lines)
 
-        if self.__result.food_item_emoji is not None:
-            lines[0] = f'{self.__result.food_item_emoji} {lines[0]}'
 
-        lines.append(
-            f'⚡️ Ваша энергия: {render_units(self.__result.user_energy)}'
-            f' (+{render_units(self.__result.energy_benefit_value)})'
-        )
+class FeedOtherUserView(View):
 
-        emoji = '💚' if self.__result.health_impact_value >= 0 else '❤️'
-        sign = '+' if self.__result.health_impact_value >= 0 else ''
-        lines.append(
-            f'{emoji} Ваше здоровье: {render_units(self.__result.user_health)}'
-            f' ({sign}{render_units(self.__result.health_impact_value)})'
-        )
+    def __init__(
+            self,
+            food_item_consumption_result: FoodItemFeedResult,
+            food_item_type: FoodItemType,
+            from_user: TelegramUser,
+            to_user: TelegramUser,
+    ):
+        self.__result = food_item_consumption_result
+        self.__food_item_type = food_item_type
+        self.__from_user = from_user
+        self.__to_user = to_user
 
+    def get_text(self) -> str:
+        lines: list[str] = [
+            render_feed_other_user(
+                food_item_feed_result=self.__result,
+                food_item_type=self.__food_item_type,
+                from_user=self.__from_user,
+                to_user=self.__to_user,
+            ),
+            render_energy(food_item_feed_result=self.__result),
+            render_health(food_item_feed_result=self.__result),
+        ]
         return '\n'.join(lines)
 
 

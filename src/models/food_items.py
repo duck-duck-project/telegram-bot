@@ -2,7 +2,7 @@ from pydantic import BaseModel
 
 from enums import FoodItemType
 
-__all__ = ('FoodItem', 'FoodItemConsumptionResult')
+__all__ = ('FoodItem', 'FoodItemFeedResult')
 
 
 class FoodItem(BaseModel):
@@ -14,8 +14,9 @@ class FoodItem(BaseModel):
     health_impact_value: int
 
 
-class FoodItemConsumptionResult(BaseModel):
-    user_id: int
+class FoodItemFeedResult(BaseModel):
+    from_user_id: int
+    to_user_id: int
     food_item_name: str
     food_item_emoji: str | None
     price: int
