@@ -5,7 +5,7 @@ from exceptions import (
     NotEnoughHealthError,
     ServerAPIError,
 )
-from models import FoodItem, FoodItemConsumptionResult
+from models import FoodItem, FoodItemFeedResult
 from repositories import APIRepository
 
 __all__ = ('FoodItemRepository',)
@@ -26,13 +26,18 @@ class FoodItemRepository(APIRepository):
 
         raise ServerAPIError
 
-    async def consume(
+    async def feed(
             self,
-            user_id: int,
+            from_user_id: int,
+            to_user_id: int,
             food_item_name: str,
-    ) -> FoodItemConsumptionResult:
-        url = '/food-items/consume/'
-        request_data = {'user_id': user_id, 'food_item_name': food_item_name}
+    ) -> FoodItemFeedResult:
+        url = '/food-items/feed/'
+        request_data = {
+            'from_user_id': from_user_id,
+            'to_user_id': to_user_id,
+            'food_item_name': food_item_name,
+        }
 
         response = await self._http_client.post(url, json=request_data)
 
@@ -56,7 +61,7 @@ class FoodItemRepository(APIRepository):
             )
 
         if response_data.get('ok'):
-            return FoodItemConsumptionResult.model_validate(
+            return FoodItemFeedResult.model_validate(
                 response_data['result'],
             )
 
