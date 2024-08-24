@@ -42,9 +42,6 @@ class FinanceMenuView(View):
                 KeyboardButton(text='💳 Перевод средств'),
             ],
             [
-                KeyboardButton(text='📊 Самые богатые пользователи'),
-            ],
-            [
                 KeyboardButton(text='🔙 Назад'),
             ],
         ],
