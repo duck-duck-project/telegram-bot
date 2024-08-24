@@ -14,24 +14,7 @@ __all__ = (
 
 
 class UserPersonalSettingsView(View):
-
-    def __init__(self, user: User):
-        self.__user = user
-
-    def get_text(self) -> str:
-        if self.__user.theme is None:
-            theme_text = (
-                '🌈 Тема:\n'
-                '📩 Секретное сообщение для <b>{name}</b>\n'
-                '👀 Прочитать'
-            )
-        else:
-            theme_text = (
-                '🌈 Тема:\n'
-                f'{self.__user.theme.secret_message_template_text}'
-                f'\n{self.__user.theme.secret_message_view_button_text}'
-            )
-        return f'{theme_text}'
+    text = 'Настройки профиля'
 
     def get_reply_markup(self) -> InlineKeyboardMarkup:
         return InlineKeyboardMarkup(

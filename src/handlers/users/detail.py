@@ -19,9 +19,8 @@ __all__ = ('register_handlers',)
 
 async def on_show_personal_settings(
         message_or_callback_query: Message | CallbackQuery,
-        user: User,
 ) -> None:
-    view = UserPersonalSettingsView(user)
+    view = UserPersonalSettingsView()
     await render_message_or_callback_query(
         message_or_callback_query=message_or_callback_query,
         view=view,
