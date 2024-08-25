@@ -58,16 +58,16 @@ async def on_secret_message_typing(
         state: FSMContext,
         user: User,
 ) -> None:
-    contacts = await contact_repository.get_by_user_id(user.id)
+    user_contacts = await contact_repository.get_by_user_id(user.id)
 
-    if not contacts:
+    if not user_contacts.contacts:
         items = [
             NoUserContactsInlineQueryView().get_inline_query_result_article()
         ]
         await inline_query.answer(items, cache_time=1, is_personal=True)
         return
 
-    visible_contacts = filter_not_hidden(contacts)
+    visible_contacts = filter_not_hidden(user_contacts.contacts)
 
     if not visible_contacts:
         items = [
@@ -80,7 +80,7 @@ async def on_secret_message_typing(
     await state.update_data(secret_message_id=draft_secret_message_id.hex)
 
     contacts_and_query_ids = [
-        (contact, f'{uuid4().hex}@{contact.to_user.id}')
+        (contact, f'{uuid4().hex}@{contact.user.id}')
         for contact in visible_contacts
     ]
 
@@ -89,7 +89,7 @@ async def on_secret_message_typing(
             query_id=query_id,
             contact=contact,
             secret_message_id=draft_secret_message_id,
-            theme=user.theme,
+            user_theme=user.theme,
         ).get_inline_query_result_article()
         for contact, query_id in contacts_and_query_ids
     ]

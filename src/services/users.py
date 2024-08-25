@@ -1,7 +1,18 @@
+from typing import Protocol
+
 from aiogram.enums import ChatType
 from aiogram.types import Update, User
 
-__all__ = ('extract_user_from_update', 'extract_chat_type_from_update_or_none')
+__all__ = (
+    'extract_user_from_update',
+    'extract_chat_type_from_update_or_none',
+    'get_username_or_fullname',
+)
+
+
+class HasUsernameOrFullname(Protocol):
+    fullname: str
+    username: str | None
 
 
 def extract_user_from_update(update: Update) -> User:
@@ -36,3 +47,7 @@ def extract_chat_type_from_update_or_none(update: Update) -> ChatType | None:
             return ChatType(update.callback_query.message.chat.type)
     if update.inline_query is not None:
         return ChatType(update.inline_query.chat_type)
+
+
+def get_username_or_fullname(user: HasUsernameOrFullname) -> str:
+    return user.username or user.fullname

@@ -4,7 +4,6 @@ from aiogram.types import Message, User as TelegramUser
 
 from enums import TagWeight
 from filters.tags import tag_create_command_filter
-from models import User
 from repositories import BalanceRepository, TagRepository, UserRepository
 from services import BalanceNotifier
 from services.tags import compute_tag_issue_price

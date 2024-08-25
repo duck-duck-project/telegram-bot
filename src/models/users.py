@@ -12,6 +12,8 @@ __all__ = (
     'UserPartial',
     'UserEnergyRefill',
     'UserSportsActivityResult',
+    'UserWithTheme',
+    'UserWithProfilePhotoUrl',
 )
 
 
@@ -23,6 +25,14 @@ class UserPartial(BaseModel):
     id: int
     username: str | None
     fullname: str
+
+
+class UserWithProfilePhotoUrl(UserPartial):
+    profile_photo_url: HttpUrl | None
+
+
+class UserWithTheme(UserPartial):
+    theme: Theme | None
 
 
 class User(BaseModel):

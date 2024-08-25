@@ -54,11 +54,9 @@ class UserMenuView(View):
     def __init__(
             self,
             user: User,
-            is_anonymous_messaging_enabled: bool,
             balance: int,
     ):
         self.__user = user
-        self.__is_anonymous_messaging_enabled = is_anonymous_messaging_enabled
         self.__balance = balance
 
     def get_text(self) -> str:

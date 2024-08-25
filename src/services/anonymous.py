@@ -6,7 +6,6 @@ from aiogram.types import Message
 from models import SecretMediaType
 
 __all__ = (
-    'is_anonymous_messaging_enabled',
     'determine_media_file',
     'get_message_method_by_media_type',
 )
@@ -14,12 +13,6 @@ __all__ = (
 
 class HasFileID(Protocol):
     file_id: str
-
-
-def is_anonymous_messaging_enabled(state_name: str) -> bool:
-    # rename it if state declaration will be changed
-    # in anonymous_messaging.states.py file
-    return state_name == 'AnonymousMessagingStates:enabled'
 
 
 def determine_media_file(message: Message) -> tuple[str, SecretMediaType]:

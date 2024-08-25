@@ -2,23 +2,32 @@ from datetime import date, datetime
 
 from pydantic import BaseModel
 
-from models.users import User
+from models.themes import Theme
+from models.users import UserPartial, UserWithProfilePhotoUrl, UserWithTheme
 
-__all__ = ('Contact', 'ContactBirthday')
+__all__ = ('Contact', 'ContactBirthday', 'UserContacts', 'UserContact')
 
 
 class Contact(BaseModel):
     id: int
+    user: UserWithProfilePhotoUrl
     private_name: str
     public_name: str
-    created_at: datetime
     is_hidden: bool
-    of_user: User
-    to_user: User
+    theme: Theme | None
+    created_at: datetime
+
+
+class UserContacts(BaseModel):
+    user: UserWithTheme
+    contacts: list[Contact]
+
+
+class UserContact(BaseModel):
+    user: UserWithTheme
+    contact: Contact
 
 
 class ContactBirthday(BaseModel):
-    user_id: int
-    fullname: str
-    username: str | None
+    user: UserPartial
     born_on: date

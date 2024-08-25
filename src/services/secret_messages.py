@@ -22,7 +22,7 @@ def can_see_secret_media(
         secret_media: SecretMedia,
 ) -> bool:
     return user_id in (
-        secret_media.contact.of_user.id,
+        secret_media.contact.user.id,
         secret_media.contact.to_user.id,
     )
 

@@ -6,7 +6,6 @@ from aiogram.types import Message, CallbackQuery
 
 from models import User
 from repositories import BalanceRepository
-from services import is_anonymous_messaging_enabled
 from views import (
     UserSettingsCalledInGroupChatView,
     UserMenuView,
@@ -43,13 +42,9 @@ async def on_show_settings(
         balance_repository: BalanceRepository,
 ) -> None:
     await state.clear()
-    state_name = await state.get_state()
     user_balance = await balance_repository.get_user_balance(user.id)
     view = UserMenuView(
         user=user,
-        is_anonymous_messaging_enabled=is_anonymous_messaging_enabled(
-            state_name=state_name,
-        ),
         balance=user_balance.balance,
     )
     if isinstance(message_or_callback_query, Message):
