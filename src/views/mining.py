@@ -31,6 +31,20 @@ class MiningActionThrottledView(View):
         return f'❌ Следующая добыча через: {next_mining}'
 
 
+def render_energy(mined_resource_result: MinedResourceResult) -> str:
+    return (
+        f'⚡️ Энергия: {render_units(mined_resource_result.remaining_energy)}'
+        f' (-{render_units(mined_resource_result.spent_energy)})'
+    )
+
+
+def render_health(mined_resource_result: MinedResourceResult) -> str:
+    return (
+        f'❤️ Здоровье: {render_units(mined_resource_result.remaining_health)}'
+        f' (-{render_units(mined_resource_result.spent_health)})'
+    )
+
+
 class MinedResourceView(View):
 
     def __init__(self, mined_resource_result: MinedResourceResult):
@@ -40,15 +54,11 @@ class MinedResourceView(View):
         weight = render_grams(self.__mined_resource_result.weight_in_grams)
         resource_name = self.__mined_resource_result.resource_name
         value = self.__mined_resource_result.value
-        energy = self.__mined_resource_result.remaining_energy
-        emoji = '🪫' if energy < 5000 else '🔋'
-        my_energy = f'{emoji} Ваша энергия: {render_units(energy)} из 100'
-        spent_energy = render_units(self.__mined_resource_result.spent_energy)
         return (
             f'⛏️ Вы добыли {weight} ресурса "{resource_name}"'
             f' на сумму {value} дак-дак коинов!\n'
-            f'⚡️ Потрачено {spent_energy} энергии\n'
-            f'{my_energy}'
+            f'{render_energy(self.__mined_resource_result)}\n'
+            f'{render_health(self.__mined_resource_result)}\n'
         )
 
 
