@@ -16,6 +16,8 @@ class MinedResourceResult(BaseModel):
     weight_in_grams: int
     spent_energy: int
     remaining_energy: int
+    spent_health: int
+    remaining_health: int
 
 
 class MinedResourceStatistics(BaseModel):
