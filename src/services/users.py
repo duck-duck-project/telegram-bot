@@ -1,13 +1,17 @@
 from typing import Protocol
 
 from aiogram.enums import ChatType
-from aiogram.types import URLInputFile, Update, User as TelegramUser
+from aiogram.types import (
+    Chat, URLInputFile, Update,
+    User as TelegramUser,
+)
 
 __all__ = (
     'extract_user_from_update',
     'extract_chat_type_from_update_or_none',
     'get_username_or_fullname',
     'get_user_profile_photo',
+    'get_chat_id_if_group_chat'
 )
 
 from pydantic import HttpUrl
@@ -72,3 +76,8 @@ async def get_user_profile_photo(
         'images/search?format=src&mime_types=jpg,png'
     )
     return URLInputFile(url)
+
+
+def get_chat_id_if_group_chat(chat: Chat) -> int | None:
+    if chat.type in (ChatType.GROUP, ChatType.SUPERGROUP):
+        return chat.id

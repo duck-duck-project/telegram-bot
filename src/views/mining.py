@@ -1,8 +1,12 @@
+from collections.abc import Iterable
 from datetime import timedelta
 
 import humanize
 
-from models import MinedResourceResult, MiningUserStatistics
+from models import (
+    MinedResourceResult, MinedResourceStatistics, MiningChatStatistics,
+    MiningUserStatistics,
+)
 from services.text import render_grams, render_units
 from views import PhotoView, View
 
@@ -10,7 +14,8 @@ __all__ = (
     'MinedResourceView',
     'MinedResourcePhotoView',
     'MiningActionThrottledView',
-    'MiningStatisticsView',
+    'MiningUserStatisticsView',
+    'MiningChatStatisticsView',
 )
 
 
@@ -64,7 +69,41 @@ class MinedResourcePhotoView(PhotoView, MinedResourceView):
         return self.__photo_url
 
 
-class MiningStatisticsView(View):
+def compute_total_value(
+        mined_resources: Iterable[MinedResourceStatistics],
+) -> int:
+    return sum(resource.total_value for resource in mined_resources)
+
+
+def compute_total_count(
+        mined_resources: Iterable[MinedResourceStatistics],
+) -> int:
+    return sum(resource.total_count for resource in mined_resources)
+
+
+def render_total_statistics(
+        mined_resources: Iterable[MinedResourceStatistics],
+) -> str:
+    total_value = compute_total_value(mined_resources)
+    total_count = compute_total_count(mined_resources)
+    return f'<b>Всего: {total_count} раз - {total_value} коинов</b>'
+
+
+def render_resources_list(
+        mined_resources: Iterable[MinedResourceStatistics],
+) -> list[str]:
+    emojis = ('▪️', '▫️')
+    lines: list[str] = []
+    for index, resource in enumerate(mined_resources):
+        emoji = emojis[index % 2]
+        lines.append(
+            f'{emoji} {resource.name} - {resource.total_count} раз'
+            f' - {resource.total_value} коинов'
+        )
+    return lines
+
+
+class MiningUserStatisticsView(View):
 
     def __init__(self, mining_statistics: MiningUserStatistics):
         self.__mining_statistics = mining_statistics
@@ -76,26 +115,36 @@ class MiningStatisticsView(View):
                 'Чтобы начать, введите <code>шахта</code>'
                 ' или <code>копать</code>'
             )
-
-        emojis = ('▪️', '▫️')
         lines: list[str] = ['<b>⛏️ Статистика шахты:</b>']
-        for index, resource in enumerate(self.__mining_statistics.resources):
-            emoji = emojis[index % 2]
-            lines.append(
-                f'{emoji} {resource.name} - {resource.total_count} раз'
-                f' - {resource.total_value} коинов'
-            )
+
+        lines += render_resources_list(self.__mining_statistics.resources)
 
         if len(self.__mining_statistics.resources) > 1:
-            total_wealth = sum(
-                resource.total_value
-                for resource in self.__mining_statistics.resources
-            )
-            total_count = sum(
-                resource.total_count
-                for resource in self.__mining_statistics.resources
-            )
             lines.append(
-                f'<b>Всего: {total_count} раз - {total_wealth} коинов</b>'
+                render_total_statistics(self.__mining_statistics.resources)
             )
+        return '\n'.join(lines)
+
+
+class MiningChatStatisticsView(View):
+
+    def __init__(self, mining_statistics: MiningChatStatistics):
+        self.__mining_statistics = mining_statistics
+
+    def get_text(self) -> str:
+        if not self.__mining_statistics.resources:
+            return '😔 На шахте ещё никто не работал.'
+
+        lines: list[str] = ['<b>⛏️ Статистика шахты этого чата:</b>']
+
+        lines += render_resources_list(self.__mining_statistics.resources)
+
+        if len(self.__mining_statistics.resources) > 1:
+            lines.append(
+                render_total_statistics(self.__mining_statistics.resources)
+            )
+        lines.append(
+            f'<b>Глубина шахты чата: '
+            f'{len(self.__mining_statistics.resources)}</b>'
+        )
         return '\n'.join(lines)

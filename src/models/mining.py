@@ -4,6 +4,7 @@ __all__ = (
     'MinedResourceResult',
     'MinedResourceStatistics',
     'MiningUserStatistics',
+    'MiningChatStatistics',
 )
 
 
@@ -25,4 +26,9 @@ class MinedResourceStatistics(BaseModel):
 
 class MiningUserStatistics(BaseModel):
     user_id: int
+    resources: list[MinedResourceStatistics]
+
+
+class MiningChatStatistics(BaseModel):
+    chat_id: int
     resources: list[MinedResourceStatistics]
