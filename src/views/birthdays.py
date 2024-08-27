@@ -3,7 +3,7 @@ from datetime import datetime
 from zoneinfo import ZoneInfo
 
 from models import ContactBirthday
-from services import get_username_or_fullname
+from services.users import get_username_or_fullname
 from services.dates import compute_age, compute_days_until_birthday
 from views.base import View
 

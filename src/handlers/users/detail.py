@@ -85,8 +85,6 @@ def register_handlers(router: Router) -> None:
         F.text.in_({
             '/start',
             '/settings',
-            '🔙 Назад',
-            '🔙 Отключить режим анонимных сообщений',
         }),
         F.chat.type == ChatType.PRIVATE,
         StateFilter('*'),

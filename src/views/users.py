@@ -1,6 +1,6 @@
 from aiogram.types import (
     InlineKeyboardButton, InlineKeyboardMarkup, KeyboardButton,
-    ReplyKeyboardMarkup,
+    ReplyKeyboardMarkup, WebAppInfo,
 )
 
 from models import User
@@ -38,7 +38,6 @@ class UserMenuView(View):
                 KeyboardButton(text='🖼️ Секретное медиа'),
             ],
             [
-                KeyboardButton(text='💰 Финансы'),
                 KeyboardButton(text='🍽️ Йемек'),
             ],
             [

@@ -32,5 +32,5 @@ async def on_delete_secret_message(
     await secret_message_repository.delete_by_id(
         secret_message_id=callback_data.secret_message_id,
     )
-    view = SecretMessageDeletedConfirmationView(secret_message.sender.theme)
+    view = SecretMessageDeletedConfirmationView(secret_message.theme)
     await answer_callback_query(callback_query=callback_query, view=view)

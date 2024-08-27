@@ -4,7 +4,7 @@ from aiogram.exceptions import TelegramAPIError
 from aiogram.filters import CommandStart, StateFilter
 from aiogram.types import Message
 
-from models import SecretMediaType
+from enums import SecretMediaType
 from repositories import HTTPClientFactory, SecretMediaRepository
 from services import (
     extract_secret_media_id,

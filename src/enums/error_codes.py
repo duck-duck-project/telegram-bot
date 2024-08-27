@@ -1,8 +1,10 @@
-from enum import StrEnum
+from enum import StrEnum, auto
 
 __all__ = ('ServerApiErrorCode',)
 
 
 class ServerApiErrorCode(StrEnum):
-    CONTACT_DOES_NOT_EXIST = 'CONTACT_DOES_NOT_EXIST'
-    CONTACT_ALREADY_EXISTS = 'CONTACT_ALREADY_EXISTS'
+    CONTACT_NOT_FOUND = auto()
+    CONTACT_ALREADY_EXISTS = auto()
+    SECRET_MEDIA_MESSAGE_NOT_FOUND = auto()
+    SECRET_TEXT_MESSAGE_NOT_FOUND = auto()

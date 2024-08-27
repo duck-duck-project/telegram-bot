@@ -63,7 +63,6 @@ async def on_contact_command_is_not_replied_to_user(
 )
 async def on_add_contact(
         message: Message,
-        user: User,
         user_repository: UserRepository,
         contact_repository: ContactRepository,
         reply_to_message: Message,
@@ -81,7 +80,7 @@ async def on_add_contact(
         raise ContactCreateForbiddenError
 
     await contact_repository.create(
-        of_user_id=user.id,
+        of_user_id=from_user.id,
         to_user_id=to_user.id,
         private_name=name,
         public_name=name,

@@ -3,7 +3,7 @@ from typing import Any, Coroutine, Protocol
 
 from aiogram.types import Message
 
-from models import SecretMediaType
+from enums import SecretMediaType
 
 __all__ = (
     'determine_media_file',

@@ -80,7 +80,7 @@ async def on_secret_message_typing(
     await state.update_data(secret_message_id=draft_secret_message_id.hex)
 
     contacts_and_query_ids = [
-        (contact, f'{uuid4().hex}@{contact.user.id}')
+        (contact, f'{uuid4().hex}@{contact.id}')
         for contact in visible_contacts
     ]
 

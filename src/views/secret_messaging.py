@@ -7,14 +7,14 @@ from callback_data import (
     SecretMessageDeleteCallbackData,
     SecretMessageDetailCallbackData,
 )
+from enums import SecretMediaType
 from models import (
     Contact,
-    SecretMedia,
-    SecretMediaType,
-    SecretMessage,
+    SecretMediaMessage,
+    SecretTextMessage,
     Theme,
 )
-from services import get_username_or_fullname
+from services.users import get_username_or_fullname
 from views import CallbackQueryAnswerView, InlineQueryView, View
 
 __all__ = (
@@ -39,21 +39,23 @@ __all__ = (
 
 class SecretMessageReadConfirmationView(View):
 
-    def __init__(self, secret_message: SecretMessage):
-        self.__secret_message = secret_message
+    def __init__(self, secret_text_message: SecretTextMessage):
+        self.__secret_text_message = secret_text_message
 
     def get_text(self) -> str:
-        theme = self.__secret_message.sender.theme
-        recipient_name = self.__secret_message.recipient.username_or_fullname
+        theme = self.__secret_text_message.theme
+        recipient_name = get_username_or_fullname(
+            user=self.__secret_text_message.recipient,
+        )
 
-        if self.__secret_message is None:
+        if theme is None:
             template = '✅ Сообщение для {name} прочитано\n\n<i>{text}</i>'
         else:
             template = theme.secret_message_read_confirmation_text
 
         return template.format(
             name=recipient_name,
-            text=self.__secret_message.text,
+            text=self.__secret_text_message.text,
         )
 
 
@@ -245,20 +247,22 @@ class SecretMediaCreateConfirmView(View):
 
 class SecretMediaDetailView(View):
 
-    def __init__(self, secret_media: SecretMedia):
-        self.__secret_media = secret_media
+    def __init__(self, secret_media_message: SecretMediaMessage):
+        self.__secret_media_message = secret_media_message
 
     def get_text(self) -> str:
-        sender = (
-                self.__secret_media.contact.of_user.username
-                or self.__secret_media.contact.of_user.fullname
+        sender = get_username_or_fullname(self.__secret_media_message.sender)
+        recipient = get_username_or_fullname(
+            user=self.__secret_media_message.recipient,
         )
-        description = '' if self.__secret_media.name is None else (
-            f'\nОписание: "{self.__secret_media.name}"'
-        )
+
+        if self.__secret_media_message.caption is None:
+            description = ''
+        else:
+            description = f'\nОписание: "{self.__secret_media_message.caption}"'
         return (
             '🖼️ Секретное медиа для'
-            f' <b>{self.__secret_media.contact.public_name}</b>\n'
+            f' <b>{recipient}</b>\n'
             f'Отправитель: {sender}'
             f'{description}'
         )
@@ -270,29 +274,30 @@ class SecretMediaForShareView(View):
             self,
             *,
             bot_username: str,
-            secret_media: SecretMedia,
-            theme: Theme | None,
+            secret_media_message: SecretMediaMessage,
     ):
         self.__bot_username = bot_username
-        self.__secret_media = secret_media
-        self.__theme = theme
+        self.__secret_media_message = secret_media_message
 
     def get_text(self) -> str:
-        if self.__theme is None:
+        theme = self.__secret_media_message.theme
+        if theme is None:
             template = '🖼️ Секретное медиа для {name}'
         else:
-            template = self.__theme.secret_media_template_text
+            template = theme.secret_media_template_text
 
-        return template.format(name=self.__secret_media.contact.public_name)
+        return template.format(
+            name=self.__secret_media_message.recipient.fullname)
 
     def get_reply_markup(self) -> InlineKeyboardMarkup:
-        if self.__theme is None:
+        theme = self.__secret_media_message.theme
+        if theme is None:
             button_text = '👀 Посмотреть'
         else:
-            button_text = self.__theme.secret_message_view_button_text
+            button_text = theme.secret_message_view_button_text
         url = (
             f'https://t.me/{self.__bot_username}'
-            f'?start=secret_media-{self.__secret_media.id.hex}'
+            f'?start=secret_media-{self.__secret_media_message.id.hex}'
         )
         button = InlineKeyboardButton(text=button_text, url=url)
         return InlineKeyboardMarkup(inline_keyboard=[[button]])

@@ -14,6 +14,7 @@ __all__ = (
     'UserSportsActivityResult',
     'UserWithTheme',
     'UserWithProfilePhotoUrl',
+    'UserWithCanReceiveNotifications',
 )
 
 
@@ -33,6 +34,10 @@ class UserWithProfilePhotoUrl(UserPartial):
 
 class UserWithTheme(UserPartial):
     theme: Theme | None
+
+
+class UserWithCanReceiveNotifications(UserPartial):
+    can_receive_notifications: bool
 
 
 class User(BaseModel):
