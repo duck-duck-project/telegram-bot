@@ -2,7 +2,7 @@ from aiogram import F, Router
 from aiogram.filters import StateFilter
 from aiogram.types import Message
 
-from exceptions.mining import MiningActionThrottlingError
+from exceptions.mining import MiningCooldownError
 from repositories import MiningRepository
 from services.clean_up import CleanUpService
 from services.mining import get_mined_resource_view
@@ -29,7 +29,7 @@ async def on_mining(
     user_id = message.from_user.id
     try:
         mined_resource = await mining_repository.mine(user_id)
-    except MiningActionThrottlingError as error:
+    except MiningCooldownError as error:
         view = MiningActionThrottledView(error.next_mining_in_seconds)
     else:
         view = get_mined_resource_view(mined_resource)
