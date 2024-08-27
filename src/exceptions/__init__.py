@@ -1,4 +1,3 @@
-from .anonymous_messaging import *
 from .balance import *
 from .contacts import *
 from .energy import *

@@ -1,10 +1,6 @@
 from uuid import UUID
 
 import models
-from exceptions import (
-    SecretMediaAlreadyExistsError,
-    SecretMediaDoesNotExistError,
-)
 from models import SecretMediaMessage
 from repositories import APIRepository, handle_server_api_errors
 

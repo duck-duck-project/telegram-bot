@@ -1,9 +1,10 @@
 from aiogram.types import (
-    InlineKeyboardButton, InlineKeyboardMarkup, KeyboardButton,
-    ReplyKeyboardMarkup, WebAppInfo,
+    InlineKeyboardButton,
+    InlineKeyboardMarkup,
+    KeyboardButton,
+    ReplyKeyboardMarkup,
 )
 
-from models import User
 from views import InlineQueryView, View
 
 __all__ = (
@@ -30,6 +31,7 @@ class UserPersonalSettingsView(View):
 
 
 class UserMenuView(View):
+    text = 'Меню пользователя'
     reply_markup = ReplyKeyboardMarkup(
         resize_keyboard=True,
         keyboard=[
@@ -49,23 +51,6 @@ class UserMenuView(View):
             ],
         ],
     )
-
-    def __init__(
-            self,
-            user: User,
-            balance: int,
-    ):
-        self.__user = user
-        self.__balance = balance
-
-    def get_text(self) -> str:
-        name = self.__user.username_or_fullname
-        if self.__user.profile_photo_url is not None:
-            name = f'<a href="{self.__user.profile_photo_url}">{name}</a>'
-        return (
-            f'🙎🏿‍♂️ Имя: {name}\n'
-            f'💰 Баланс: 🐥${self.__balance}\n'
-        )
 
 
 class UserBannedInlineQueryView(InlineQueryView):

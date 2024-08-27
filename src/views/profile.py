@@ -56,6 +56,11 @@ class ProfileView(PhotoView):
         real_last_name = self.__user.real_last_name or 'не указана'
         real_patronymic = self.__user.patronymic or 'не указано'
 
+        if self.__user.is_premium:
+            is_premium = f'🌟 Да'
+        else:
+            is_premium = 'Нет'
+
         return (
             f'<b>🪪 Пользователь:</b>\n'
             f'ID: {self.__user.id}\n'
@@ -70,6 +75,7 @@ class ProfileView(PhotoView):
             f'Пол: {gender_name}\n'
             '\n'
             '<b>✏️ Прочее:</b>\n'
+            f'Премиум: {is_premium}\n'
             f'Знак зодиака: {zodiac_sign}\n'
             f'Тип личности: {personality_type}\n'
             f'Прожил на Земле: {lifetime_in_days} дней\n'
