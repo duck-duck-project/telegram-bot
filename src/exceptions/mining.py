@@ -1,5 +1,5 @@
-class MiningActionThrottlingError(Exception):
+class MiningCooldownError(Exception):
 
-    def __init__(self, next_mining_in_seconds: int):
-        super().__init__(f'Next mining in {next_mining_in_seconds} seconds')
+    def __init__(self, detail: str, next_mining_in_seconds: int):
+        super().__init__(detail)
         self.next_mining_in_seconds = next_mining_in_seconds

@@ -1,5 +1,5 @@
 class NotEnoughHealthError(Exception):
 
-    def __init__(self, required_health: int):
-        super().__init__('Not enough health')
-        self.required_health = required_health
+    def __init__(self, detail: str, required_health_value: int):
+        super().__init__(detail)
+        self.required_health = required_health_value
