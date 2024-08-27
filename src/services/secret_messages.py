@@ -5,7 +5,7 @@ from aiogram import Bot
 from aiogram.exceptions import TelegramAPIError
 
 from exceptions import InvalidSecretMediaDeeplinkError
-from models import SecretMedia, SecretMessage
+from models import SecretMediaMessage, SecretTextMessage
 from views.secret_messaging import SecretMessageReadConfirmationView
 
 __all__ = (
@@ -19,22 +19,22 @@ __all__ = (
 def can_see_secret_media(
         *,
         user_id: int,
-        secret_media: SecretMedia,
+        secret_media: SecretMediaMessage,
 ) -> bool:
     return user_id in (
-        secret_media.contact.of_user.id,
-        secret_media.contact.to_user.id,
+        secret_media.sender.id,
+        secret_media.recipient.id,
     )
 
 
 def can_see_secret_message(
         *,
         user_id: int,
-        secret_message: SecretMessage,
+        secret_text_message: SecretTextMessage,
 ) -> bool:
     return user_id in (
-        secret_message.sender.id,
-        secret_message.recipient.id,
+        secret_text_message.sender.id,
+        secret_text_message.recipient.id,
     )
 
 
@@ -46,12 +46,12 @@ def extract_secret_media_id(deep_link: str) -> UUID:
 
 
 async def notify_secret_message_seen(
-        secret_message: SecretMessage,
+        secret_text_message: SecretTextMessage,
         bot: Bot,
 ):
-    view = SecretMessageReadConfirmationView(secret_message)
+    view = SecretMessageReadConfirmationView(secret_text_message)
     with contextlib.suppress(TelegramAPIError):
         await bot.send_message(
-            chat_id=secret_message.sender.id,
+            chat_id=secret_text_message.sender.id,
             text=view.get_text(),
         )

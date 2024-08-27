@@ -9,9 +9,8 @@ from .holidays import *
 from .medicines import *
 from .mining import *
 from .role_play import *
-from .secret_media_types import *
-from .secret_medias import *
-from .secret_messages import *
+from .secret_media_messages import *
+from .secret_text_messages import *
 from .sport_activities import *
 from .tags import *
 from .themes import *

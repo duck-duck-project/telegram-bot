@@ -1,8 +1,8 @@
+from typing import Never
 from uuid import UUID
 
-import models
-from exceptions import SecretMessageDoesNotExistError
-from repositories import APIRepository
+from models import SecretTextMessage
+from repositories import APIRepository, handle_server_api_errors
 
 __all__ = ('SecretMessageRepository',)
 
@@ -14,57 +14,107 @@ class SecretMessageRepository(APIRepository):
             *,
             secret_message_id: UUID,
             text: str,
-            sender_id: int,
-            recipient_id: int,
-    ) -> models.SecretMessage:
+            contact_id: int,
+    ) -> SecretTextMessage:
+        """
+        Create secret text message.
+
+        Keyword Args:
+            secret_message_id: Secret message ID in UUID format.
+            text: Secret message text.
+            contact_id: Contact ID.
+
+        Returns:
+            SecretTextMessage object.
+
+        Raises:
+            ContactDoesNotExistError: If contact with provided
+                                      ID does not exist.
+            ServerAPIError: If server returned an error.
+        """
         request_data = {
             'id': str(secret_message_id),
             'text': text,
-            'sender_id': sender_id,
-            'recipient_id': recipient_id,
+            'contact_id': contact_id,
         }
-        url = '/secret-messages/'
+        url = '/secret-messages/text/'
 
         response = await self._http_client.post(url, json=request_data)
 
         response_data = response.json()
 
-        return models.SecretMessage.model_validate(response_data['result'])
+        if response.is_success:
+            return SecretTextMessage.model_validate(response_data)
 
-    async def get_by_id(self, secret_message_id: UUID) -> models.SecretMessage:
-        url = f'/secret-messages/{str(secret_message_id)}/'
+        handle_server_api_errors(response_data['errors'])
+
+    async def get_by_id(self, secret_message_id: UUID) -> SecretTextMessage:
+        """
+        Get secret text message by ID.
+
+        Args:
+            secret_message_id:
+
+        Returns:
+            SecretTextMessage object.
+
+        Raises:
+            SecretMessageDoesNotExistError: If secret message with provided ID
+                                             does not exist.
+            ServerAPIError: If server returned an error.
+        """
+        url = f'/secret-messages/text/{str(secret_message_id)}/'
         response = await self._http_client.get(url)
 
-        if response.status_code == 404:
-            raise SecretMessageDoesNotExistError
+        response_data: dict = response.json()
 
-        response_data = response.json()
+        if response.is_success:
+            return SecretTextMessage.model_validate(response_data)
 
-        return models.SecretMessage.model_validate(response_data['result'])
+        handle_server_api_errors(response_data['errors'])
 
-    async def update(
+    async def mark_as_seen(
             self,
-            *,
             secret_message_id: UUID,
-            is_seen: bool | None = None,
-    ) -> models.SecretMessage:
-        url = f'/secret-messages/{str(secret_message_id)}/'
-        request_data = {}
-        if is_seen is not None:
-            request_data['is_seen'] = is_seen
+    ) -> None | Never:
+        """
+        Mark secret message as seen.
 
-        response = await self._http_client.patch(url, json=request_data)
+        Args:
+            secret_message_id: Secret message ID.
 
-        if response.status_code == 404:
-            raise SecretMessageDoesNotExistError
+        Raises:
+            SecretMessageDoesNotExistError: If secret message with provided ID
+                                             does not exist.
+            ServerAPIError: If server returned an error.
+        """
+        url = f'/secret-messages/text/{str(secret_message_id)}/seen/'
+
+        response = await self._http_client.post(url)
+
+        if response.is_success:
+            return
 
         response_data = response.json()
-
-        return models.SecretMessage.model_validate(response_data['result'])
+        handle_server_api_errors(response_data['errors'])
 
     async def delete_by_id(self, secret_message_id: UUID) -> None:
-        url = f'/secret-messages/{str(secret_message_id)}/'
+        """
+        Delete secret message by ID.
+
+        Args:
+            secret_message_id: Secret message ID.
+
+        Raises:
+            SecretMessageDoesNotExistError: If secret message with provided ID
+                                             does not exist.
+            ServerAPIError: If server returned an error.
+        """
+        url = f'/secret-messages/text/{str(secret_message_id)}/'
         response = await self._http_client.delete(url)
 
-        if response.status_code == 404:
-            raise SecretMessageDoesNotExistError
+        if response.is_success:
+            return
+
+        response_data = response.json()
+        handle_server_api_errors(response_data['errors'])

@@ -11,7 +11,6 @@ from services.text import int_gaps
 from views.base import View
 
 __all__ = (
-    'FinanceMenuView',
     'UserBalanceView',
     'WithdrawalNotificationView',
     'DepositNotificationView',
@@ -27,28 +26,6 @@ __all__ = (
 class HasAmountAndDescription(Protocol):
     amount: int
     description: str | None
-
-
-class FinanceMenuView(View):
-    text = '📊 Финансовые операции'
-    reply_markup = ReplyKeyboardMarkup(
-        resize_keyboard=True,
-        keyboard=[
-            [
-                KeyboardButton(text='💼 Работать'),
-            ],
-            [
-                KeyboardButton(text='💰 Мой баланс'),
-                KeyboardButton(text='💳 Перевод средств'),
-            ],
-            [
-                KeyboardButton(text='📊 Самые богатые пользователи'),
-            ],
-            [
-                KeyboardButton(text='🔙 Назад'),
-            ],
-        ],
-    )
 
 
 class UserBalanceView(View):

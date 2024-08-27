@@ -8,7 +8,6 @@ __all__ = ('Theme', 'ThemesPage')
 
 class Theme(BaseModel):
     id: UUID
-    is_hidden: bool
     secret_message_template_text: str
     secret_media_template_text: str
     secret_message_view_button_text: str

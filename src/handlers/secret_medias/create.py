@@ -3,31 +3,26 @@ from aiogram.enums import ChatType
 from aiogram.filters import StateFilter, or_f
 from aiogram.fsm.context import FSMContext
 from aiogram.types import (
-    Message,
-    InlineKeyboardMarkup,
-    InlineKeyboardButton,
-    CallbackQuery,
+    CallbackQuery, InlineKeyboardButton, InlineKeyboardMarkup, Message,
 )
 
-from models import SecretMediaType
+from enums import SecretMediaType
+from models import User
 from repositories import (
     ContactRepository,
     SecretMediaRepository,
 )
-from repositories import HTTPClientFactory
 from services import (
     determine_media_file,
-    get_message_method_by_media_type, filter_not_hidden,
-    send_view,
+    filter_not_hidden,
+    get_message_method_by_media_type,
 )
 from states import SecretMediaCreateStates
 from views import (
-    SecretMediaCreateContactListView,
-    SecretMediaCreateConfirmView,
-    SecretMediaForShareView,
     SecretMediaCalledInGroupChatView,
+    SecretMediaCreateConfirmView, SecretMediaCreateContactListView,
+    SecretMediaForShareView, answer_view,
 )
-from views import answer_view
 
 __all__ = ('register_handlers',)
 
@@ -58,7 +53,7 @@ async def on_secret_media_create_confirm(
         state: FSMContext,
         bot: Bot,
         secret_media_repository: SecretMediaRepository,
-        contact_repository: ContactRepository,
+        user: User,
 ) -> None:
     state_data = await state.get_data()
     await state.clear()
@@ -68,30 +63,21 @@ async def on_secret_media_create_confirm(
     description: str | None = state_data['description']
     media_type_value: int = state_data['media_type_value']
 
-    secret_media = await secret_media_repository.create(
+    secret_media_message = await secret_media_repository.create(
         contact_id=contact_id,
         file_id=file_id,
         description=description,
         media_type=media_type_value,
     )
-    contact = await contact_repository.get_by_id(contact_id)
 
     me = await bot.get_me()
 
     view = SecretMediaForShareView(
         bot_username=me.username,
-        secret_media=secret_media,
-        theme=contact.of_user.theme,
+        secret_media_message=secret_media_message,
     )
     sent_message = await answer_view(message=callback_query.message, view=view)
     await sent_message.reply('Вы можете переслать это сообщение получателю')
-
-    if contact.to_user.can_receive_notifications:
-        await send_view(
-            bot=bot,
-            view=view,
-            chat_id=contact.to_user.id,
-        )
 
 
 async def on_media_description_skip(
@@ -108,10 +94,10 @@ async def on_media_description_skip(
     media_type_value: int = state_data['media_type_value']
     media_type = SecretMediaType(media_type_value)
 
-    contact = await contact_repository.get_by_id(contact_id)
+    user_contact = await contact_repository.get_by_id(contact_id)
 
     view = SecretMediaCreateConfirmView(
-        contact=contact,
+        contact_private_name=user_contact.contact.private_name,
         media_type=media_type,
         description=None,
     )
@@ -140,10 +126,10 @@ async def on_media_description(
     media_type_value: int = state_data['media_type_value']
     media_type = SecretMediaType(media_type_value)
 
-    contact = await contact_repository.get_by_id(contact_id)
+    user_contact = await contact_repository.get_by_id(contact_id)
 
     view = SecretMediaCreateConfirmView(
-        contact=contact,
+        contact_private_name=user_contact.contact.private_name,
         media_type=media_type,
         description=message.text,
     )
@@ -193,13 +179,11 @@ async def on_contact_choice(
 
 async def on_secret_media_command(
         message: Message,
-        closing_http_client_factory: HTTPClientFactory,
         state: FSMContext,
+        contact_repository: ContactRepository,
 ) -> None:
-    async with closing_http_client_factory() as http_client:
-        contact_repository = ContactRepository(http_client)
-        contacts = await contact_repository.get_by_user_id(message.from_user.id)
-    contacts = filter_not_hidden(contacts)
+    user_contacts = await contact_repository.get_by_user_id(message.from_user.id)
+    contacts = filter_not_hidden(user_contacts.contacts)
     view = SecretMediaCreateContactListView(contacts)
     await state.set_state(SecretMediaCreateStates.contact)
     await answer_view(message=message, view=view)

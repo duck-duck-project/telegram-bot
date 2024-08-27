@@ -1,14 +1,12 @@
 from pydantic import TypeAdapter
 
-import models
-from exceptions import (
-    ContactAlreadyExistsError,
-    ContactDoesNotExistError,
-    InsufficientFundsForWithdrawalError,
-    ServerAPIError,
-    UserDoesNotExistError,
+from models import (
+    Contact,
+    ContactBirthday,
+    UserContact,
+    UserContacts,
 )
-from models import ContactBirthday
+from repositories import handle_server_api_errors
 from repositories.base import APIRepository
 
 __all__ = ('ContactRepository',)
@@ -23,7 +21,23 @@ class ContactRepository(APIRepository):
             to_user_id: int,
             private_name: str,
             public_name: str
-    ) -> models.Contact:
+    ) -> Contact:
+        """
+        Create contact between two users.
+
+        Keyword Args:
+            of_user_id: User ID of the user who creates the contact.
+            to_user_id: User ID of the user to whom the contact is created.
+            private_name: Private name of the contact.
+            public_name: Public name of the contact.
+
+        Returns:
+            Contact model.
+
+        Raises:
+            ContactAlreadyExistsError - if contact already exists.
+            ServerAPIError - if server response is not valid.
+        """
         request_data = {
             'of_user_id': of_user_id,
             'to_user_id': to_user_id,
@@ -32,46 +46,84 @@ class ContactRepository(APIRepository):
         }
         url = '/contacts/'
         response = await self._http_client.post(url, json=request_data)
-        if response.status_code == 400:
-            response_data = response.json()
-            error_detail = response_data.get('detail')
-            if error_detail == 'Insufficient funds for contact creation':
-                amount = response_data['amount']
-                raise InsufficientFundsForWithdrawalError(amount=amount)
-        if response.status_code == 404:
-            raise UserDoesNotExistError(user_id=of_user_id)
-        if response.status_code == 409:
-            raise ContactAlreadyExistsError
-        if response.status_code != 201:
-            raise ServerAPIError
+
         response_data = response.json()
-        return models.Contact.model_validate(response_data)
+
+        if response.is_success:
+            return Contact.model_validate(response_data)
+
+        handle_server_api_errors(response_data['errors'])
 
     async def get_by_user_id(
             self,
             user_id: int,
-    ) -> list[models.Contact]:
-        url = f'/users/{user_id}/contacts/'
-        response = await self._http_client.get(url)
-        if response.status_code != 200:
-            raise ServerAPIError
-        response_data = response.json()
-        type_adapter = TypeAdapter(list[models.Contact])
-        return type_adapter.validate_python(response_data)
+    ) -> UserContacts:
+        """
+        Get user's specific contacts.
 
-    async def get_by_id(self, contact_id: int) -> models.Contact:
+        Args:
+            user_id: User Telegram ID.
+
+        Returns:
+            UserContacts model.
+
+        Raises:
+            ServerAPIError - if server response is not valid.
+        """
+        url = f'/contacts/users/{user_id}/'
+        response = await self._http_client.get(url)
+
+        response_data = response.json()
+
+        if response.is_success:
+            return UserContacts.model_validate(response_data)
+
+        handle_server_api_errors(response_data['errors'])
+
+    async def get_by_id(self, contact_id: int) -> UserContact:
+        """
+        Get contact by ID.
+
+        Args:
+            contact_id: Contact ID.
+
+        Returns:
+            UserContact model.
+
+        Raises:
+            ContactDoesNotExistError - if contact does not exist.
+            ServerAPIError - if server response is not valid.
+        """
         url = f'/contacts/{contact_id}/'
         response = await self._http_client.get(url)
-        if response.status_code == 404:
-            raise ContactDoesNotExistError(contact_id=contact_id)
+
         response_data = response.json()
-        return models.Contact.model_validate(response_data)
+
+        if response.is_success:
+            return UserContact.model_validate(response_data)
+
+        handle_server_api_errors(response_data['errors'])
 
     async def get_birthdays(self, user_id: int) -> list[ContactBirthday]:
+        """
+        Get user's contacts birthdays.
+
+        Args:
+            user_id: User Telegram ID.
+
+        Returns:
+            List of ContactBirthday models.
+
+        Raises:
+            ServerAPIError - if server response is not valid.
+        """
         url = f'/users/{user_id}/contact-birthdays/'
         response = await self._http_client.get(url)
-        if response.is_error:
-            raise ServerAPIError
+
         response_data = response.json()
-        type_adapter = TypeAdapter(list[ContactBirthday])
-        return type_adapter.validate_python(response_data['result'])
+
+        if response.is_success:
+            type_adapter = TypeAdapter(list[ContactBirthday])
+            return type_adapter.validate_python(response_data['birthdays'])
+
+        handle_server_api_errors(response_data['errors'])

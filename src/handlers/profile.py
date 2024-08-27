@@ -1,8 +1,9 @@
 from aiogram import F, Router
 from aiogram.filters import StateFilter, and_f, or_f
-from aiogram.types import Message, URLInputFile
+from aiogram.types import Message
 
 from repositories import UserRepository
+from services import get_user_profile_photo
 from views import ProfileView, answer_photo_view
 
 router = Router(name=__name__)
@@ -40,18 +41,10 @@ async def on_show_profile(
 
     user = await user_repository.get_by_id(from_user.id)
 
-    if user.profile_photo_url is not None:
-        photo = URLInputFile(str(user.profile_photo_url))
-    else:
-        profile_photos = await from_user.get_profile_photos()
-        if profile_photos.photos:
-            photo = profile_photos.photos[0][-1].file_id
-        else:
-            url = (
-                'https://api.thecatapi.com/v1/'
-                'images/search?format=src&mime_types=jpg,png'
-            )
-            photo = URLInputFile(url)
+    photo = await get_user_profile_photo(
+        user=from_user,
+        profile_photo_url=user.profile_photo_url,
+    )
 
     view = ProfileView(user, photo)
 

@@ -48,6 +48,7 @@ logger: BoundLogger = structlog.get_logger('app')
 
 
 def include_routers(dispatcher: Dispatcher) -> None:
+    handlers.errors.register_global_error_handlers(dispatcher)
     dispatcher.include_routers(
         handlers.probability.router,
         handlers.balance.router,

@@ -1,9 +1,9 @@
-import enum
+from enum import IntEnum
 
 __all__ = ('SecretMediaType',)
 
 
-class SecretMediaType(enum.Enum):
+class SecretMediaType(IntEnum):
     PHOTO = 1
     VOICE = 2
     VIDEO = 3

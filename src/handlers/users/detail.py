@@ -4,9 +4,10 @@ from aiogram.filters import StateFilter, Command
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message, CallbackQuery
 
+from handlers.profile import on_show_profile
 from models import User
-from repositories import BalanceRepository
-from services import is_anonymous_messaging_enabled
+from repositories import BalanceRepository, UserRepository
+from services import extract_user_from_update
 from views import (
     UserSettingsCalledInGroupChatView,
     UserMenuView,
@@ -19,9 +20,8 @@ __all__ = ('register_handlers',)
 
 async def on_show_personal_settings(
         message_or_callback_query: Message | CallbackQuery,
-        user: User,
 ) -> None:
-    view = UserPersonalSettingsView(user)
+    view = UserPersonalSettingsView()
     await render_message_or_callback_query(
         message_or_callback_query=message_or_callback_query,
         view=view,
@@ -38,28 +38,14 @@ async def on_settings_in_group_chat(
 
 
 async def on_show_settings(
-        message_or_callback_query: Message | CallbackQuery,
+        message: Message,
         state: FSMContext,
-        user: User,
-        balance_repository: BalanceRepository,
+        user_repository: UserRepository,
 ) -> None:
     await state.clear()
-    state_name = await state.get_state()
-    user_balance = await balance_repository.get_user_balance(user.id)
-    view = UserMenuView(
-        user=user,
-        is_anonymous_messaging_enabled=is_anonymous_messaging_enabled(
-            state_name=state_name,
-        ),
-        balance=user_balance.balance,
-    )
-    if isinstance(message_or_callback_query, Message):
-        await answer_view(message=message_or_callback_query, view=view)
-    else:
-        await edit_message_by_view(
-            message=message_or_callback_query.message,
-            view=view,
-        )
+    view = UserMenuView()
+    await answer_view(message=message, view=view)
+    await on_show_profile(message=message, user_repository=user_repository)
 
 
 def register_handlers(router: Router) -> None:
@@ -80,19 +66,11 @@ def register_handlers(router: Router) -> None:
         F.chat.type.in_({ChatType.GROUP, ChatType.SUPERGROUP}),
         StateFilter('*'),
     )
-    router.callback_query.register(
-        on_show_settings,
-        F.data == 'show-user-settings',
-        F.chat.type == ChatType.PRIVATE,
-        StateFilter('*'),
-    )
     router.message.register(
         on_show_settings,
         F.text.in_({
             '/start',
             '/settings',
-            '🔙 Назад',
-            '🔙 Отключить режим анонимных сообщений',
         }),
         F.chat.type == ChatType.PRIVATE,
         StateFilter('*'),

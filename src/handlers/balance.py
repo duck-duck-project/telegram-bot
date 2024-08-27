@@ -9,19 +9,12 @@ from exceptions import InsufficientFundsForWithdrawalError
 from repositories import BalanceRepository
 from services import int_gaps
 from views import (
-    FinanceMenuView, UserBalanceView, UserBalanceWithoutNameView, answer_view,
+    UserBalanceView,
+    UserBalanceWithoutNameView,
+    answer_view,
 )
 
 router = Router(name=__name__)
-
-
-@router.message(
-    F.text == '💰 Финансы',
-    StateFilter('*'),
-)
-async def on_show_finance_menu(message: Message) -> None:
-    view = FinanceMenuView()
-    await answer_view(message=message, view=view)
 
 
 @router.error(
@@ -76,19 +69,3 @@ async def on_show_user_balance(
     view = UserBalanceWithoutNameView(balance=user_balance.balance)
     await callback_query.answer(view.get_text(), show_alert=True)
 
-
-@router.message(
-    or_f(
-        Command('richest'),
-        F.text.lower() == 'топ богатых',
-    ),
-    StateFilter('*'),
-)
-async def on_show_richest_users_statistics(
-        message: Message,
-        balance_repository: BalanceRepository,
-) -> None:
-    await balance_repository.create_richest_users_statistics_task(
-        chat_id=message.chat.id,
-        user_id=message.from_user.id,
-    )

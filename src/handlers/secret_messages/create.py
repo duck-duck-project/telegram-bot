@@ -6,7 +6,8 @@ from aiogram.fsm.context import FSMContext
 from aiogram.types import ChosenInlineResult, Message
 
 from filters import secret_message_valid_format_chosen_inline_result_filter
-from repositories import (SecretMessageRepository)
+from repositories import SecretMessageRepository
+from services import get_username_or_fullname
 from views import (
     SecretMessageNotificationView,
     SecretMessagePromptView,
@@ -38,7 +39,7 @@ async def on_message_created(
         chosen_inline_result: ChosenInlineResult,
         state: FSMContext,
         secret_message_repository: SecretMessageRepository,
-        recipient_id: int,
+        contact_id: int,
         bot: Bot,
 ):
     state_data = await state.get_data()
@@ -51,17 +52,16 @@ async def on_message_created(
     secret_message = await secret_message_repository.create(
         secret_message_id=secret_message_id,
         text=text,
-        sender_id=chosen_inline_result.from_user.id,
-        recipient_id=recipient_id,
+        contact_id=contact_id,
     )
 
     if secret_message.recipient.can_receive_notifications:
         view = SecretMessageNotificationView(
             secret_message_id=secret_message.id,
-            sender_full_name=secret_message.sender.username_or_fullname,
+            sender_full_name=get_username_or_fullname(secret_message.sender),
         )
         await send_view(
             bot=bot,
-            chat_id=recipient_id,
+            chat_id=secret_message.recipient.id,
             view=view,
         )

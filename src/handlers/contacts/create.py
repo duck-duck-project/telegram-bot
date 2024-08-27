@@ -1,6 +1,6 @@
 from aiogram import F, Router
 from aiogram.enums import ChatType
-from aiogram.filters import Command, StateFilter, invert_f
+from aiogram.filters import Command, StateFilter, invert_f, or_f
 from aiogram.types import CallbackQuery, Message
 
 from callback_data import ContactCreateCallbackData
@@ -20,7 +20,7 @@ router = Router(name=__name__)
     StateFilter('*'),
 )
 async def on_add_bot_to_contacts(message: Message) -> None:
-    await message.reply('Вы не можете добавить бота в контакты')
+    await message.reply('🤖 Вы не можете добавить бота в контакты')
 
 
 @router.message(
@@ -51,13 +51,18 @@ async def on_contact_command_is_not_replied_to_user(
 
 @router.message(
     F.chat.type.in_({ChatType.GROUP, ChatType.SUPERGROUP}),
-    Command('contact'),
+    or_f(
+        Command('contact'),
+        F.text.lower().in_({
+            'contact',
+            'контакт',
+        }),
+    ),
     F.reply_to_message.as_('reply_to_message'),
     StateFilter('*'),
 )
 async def on_add_contact(
         message: Message,
-        user: User,
         user_repository: UserRepository,
         contact_repository: ContactRepository,
         reply_to_message: Message,
@@ -75,7 +80,7 @@ async def on_add_contact(
         raise ContactCreateForbiddenError
 
     await contact_repository.create(
-        of_user_id=user.id,
+        of_user_id=from_user.id,
         to_user_id=to_user.id,
         private_name=name,
         public_name=name,
