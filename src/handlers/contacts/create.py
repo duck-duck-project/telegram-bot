@@ -10,6 +10,8 @@ from repositories import ContactRepository, UserRepository
 
 __all__ = ('router',)
 
+from services import get_username_or_fullname
+
 router = Router(name=__name__)
 
 
@@ -67,20 +69,20 @@ async def on_add_contact(
         contact_repository: ContactRepository,
         reply_to_message: Message,
 ) -> None:
-    from_user = reply_to_message.from_user
-    name = from_user.username or from_user.full_name
+    to_user = reply_to_message.from_user
+    name = to_user.username or to_user.full_name
 
     to_user, is_to_user_created = await user_repository.upsert(
-        user_id=from_user.id,
-        fullname=from_user.full_name,
-        username=from_user.username,
+        user_id=to_user.id,
+        fullname=to_user.full_name,
+        username=to_user.username,
     )
 
     if not to_user.can_be_added_to_contacts:
         raise ContactCreateForbiddenError
 
     await contact_repository.create(
-        of_user_id=from_user.id,
+        of_user_id=message.from_user.id,
         to_user_id=to_user.id,
         private_name=name,
         public_name=name,
