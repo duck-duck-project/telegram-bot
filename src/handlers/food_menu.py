@@ -69,7 +69,7 @@ async def on_show_food_menu_for_specific_day(
 
     withdrawal = await balance_repository.create_withdrawal(
         user_id=message.from_user.id,
-        amount=80,
+        amount=500,
         description='Просмотр йемека на сегодня',
     )
     await balance_notifier.send_withdrawal_notification(withdrawal)
