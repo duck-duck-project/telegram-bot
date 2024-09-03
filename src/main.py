@@ -56,6 +56,7 @@ def include_routers(dispatcher: Dispatcher) -> None:
         handlers.eraser.router,
         handlers.work.router,
         handlers.quizzes.router,
+        handlers.mute_self.router,
         handlers.cats.router,
         handlers.profile.router,
         handlers.casino.router,
