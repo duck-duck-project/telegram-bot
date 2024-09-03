@@ -1,6 +1,7 @@
 import time
 
 from aiogram import Bot, F, Router
+from aiogram.enums import ChatType
 from aiogram.filters import StateFilter
 from aiogram.types import ChatPermissions, Message
 
@@ -11,6 +12,7 @@ router = Router(name=__name__)
 
 @router.message(
     F.text.lower() == 'помолчать',
+    F.chat.type.in_({ChatType.GROUP, ChatType.SUPERGROUP}),
     StateFilter('*'),
 )
 async def on_mute_self(message: Message, bot: Bot):
