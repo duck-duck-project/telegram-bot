@@ -1,9 +1,9 @@
-from collections.abc import Iterable
+from collections.abc import Sequence
 from typing import Final
 
 from enums import TagWeight
-from exceptions import TagDoesNotExistError
-from models import Tag
+from exceptions import TagNotFoundError
+from models import UserTag
 
 __all__ = (
     'TAG_WEIGHT_TO_PRICE',
@@ -20,13 +20,12 @@ TAG_WEIGHT_TO_PRICE: Final[dict[TagWeight, int]] = {
 
 
 def find_tag_by_number(
-        tags: Iterable[Tag],
-        tag_number_to_find: int,
-) -> Tag:
-    for tag_number, tag in enumerate(tags, start=1):
-        if tag_number == tag_number_to_find:
-            return tag
-    raise TagDoesNotExistError(f'Tag number {tag_number_to_find} not found')
+        tags: Sequence[UserTag],
+        number: int,
+) -> UserTag:
+    if len(tags) < number:
+        raise TagNotFoundError('Tag not found')
+    return tags[number - 1]
 
 
 def compute_tag_refund_price(

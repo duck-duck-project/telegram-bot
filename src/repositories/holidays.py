@@ -1,6 +1,5 @@
-from exceptions import ServerAPIError
 from models import DateHolidays
-from repositories import APIRepository
+from repositories import APIRepository, handle_server_api_errors
 
 __all__ = ('HolidayRepository',)
 
@@ -15,9 +14,9 @@ class HolidayRepository(APIRepository):
         }
         response = await self._http_client.get(url, params=request_query_params)
 
-        if response.is_success:
-            response_data = response.json()
+        response_data = response.json()
 
-            return DateHolidays.model_validate(response_data['result'])
+        if response.is_error:
+            handle_server_api_errors(response_data['errors'])
 
-        raise ServerAPIError
+        return DateHolidays.model_validate(response_data)

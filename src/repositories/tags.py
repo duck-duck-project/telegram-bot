@@ -1,26 +1,22 @@
-import json
-
-from pydantic import TypeAdapter
-
-from exceptions import (
-    ServerAPIError,
-    TagDoesNotBelongToUserError,
-    TagDoesNotExistError,
-)
-from models import Tag
-from repositories import APIRepository
+from models import Tag, UserTags
+from repositories import APIRepository, handle_server_api_errors
 
 __all__ = ('TagRepository',)
 
 
 class TagRepository(APIRepository):
 
-    async def get_all_by_user_id(self, user_id: int) -> list[Tag]:
-        url = f'/users/{user_id}/tags/'
+    async def get_all_by_user_id(self, user_id: int) -> UserTags:
+        url = f'/tags/users/{user_id}/'
+
         response = await self._http_client.get(url)
-        type_adapter = TypeAdapter(list[Tag])
+
         response_data = response.json()
-        return type_adapter.validate_python(response_data['result'])
+
+        if response.is_error:
+            handle_server_api_errors(response_data['errors'])
+
+        return UserTags.model_validate(response_data)
 
     async def create(
             self,
@@ -30,26 +26,36 @@ class TagRepository(APIRepository):
             text: str,
             weight,
     ) -> Tag:
-        url = f'/users/tags/'
+        url = f'/tags/'
         request_data = {
             'of_user_id': of_user_id,
             'to_user_id': to_user_id,
             'text': text,
             'weight': weight,
         }
-        response = await self._http_client.post(url, json=request_data)
-        response_data = response.json()
-        return Tag.model_validate(response_data['result'])
 
-    async def delete(self, *, user_id: int, tag_id: int) -> bool:
-        url = f'/users/{user_id}/tags/{tag_id}/'
-        response = await self._http_client.delete(url)
-        if response.status_code == 404:
-            raise TagDoesNotExistError
-        if response.status_code == 403:
-            raise TagDoesNotBelongToUserError
-        try:
+        response = await self._http_client.post(url, json=request_data)
+
+        response_data = response.json()
+
+        if response.is_error:
+            handle_server_api_errors(response_data['errors'])
+
+        return Tag.model_validate(response_data)
+
+    async def delete(self, *, user_id: int, tag_id: int) -> None:
+        url = f'/tags/'
+        request_data = {
+            'user_id': user_id,
+            'tag_id': tag_id,
+        }
+
+        response = await self._http_client.request(
+            method='DELETE',
+            url=url,
+            json=request_data,
+        )
+
+        if response.is_error:
             response_data = response.json()
-        except json.JSONDecodeError:
-            raise ServerAPIError
-        return response_data.get('ok', False)
+            handle_server_api_errors(response_data['errors'])

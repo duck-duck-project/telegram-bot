@@ -42,7 +42,7 @@ async def user_retrieve_middleware(
     )
 
     user_repository: UserRepository = data['user_repository']
-    user, _ = await user_repository.upsert(
+    user = await user_repository.create(
         user_id=from_user.id,
         fullname=from_user.full_name,
         username=from_user.username,

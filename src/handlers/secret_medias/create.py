@@ -7,7 +7,6 @@ from aiogram.types import (
 )
 
 from enums import SecretMediaType
-from models import User
 from repositories import (
     ContactRepository,
     SecretMediaRepository,
@@ -53,7 +52,6 @@ async def on_secret_media_create_confirm(
         state: FSMContext,
         bot: Bot,
         secret_media_repository: SecretMediaRepository,
-        user: User,
 ) -> None:
     state_data = await state.get_data()
     await state.clear()

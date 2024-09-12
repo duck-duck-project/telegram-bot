@@ -9,7 +9,6 @@ from . import (
     errors,
     dogs,
     food_menu,
-    eraser,
     tags,
     sport_activities,
     help,
@@ -34,7 +33,6 @@ from . import (
 __all__ = (
     'probability',
     'balance',
-    'eraser',
     'casino',
     'medicines',
     'cats',

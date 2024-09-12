@@ -153,8 +153,4 @@ class MiningChatStatisticsView(View):
             lines.append(
                 render_total_statistics(self.__mining_statistics.resources)
             )
-        lines.append(
-            f'<b>Глубина шахты чата: '
-            f'{len(self.__mining_statistics.resources)}</b>'
-        )
         return '\n'.join(lines)

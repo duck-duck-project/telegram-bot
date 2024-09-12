@@ -1,6 +1,14 @@
-class TagDoesNotExistError(Exception):
+from exceptions.base import ApplicationError
+
+__all__ = (
+    'TagNotFoundError',
+    'TagDoesNotBelongToUserError',
+)
+
+
+class TagNotFoundError(ApplicationError):
     pass
 
 
-class TagDoesNotBelongToUserError(Exception):
+class TagDoesNotBelongToUserError(ApplicationError):
     pass

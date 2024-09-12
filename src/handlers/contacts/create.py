@@ -5,12 +5,9 @@ from aiogram.types import CallbackQuery, Message
 
 from callback_data import ContactCreateCallbackData
 from exceptions import ContactCreateForbiddenError, ContactCreateToSelfError
-from models import User
 from repositories import ContactRepository, UserRepository
 
 __all__ = ('router',)
-
-from services import get_username_or_fullname
 
 router = Router(name=__name__)
 
@@ -72,7 +69,7 @@ async def on_add_contact(
     to_user = reply_to_message.from_user
     name = to_user.username or to_user.full_name
 
-    to_user, is_to_user_created = await user_repository.upsert(
+    to_user = await user_repository.create(
         user_id=to_user.id,
         fullname=to_user.full_name,
         username=to_user.username,

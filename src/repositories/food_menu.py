@@ -1,7 +1,7 @@
 from pydantic import TypeAdapter
 
-from exceptions import ServerAPIError
 from models import DailyFoodMenu
+from repositories import handle_server_api_errors
 from repositories.base import APIRepository
 
 __all__ = ('FoodMenuRepository',)
@@ -9,10 +9,13 @@ __all__ = ('FoodMenuRepository',)
 
 class FoodMenuRepository(APIRepository):
 
-    async def get_all(self) -> list[DailyFoodMenu]:
+    async def get_all(self) -> tuple[DailyFoodMenu, ...]:
         response = await self._http_client.get('/food-menu/')
-        if response.status_code != 200:
-            raise ServerAPIError
+
         response_data = response.json()
-        type_adapter = TypeAdapter(list[DailyFoodMenu])
+
+        if response.is_error:
+            handle_server_api_errors(response_data['errors'])
+
+        type_adapter = TypeAdapter(tuple[DailyFoodMenu, ...])
         return type_adapter.validate_python(response_data['food_menus'])

@@ -1,6 +1,4 @@
 from aiogram.types import (
-    InlineKeyboardButton,
-    InlineKeyboardMarkup,
     KeyboardButton,
     ReplyKeyboardMarkup,
 )
@@ -10,24 +8,7 @@ from views import InlineQueryView, View
 __all__ = (
     'UserMenuView',
     'UserBannedInlineQueryView',
-    'UserPersonalSettingsView',
 )
-
-
-class UserPersonalSettingsView(View):
-    text = 'Настройки профиля'
-
-    def get_reply_markup(self) -> InlineKeyboardMarkup:
-        return InlineKeyboardMarkup(
-            inline_keyboard=[
-                [
-                    InlineKeyboardButton(
-                        text='🏞️ Фото профиля',
-                        callback_data='update-profile-photo',
-                    )
-                ]
-            ],
-        )
 
 
 class UserMenuView(View):
@@ -45,9 +26,6 @@ class UserMenuView(View):
             [
                 KeyboardButton(text='🐾 Котик'),
                 KeyboardButton(text='🐶 Собачка'),
-            ],
-            [
-                KeyboardButton(text='🎨 Настройки'),
             ],
         ],
     )

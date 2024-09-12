@@ -1,3 +1,5 @@
+from exceptions.base import ApplicationError
+
 __all__ = (
     'InsufficientFundsForWithdrawalError',
     'InsufficientFundsForTransferError',
@@ -9,34 +11,32 @@ __all__ = (
 )
 
 
-class InsufficientFundsForWithdrawalError(Exception):
+class InsufficientFundsForWithdrawalError(ApplicationError):
 
-    def __init__(self, amount: int):
+    def __init__(self, detail: str, amount: int):
+        super().__init__(detail)
         self.amount = amount
 
-    def __str__(self):
-        return f'Insufficient funds for withdrawal: {self.amount=}'
 
-
-class InsufficientFundsForTransferError(Exception):
+class InsufficientFundsForTransferError(ApplicationError):
     pass
 
 
-class InsufficientFundsForBetError(Exception):
+class InsufficientFundsForBetError(ApplicationError):
     pass
 
 
-class TransactionDoesNotExistError(Exception):
+class TransactionDoesNotExistError(ApplicationError):
     pass
 
 
-class TransferRollbackExpiredError(Exception):
+class TransferRollbackExpiredError(ApplicationError):
     pass
 
 
-class TransactionDoesNotBelongToUserError(Exception):
+class TransactionDoesNotBelongToUserError(ApplicationError):
     pass
 
 
-class InsufficientFundsForTransferRollbackError(Exception):
+class InsufficientFundsForTransferRollbackError(ApplicationError):
     pass

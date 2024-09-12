@@ -1,3 +1,5 @@
+from exceptions.base import ApplicationError
+
 __all__ = (
     'ContactDoesNotExistError',
     'ContactAlreadyExistsError',
@@ -6,22 +8,20 @@ __all__ = (
 )
 
 
-class ContactDoesNotExistError(Exception):
+class ContactDoesNotExistError(ApplicationError):
 
-    def __init__(self, contact_id: int):
+    def __init__(self, detail: str, contact_id: int):
+        super().__init__(detail)
         self.contact_id = contact_id
 
-    def __str__(self) -> str:
-        return f'Contact with ID {self.contact_id} does not exist'
 
-
-class ContactAlreadyExistsError(Exception):
+class ContactAlreadyExistsError(ApplicationError):
     pass
 
 
-class ContactCreateToSelfError(Exception):
+class ContactCreateToSelfError(ApplicationError):
     pass
 
 
-class ContactCreateForbiddenError(Exception):
+class ContactCreateForbiddenError(ApplicationError):
     pass
