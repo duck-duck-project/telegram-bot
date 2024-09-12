@@ -1,14 +1,24 @@
-class SecretMessageDoesNotExistError(Exception):
+from exceptions.base import ApplicationError
+
+__all__ = (
+    'SecretMessageDoesNotExistError',
+    'SecretMediaDoesNotExistError',
+    'SecretMediaAlreadyExistsError',
+    'InvalidSecretMediaDeeplinkError',
+)
+
+
+class SecretMessageDoesNotExistError(ApplicationError):
     pass
 
 
-class SecretMediaAlreadyExistsError(Exception):
+class SecretMediaAlreadyExistsError(ApplicationError):
     pass
 
 
-class SecretMediaDoesNotExistError(Exception):
+class SecretMediaDoesNotExistError(ApplicationError):
     pass
 
 
-class InvalidSecretMediaDeeplinkError(Exception):
+class InvalidSecretMediaDeeplinkError(ApplicationError):
     pass

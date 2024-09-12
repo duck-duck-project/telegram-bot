@@ -1,42 +1,47 @@
 from enums import TruthOrDareQuestionType
-from repositories import APIRepository
+from models import Prediction, TruthOrDareQuestion, Wish
+from repositories import APIRepository, handle_server_api_errors
 
 __all__ = ('QuizRepository',)
 
 
 class QuizRepository(APIRepository):
 
-    async def get_random_wish(self) -> str | None:
+    async def get_random_wish(self) -> Wish:
         response = await self._http_client.get('/quizzes/wishes/random/')
 
-        if response.is_success:
-            return response.json()['text']
+        response_data = response.json()
 
-        return None
+        if response.is_error:
+            handle_server_api_errors(response_data['errors'])
 
-    async def get_random_prediction(self) -> str | None:
+        return Wish.model_validate(response_data)
+
+    async def get_random_prediction(self) -> Prediction:
         response = await self._http_client.get('/quizzes/predictions/random/')
 
-        if response.is_success:
-            return response.json()['text']
+        response_data = response.json()
 
-        return None
+        if response.is_error:
+            handle_server_api_errors(response_data['errors'])
+
+        return Prediction.model_validate(response_data)
 
     async def get_random_truth_or_dare_question(
             self,
             *,
             question_type: TruthOrDareQuestionType | None = None,
-    ) -> str | None:
-        request_query_params = {}
+    ) -> TruthOrDareQuestion:
+        url = '/quizzes/truth-or-dare/random/'
+        query_params = {}
         if question_type is not None:
-            request_query_params['type'] = question_type
+            query_params['type'] = question_type
 
-        response = await self._http_client.get(
-            '/quizzes/truth-or-dare/random/',
-            params=request_query_params,
-        )
+        response = await self._http_client.get(url, params=query_params)
 
-        if response.is_success:
-            return response.json()['text']
+        response_data = response.json()
 
-        return None
+        if response.is_error:
+            handle_server_api_errors(response_data['errors'])
+
+        return TruthOrDareQuestion.model_validate(response_data)

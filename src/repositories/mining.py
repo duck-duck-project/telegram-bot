@@ -21,12 +21,13 @@ class MiningRepository(APIRepository):
             request_data['chat_id'] = chat_id
 
         response = await self._http_client.post(url, json=request_data)
+
         response_data = response.json()
 
-        if response.is_success:
-            return MinedResourceResult.model_validate(response_data)
+        if response.is_error:
+            handle_server_api_errors(response_data['errors'])
 
-        handle_server_api_errors(response_data['errors'])
+        return MinedResourceResult.model_validate(response_data)
 
     async def get_user_statistics(self, user_id: int) -> MiningUserStatistics:
         url = f'/mining/users/{user_id}/statistics/'
@@ -34,10 +35,10 @@ class MiningRepository(APIRepository):
 
         response_data = response.json()
 
-        if response.is_success:
-            return MiningUserStatistics.model_validate(response_data)
+        if response.is_error:
+            handle_server_api_errors(response_data['errors'])
 
-        handle_server_api_errors(response_data['errors'])
+        return MiningUserStatistics.model_validate(response_data)
 
     async def get_chat_statistics(self, chat_id: int) -> MiningChatStatistics:
         url = f'/mining/chats/{chat_id}/statistics/'
@@ -46,6 +47,6 @@ class MiningRepository(APIRepository):
         response_data = response.json()
 
         if response.is_success:
-            return MiningChatStatistics.model_validate(response_data)
+            handle_server_api_errors(response_data['errors'])
 
-        handle_server_api_errors(response_data['errors'])
+        return MiningChatStatistics.model_validate(response_data)

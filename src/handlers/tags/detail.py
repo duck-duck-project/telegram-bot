@@ -22,7 +22,7 @@ async def on_show_tag_detail(
         tag_repository: TagRepository,
         tag_number: int,
 ) -> None:
-    tags = await tag_repository.get_all_by_user_id(message.from_user.id)
-    tag = find_tag_by_number(tags, tag_number)
+    user_tags = await tag_repository.get_all_by_user_id(message.from_user.id)
+    tag = find_tag_by_number(tags=user_tags.tags, number=tag_number)
     view = TagDetailView(tag, to_user=message.from_user)
     await answer_view(message=message, view=view)

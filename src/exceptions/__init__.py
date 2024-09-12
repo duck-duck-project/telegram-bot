@@ -4,6 +4,7 @@ from .energy import *
 from .food_items import *
 from .health import *
 from .medicines import *
+from .quizzes import *
 from .secret_messaging import *
 from .server import *
 from .sport_activities import *

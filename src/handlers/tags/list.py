@@ -22,8 +22,8 @@ async def on_show_tag_list_callback(
         tag_repository: TagRepository,
         clean_up_service: CleanUpService,
 ) -> None:
-    tags = await tag_repository.get_all_by_user_id(callback_data.user_id)
-    view = TagListView(tags=tags, user_full_name=callback_data.user_full_name)
+    user_tags = await tag_repository.get_all_by_user_id(callback_data.user_id)
+    view = TagListView(user_tags)
     sent_message = await answer_view(message=callback_query.message, view=view)
     await callback_query.answer()
     if callback_data.user_id == 784163357:
@@ -57,8 +57,8 @@ async def on_show_tags_list(
     else:
         user = message.from_user
 
-    tags = await tag_repository.get_all_by_user_id(user.id)
-    view = TagListView(tags=tags, user_full_name=user.full_name)
+    user_tags = await tag_repository.get_all_by_user_id(user.id)
+    view = TagListView(user_tags=user_tags)
     sent_message = await answer_view(message=message, view=view)
     if user.id == 784163357:
         sent_media = await sent_message.reply_animation(

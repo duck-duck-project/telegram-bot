@@ -1,17 +1,10 @@
 from uuid import UUID
 
 from exceptions import (
-    ServerAPIError,
-    UserDoesNotExistError,
-    InsufficientFundsForWithdrawalError,
-    InsufficientFundsForTransferError,
-    TransactionDoesNotExistError,
-    TransferRollbackExpiredError,
-    TransactionDoesNotBelongToUserError,
-    InsufficientFundsForTransferRollbackError,
+    ServerAPIError, UserDoesNotExistError,
 )
-from models import SystemTransaction, UserBalance, Transfer
-from repositories.base import APIRepository
+from models import SystemTransaction, Transfer, UserBalance
+from repositories.base import APIRepository, handle_server_api_errors
 
 __all__ = ('BalanceRepository',)
 
@@ -24,25 +17,20 @@ class BalanceRepository(APIRepository):
             transfer_id: UUID,
             user_id: int,
     ) -> None:
-        request_query_params = {
+        request_data = {
             'transaction_id': str(transfer_id),
             'user_id': user_id,
         }
         url = '/economics/transfers/'
-        response = await self._http_client.delete(
+        response = await self._http_client.request(
+            method='DELETE',
             url=url,
-            params=request_query_params,
+            json=request_data,
         )
-        if response.status_code == 404:
-            raise TransactionDoesNotExistError
-        if response.status_code == 400:
-            match response.json():
-                case ['Transfer rollback time expired']:
-                    raise TransferRollbackExpiredError
-                case ['Transaction does not belong to user']:
-                    raise TransactionDoesNotBelongToUserError
-                case ['Insufficient funds for transfer rollback']:
-                    raise InsufficientFundsForTransferRollbackError
+
+        response_data = response.json()
+
+        handle_server_api_errors(response_data['errors'])
 
     async def create_transfer(
             self,
@@ -60,12 +48,6 @@ class BalanceRepository(APIRepository):
             'description': description,
         }
         response = await self._http_client.post(url, json=request_data)
-        if response.status_code == 400:
-            response_data = response.json()
-            if response_data[0] == 'Insufficient funds for transfer':
-                raise InsufficientFundsForTransferError
-        if response.status_code != 201:
-            raise ServerAPIError
         response_data = response.json()
         return Transfer.model_validate(response_data)
 
@@ -83,13 +65,12 @@ class BalanceRepository(APIRepository):
             'description': description,
         }
         response = await self._http_client.post(url, json=request_data)
-        if response.status_code == 400:
-            response_data = response.json()
-            if response_data[0] == 'Insufficient funds for withdrawal':
-                raise InsufficientFundsForWithdrawalError(amount=amount)
-        if response.status_code != 201:
-            raise ServerAPIError
+
         response_data = response.json()
+
+        if response.is_error:
+            handle_server_api_errors(response_data['errors'])
+
         return SystemTransaction.model_validate(response_data)
 
     async def create_deposit(

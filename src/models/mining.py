@@ -10,6 +10,7 @@ __all__ = (
 
 class MinedResourceResult(BaseModel):
     user_id: int
+    chat_id: int | None
     resource_name: str
     value: int
     value_per_gram: int | float

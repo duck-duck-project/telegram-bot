@@ -60,6 +60,7 @@ async def on_feed_self(
         from_user_id=message.from_user.id,
         to_user_id=message.from_user.id,
         food_item_name=food_item_name,
+        food_item_type=food_item_type,
     )
     view = FeedSelfView(
         food_item_consumption_result=food_item_consumption_result,
@@ -86,6 +87,7 @@ async def on_feed_other_user(
         from_user_id=from_user.id,
         to_user_id=to_user.id,
         food_item_name=food_item_name,
+        food_item_type=food_item_type,
     )
     view = FeedOtherUserView(
         food_item_consumption_result=food_item_consumption_result,

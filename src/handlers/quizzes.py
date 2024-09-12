@@ -3,6 +3,10 @@ from aiogram.filters import StateFilter
 from aiogram.types import Message
 
 from enums import TruthOrDareQuestionType
+from exceptions import (
+    PredictionNotFoundError,
+    TruthOrDareQuestionNotFoundError, WishNotFoundError,
+)
 from filters import truth_or_dare_question_filter
 from repositories import QuizRepository
 
@@ -19,11 +23,12 @@ async def on_show_wish(
         message: Message,
         quiz_repository: QuizRepository,
 ) -> None:
-    wish = await quiz_repository.get_random_wish()
-    if wish is None:
+    try:
+        wish = await quiz_repository.get_random_wish()
+    except WishNotFoundError:
         await message.answer('Не могу пока ничего пожелать 😔')
     else:
-        await message.reply(wish)
+        await message.reply(wish.text)
 
 
 @router.message(
@@ -34,11 +39,12 @@ async def on_show_prediction(
         message: Message,
         quiz_repository: QuizRepository,
 ) -> None:
-    wish = await quiz_repository.get_random_prediction()
-    if wish is None:
+    try:
+        prediction = await quiz_repository.get_random_prediction()
+    except PredictionNotFoundError:
         await message.answer('Не могу дать вам предсказание 😔')
     else:
-        await message.reply(wish)
+        await message.reply(prediction.text)
 
 
 @router.message(
@@ -50,10 +56,11 @@ async def on_show_truth_or_dare_question(
         quiz_repository: QuizRepository,
         question_type: TruthOrDareQuestionType | None,
 ) -> None:
-    question = await quiz_repository.get_random_truth_or_dare_question(
-        question_type=question_type
-    )
-    if question is None:
+    try:
+        question = await quiz_repository.get_random_truth_or_dare_question(
+            question_type=question_type
+        )
+    except TruthOrDareQuestionNotFoundError:
         await message.answer('Не могу дать вам вопрос 😔')
     else:
-        await message.reply(question)
+        await message.reply(question.text)

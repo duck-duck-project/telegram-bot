@@ -1,12 +1,7 @@
 from pydantic import TypeAdapter
 
-from exceptions import (
-    InsufficientFundsForWithdrawalError,
-    MedicineDoesNotExistError,
-    ServerAPIError,
-)
 from models import Medicine, MedicineConsumptionResult
-from repositories import APIRepository
+from repositories import APIRepository, handle_server_api_errors
 
 __all__ = ('MedicineRepository',)
 
@@ -20,11 +15,11 @@ class MedicineRepository(APIRepository):
 
         response_data = response.json()
 
-        if response_data.get('ok'):
-            type_adapter = TypeAdapter(tuple[Medicine, ...])
-            return type_adapter.validate_python(response_data['result'])
+        if response.is_error:
+            handle_server_api_errors(response_data['errors'])
 
-        raise ServerAPIError
+        type_adapter = TypeAdapter(tuple[Medicine, ...])
+        return type_adapter.validate_python(response_data['medicines'])
 
     async def consume(
             self,
@@ -38,19 +33,7 @@ class MedicineRepository(APIRepository):
 
         response_data = response.json()
 
-        if response_data.get('detail') == 'Medicine does not exist':
-            raise MedicineDoesNotExistError(
-                medicine_name=response_data['medicine_name'],
-            )
+        if response.is_error:
+            handle_server_api_errors(response_data['errors'])
 
-        if response_data.get('detail') == 'Not enough balance to buy medicine':
-            raise InsufficientFundsForWithdrawalError(
-                amount=int(response_data['price']),
-            )
-
-        if response_data.get('ok'):
-            return MedicineConsumptionResult.model_validate(
-                response_data['result'],
-            )
-
-        raise ServerAPIError
+        return MedicineConsumptionResult.model_validate(response_data)

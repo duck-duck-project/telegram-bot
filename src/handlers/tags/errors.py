@@ -2,7 +2,7 @@ from aiogram import Router
 from aiogram.filters import ExceptionTypeFilter
 from aiogram.types import ErrorEvent
 
-from exceptions import TagDoesNotBelongToUserError, TagDoesNotExistError
+from exceptions import TagDoesNotBelongToUserError, TagNotFoundError
 
 __all__ = ('on_tag_does_not_exist_error',)
 
@@ -20,7 +20,7 @@ async def on_tag_does_not_belong_to_user_error(event: ErrorEvent) -> None:
         )
 
 
-@router.error(ExceptionTypeFilter(TagDoesNotExistError))
+@router.error(ExceptionTypeFilter(TagNotFoundError))
 async def on_tag_does_not_exist_error(event: ErrorEvent) -> None:
     if event.update.message is not None:
         await event.update.message.reply('❌ Награда не найдена')

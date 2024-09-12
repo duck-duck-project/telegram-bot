@@ -1,9 +1,6 @@
 from typing import Protocol
 
-from aiogram.types import (
-    InlineKeyboardButton, InlineKeyboardMarkup, KeyboardButton,
-    ReplyKeyboardMarkup, User,
-)
+from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup, User
 
 from callback_data import TransferRollbackCallbackData
 from models import Transfer, UserBalance

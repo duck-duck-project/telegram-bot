@@ -1,12 +1,8 @@
 from pydantic import TypeAdapter
 
-from exceptions import (
-    FoodItemDoesNotExistError, InsufficientFundsForWithdrawalError,
-    NotEnoughHealthError,
-    ServerAPIError,
-)
+from enums import FoodItemType
 from models import FoodItem, FoodItemFeedResult
-from repositories import APIRepository
+from repositories import APIRepository, handle_server_api_errors
 
 __all__ = ('FoodItemRepository',)
 
@@ -20,49 +16,32 @@ class FoodItemRepository(APIRepository):
 
         response_data = response.json()
 
-        if response_data.get('ok'):
-            type_adapter = TypeAdapter(tuple[FoodItem, ...])
-            return type_adapter.validate_python(response_data['result'])
+        if response.is_error:
+            handle_server_api_errors(response_data['errors'])
 
-        raise ServerAPIError
+        type_adapter = TypeAdapter(tuple[FoodItem, ...])
+        return type_adapter.validate_python(response_data['food_items'])
 
     async def feed(
             self,
             from_user_id: int,
             to_user_id: int,
             food_item_name: str,
+            food_item_type: FoodItemType,
     ) -> FoodItemFeedResult:
         url = '/food-items/feed/'
         request_data = {
             'from_user_id': from_user_id,
             'to_user_id': to_user_id,
             'food_item_name': food_item_name,
+            'food_item_type': food_item_type,
         }
 
         response = await self._http_client.post(url, json=request_data)
 
         response_data = response.json()
 
-        if response_data.get('detail') == 'Food item does not exist':
-            raise FoodItemDoesNotExistError(
-                food_item_name=response_data['food_item_name'],
-            )
+        if response.is_error:
+            handle_server_api_errors(response_data['errors'])
 
-        if response_data.get('detail') == 'Not enough balance to buy food item':
-            raise InsufficientFundsForWithdrawalError(
-                amount=int(response_data['price']),
-            )
-
-        if response_data.get('detail') == (
-                'Not enough health to consume food item'
-        ):
-            raise NotEnoughHealthError(
-                required_health=int(response_data['required_health_value']),
-            )
-
-        if response_data.get('ok'):
-            return FoodItemFeedResult.model_validate(
-                response_data['result'],
-            )
-
-        raise ServerAPIError
+        return FoodItemFeedResult.model_validate(response_data)

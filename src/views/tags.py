@@ -1,12 +1,11 @@
-from collections.abc import Iterable
-
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup, User
 
 from callback_data import TagDeleteCallbackData
 from enums import TagWeight
-from models import Tag
-from services.text import int_gaps
+from models import UserTag, UserTags
+from services.users import get_username_or_fullname
 from services.tags import TAG_WEIGHT_TO_PRICE
+from services.text import int_gaps
 from views import View
 
 __all__ = ('TagGivenView', 'TagListView', 'TagDetailView')
@@ -29,24 +28,22 @@ class TagGivenView(View):
 
 class TagListView(View):
 
-    def __init__(self, user_full_name: str, tags: Iterable[Tag]):
-        self.__tags = tuple(tags)
-        self.__user_full_name = user_full_name
+    def __init__(self, user_tags: UserTags):
+        self.__user_tags = user_tags
 
     def get_text(self) -> str:
-        if not self.__tags:
-            return f'🏆 У {self.__user_full_name} нет наград'
+        user_name = get_username_or_fullname(self.__user_tags.user)
+        if not self.__user_tags.tags:
+            return f'🏆 У {user_name} нет наград'
 
-        lines: list[str] = [f'<b>🏆 Награды {self.__user_full_name}:</b>']
+        lines: list[str] = [f'<b>🏆 Награды {user_name}:</b>']
 
-        for tag_number, tag in enumerate(self.__tags, start=1):
+        for tag_number, tag in enumerate(self.__user_tags.tags, start=1):
             emoji = TAG_WEIGHT_TO_EMOJI[tag.weight]
-            lines.append(
-                f'{tag_number}. {emoji} {tag.text}'
-            )
+            lines.append(f'{tag_number}. {emoji} {tag.text}')
 
         total_price = sum(
-            TAG_WEIGHT_TO_PRICE[tag.weight] for tag in self.__tags
+            TAG_WEIGHT_TO_PRICE[tag.weight] for tag in self.__user_tags.tags
         )
         lines.append(
             f'\n<b>💰  Общая стоимость {int_gaps(total_price)}'
@@ -63,16 +60,17 @@ class TagListView(View):
 
 class TagDetailView(View):
 
-    def __init__(self, tag: Tag, to_user: User):
+    def __init__(self, tag: UserTag, to_user: User):
         self.__tag = tag
         self.__to_user = to_user
 
     def get_text(self) -> str:
-        from_user = self.__tag.of_user_username or self.__tag.of_user_fullname
+        from_user_name = get_username_or_fullname(self.__tag.of_user)
         emoji = TAG_WEIGHT_TO_EMOJI[self.__tag.weight]
+        to_user_name = self.__to_user.mention_html()
         return (
-            f'🏆 <b>Награда для {self.__to_user.mention_html()}</b>\n'
-            f'От: {from_user}\n'
+            f'🏆 <b>Награда для {to_user_name}</b>\n'
+            f'От: {from_user_name}\n'
             f'Текст: {self.__tag.text}\n'
             f'{emoji} Статус: {self.__tag.weight.name.lower()}\n'
             f'Выдана {self.__tag.created_at:%d.%m.%Y %H:%M} (UTC)'
