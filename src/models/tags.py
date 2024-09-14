@@ -13,8 +13,8 @@ class Tag(BaseModel):
     text: str
     weight: TagWeight
     created_at: datetime
-    of_user_fullname: str
-    of_user_username: str | None
+    of_user: UserPartial
+    to_user: UserPartial
 
 
 class UserTag(BaseModel):
