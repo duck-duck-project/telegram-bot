@@ -13,6 +13,7 @@ from .mining import *
 from .probability import *
 from .problems import *
 from .profile import *
+from .relationships import *
 from .role_play import *
 from .secret_messaging import *
 from .server import *
