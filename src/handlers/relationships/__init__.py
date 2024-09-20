@@ -1,6 +1,6 @@
 from aiogram import Router
 
-from . import create
+from . import offer
 
 __all__ = ('router',)
 
