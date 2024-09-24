@@ -39,6 +39,7 @@ from repositories import (
     MedicineRepository,
     FoodItemRepository,
     SportActivityRepository,
+    RelationshipRepository,
 )
 from services import BalanceNotifier
 from services.clean_up import CleanUpService
@@ -151,6 +152,7 @@ async def main() -> None:
             medicine_repository=MedicineRepository,
             food_item_repository=FoodItemRepository,
             sport_activity_repository=SportActivityRepository,
+            relationship_repository=RelationshipRepository,
         )
     )
     dispatcher.update.outer_middleware(user_retrieve_middleware)

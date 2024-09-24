@@ -15,7 +15,8 @@ from exceptions import (
     ServerAPIError, SportActivityDoesNotExistError,
     SportActivityOnCooldownError, TagNotFoundError,
     TruthOrDareQuestionNotFoundError,
-    UserDoesNotExistError, WishNotFoundError,
+    UserDoesNotExistError, UserHasActiveRelationshipError,
+    UserHasNoRelationshipError, WishNotFoundError,
 )
 
 __all__ = (
@@ -61,6 +62,10 @@ error_code_to_exception_class = {
     ServerApiErrorCode.MEDICINE_NOT_FOUND: MedicineDoesNotExistError,
     ServerApiErrorCode.FOOD_ITEM_NOT_FOUND: FoodItemDoesNotExistError,
     ServerApiErrorCode.SPORT_ACTIVITY_NOT_FOUND: SportActivityDoesNotExistError,
+    ServerApiErrorCode.USER_HAS_NO_RELATIONSHIP: UserHasNoRelationshipError,
+    ServerApiErrorCode.USER_HAS_ACTIVE_RELATIONSHIP: (
+        UserHasActiveRelationshipError
+    ),
 }
 
 

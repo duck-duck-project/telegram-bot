@@ -9,6 +9,7 @@ from .holidays import *
 from .medicines import *
 from .mining import *
 from .quizzes import *
+from .relationships import *
 from .role_play import *
 from .secret_media_messages import *
 from .secret_text_messages import *

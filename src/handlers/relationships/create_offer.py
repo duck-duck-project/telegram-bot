@@ -11,7 +11,7 @@ router = Router(name=__name__)
 
 
 @router.message(
-    F.text.lower() == 'Предложить встречаться',
+    F.text.lower() == 'предложить встречаться',
     F.chat.type.in_({ChatType.GROUP, ChatType.SUPERGROUP}),
     F.from_user.id == F.reply_to_message.from_user.id,
     StateFilter('*'),
@@ -21,7 +21,7 @@ async def on_relationship_offer_to_self(message: Message) -> None:
 
 
 @router.message(
-    F.text.lower() == 'Предложить встречаться',
+    F.text.lower() == 'предложить встречаться',
     F.chat.type.in_({ChatType.GROUP, ChatType.SUPERGROUP}),
     F.reply_to_message.from_user.is_bot,
     StateFilter('*'),
@@ -31,7 +31,7 @@ async def on_relationship_offer_to_bot(message: Message) -> None:
 
 
 @router.message(
-    F.text.lower() == 'Предложить встречаться',
+    F.text.lower() == 'предложить встречаться',
     F.chat.type.in_({ChatType.GROUP, ChatType.SUPERGROUP}),
     F.reply_to_message,
     StateFilter('*'),

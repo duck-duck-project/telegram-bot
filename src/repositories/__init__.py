@@ -7,6 +7,7 @@ from .holidays import *
 from .medicines import *
 from .mining import *
 from .quizzes import *
+from .relationships import *
 from .secret_medias import *
 from .secret_messages import *
 from .sport_activities import *
