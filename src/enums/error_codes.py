@@ -22,3 +22,5 @@ class ServerApiErrorCode(StrEnum):
     SECRET_TEXT_MESSAGE_ID_CONFLICT = auto()
     FOOD_ITEM_NOT_FOUND = auto()
     SPORT_ACTIVITY_NOT_FOUND = auto()
+    USER_HAS_NO_RELATIONSHIP = auto()
+    USER_HAS_ACTIVE_RELATIONSHIP = auto()

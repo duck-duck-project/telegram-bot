@@ -39,6 +39,7 @@ from repositories import (
     MedicineRepository,
     FoodItemRepository,
     SportActivityRepository,
+    RelationshipRepository,
 )
 from services import BalanceNotifier
 from services.clean_up import CleanUpService
@@ -61,6 +62,7 @@ def include_routers(dispatcher: Dispatcher) -> None:
         handlers.casino.router,
         handlers.medicines.router,
         handlers.holidays.router,
+        handlers.relationships.router,
         handlers.food_items.router,
         handlers.timetable.router,
         handlers.choice.router,
@@ -150,6 +152,7 @@ async def main() -> None:
             medicine_repository=MedicineRepository,
             food_item_repository=FoodItemRepository,
             sport_activity_repository=SportActivityRepository,
+            relationship_repository=RelationshipRepository,
         )
     )
     dispatcher.update.outer_middleware(user_retrieve_middleware)
