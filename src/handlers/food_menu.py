@@ -75,7 +75,7 @@ async def on_show_food_menu_for_specific_day(
 
     view = FoodMenuMediaGroupView(food_menu)
     messages = await answer_media_group_view(message=message, view=view)
-    await clean_up_service.create_clean_up_task(*messages)
+    await clean_up_service.create_clean_up_task(message.message_id, *messages)
 
 
 @router.message(
