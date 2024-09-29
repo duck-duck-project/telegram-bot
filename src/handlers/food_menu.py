@@ -86,5 +86,9 @@ async def on_show_food_menu_for_specific_day(
     ),
     StateFilter('*'),
 )
-async def on_show_food_menu_instructions(message: Message) -> None:
+async def on_show_food_menu_instructions(
+    message: Message,
+    clean_up_service: CleanUpService,
+) -> None:
     await answer_view(message=message, view=FoodMenuFAQView())
+    await clean_up_service.create_clean_up_task(message)
