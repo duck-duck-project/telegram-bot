@@ -675,6 +675,15 @@
             "choke"
         ],
         "emoji": "🫳🏿"
+    },
+        {
+        "action_template": "{of_user_full_name} отлизал(-а) {to_user_full_name}",
+        "triggers": [
+            "отлизать",
+            "лизать",
+            "куни"
+        ],
+        "emoji": "👅"
     }
 ]
 
