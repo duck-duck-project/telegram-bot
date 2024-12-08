@@ -1,6 +1,7 @@
 from . import (
     balance,
     birthdays,
+    booling,
     casino,
     cats,
     choice,
@@ -35,6 +36,7 @@ __all__ = (
     'probability',
     'balance',
     'casino',
+    'booling',
     'medicines',
     'cats',
     'errors',
