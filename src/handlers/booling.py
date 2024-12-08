@@ -17,6 +17,7 @@ def to_snake_case(text: str) -> str:
 
 
 @router.message(
+    F.text.lower().in_({'bool', 'бул', 'забуллить'}),
     F.reply_to_message,
     F.message_id != F.reply_to_message.message_id,
     StateFilter('*'),
