@@ -706,7 +706,7 @@
         "emoji": "🐕‍🦺"
     },
     {
-        "action_template": "{of_user_full_name} надел(-а) ошейник {to_user_full_name}",
+        "action_template": "{of_user_full_name} надел(-а) ошейник на {to_user_full_name}",
         "triggers": ["ошейник"],
         "emoji": "🐕‍🦺"
     }
