@@ -692,22 +692,22 @@
     },
     {
         "action_template": "{of_user_full_name} почесал(-а) за ушком {to_user_full_name}",
-        "trigger": ["почесать за ушком", "почесать", "ушко"],
+        "triggers": ["почесать за ушком", "почесать", "ушко"],
         "emoji": "🐶"
     },
     {
         "action_template": "{of_user_full_name} дал(-а) банан {to_user_full_name}",
-        "trigger": ["банан"],
+        "triggers": ["банан"],
         "emoji": "🐒"
     },
     {
         "action_template": "{of_user_full_name} выгулял(-а) {to_user_full_name}",
-        "trigger": ["выгулять"],
+        "triggers": ["выгулять"],
         "emoji": "🐕‍🦺"
     },
     {
         "action_template": "{of_user_full_name} надел(-а) ошейник {to_user_full_name}",
-        "trigger": ["ошейник"],
+        "triggers": ["ошейник"],
         "emoji": "🐕‍🦺"
     }
 ]
